@@ -4,6 +4,7 @@
 #include<string>
 #include<fstream>
 #include<memory>
+#include<fstream>
 #include<stdlib.h>
 #include<time.h>
 #include<SDL.h>
@@ -18,6 +19,7 @@ using std::make_shared;
 using std::move;
 using std::string;
 using std::fstream;
+using std::ifstream;
 
 enum : int
 {

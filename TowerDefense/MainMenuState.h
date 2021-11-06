@@ -12,10 +12,12 @@ public:
     void Render()override;
     void OnKeyDown(SDL_Scancode KeyCode)override;
     void OnEnter()override;
+    bool ReadMap();
 private:
     SDL_Texture* m_pTexture = nullptr;
     SDL_Texture* m_pOverlayTexture = nullptr;
     int m_Option = 0;
     bool m_PlayMusicAgain = true;
+    char Table[16][26] = {};
 };
 

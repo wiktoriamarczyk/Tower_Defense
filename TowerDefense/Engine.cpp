@@ -72,7 +72,7 @@ bool Engine::Initialize()
     m_AllStates.push_back(make_unique<MainMenuState>(MyFont, m_pRenderer));
 
     // pierwszym stanem jest Menu gry
-    ChangeState(eStateID::MAINMENU);
+    ChangeState(eStateID::INGAME);
 
     return true;
 }

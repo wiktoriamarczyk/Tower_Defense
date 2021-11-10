@@ -12,8 +12,13 @@ public:
     void OnEnter()override;
     void CreateObject();
     void DestroyTextures();
+    bool ReadMap();
 
 private:
+    SDL_Texture* m_pTexture = nullptr;
+    SDL_Texture* m_pOverlayTexture = nullptr;
+    SDL_Texture* m_pSomeTower = nullptr;
     vector<shared_ptr<GameObject>> m_AllGameObjects;
+    char Table[16][26] = {};
 };
 

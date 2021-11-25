@@ -46,4 +46,11 @@ enum class eStateID
     HOWTOPLAY = 4,
 };
 
+enum class eTowerID
+{
+    NONE = 0,
+    SOME_TOWER = 1,
+};
+
+
 bool SDL_IsKeyPressed(SDL_Scancode Code);

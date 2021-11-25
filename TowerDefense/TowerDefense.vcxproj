@@ -155,6 +155,7 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
+    <ClCompile Include="Tower.cpp" />
     <ClCompile Include="vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +167,7 @@
     <ClInclude Include="InGameState.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="MainMenuState.h" />
+    <ClInclude Include="Tower.h" />
     <ClInclude Include="vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

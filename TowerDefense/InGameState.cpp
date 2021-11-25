@@ -1,6 +1,6 @@
 #include "InGameState.h"
 #include "Engine.h"
-
+#include "Tower.h"
 
 InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : GameState(eStateID::INGAME)
 {
@@ -31,9 +31,9 @@ bool InGameState::ReadMap()
             return true;
         }
 
-        for (int i = 0; i < 16; ++i)
+        for (int i = 0; i < 17; ++i)
         {
-            for (int j = 0; j < 27;)
+            for (int j = 0; j < 31;)
             {
                 stream >> tmp_char;
 
@@ -52,6 +52,42 @@ bool InGameState::ReadMap()
     }
 }
 
+void InGameState::OnMouseButtonDown(int Button)
+{
+    int x = Engine::GetSingleton()->GetMousePos().x;
+    int y = Engine::GetSingleton()->GetMousePos().y;
+    int CellX = (x / 64);
+    int CellY = (y / 64);
+    char Test = Table[CellY % 17][CellX % 30];
+
+    // wybieramy wieze do postawienia
+    if (Test == '2' && m_TowerID == eTowerID::NONE)
+    {
+        m_TowerID = eTowerID::SOME_TOWER;
+        m_HoldTower = true;
+    }
+    // jesli klikamy jeszcze raz na wybor wiezy, owczesnie ja trzymajac, oddajemy ja spowrotem do schowka
+    else if (Test == '2' && m_TowerID == eTowerID::SOME_TOWER)
+    {
+        m_TowerID = eTowerID::NONE;
+        m_HoldTower = false;
+    }
+    // jesli trzymamy wieze i jestesmy na poprawnym polu, to po kliknieciu LPM stawiamy wieze
+    if (m_TowerID == eTowerID::SOME_TOWER)
+    {
+        if (Test == '1')
+        {
+            auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), m_pSomeTower);
+            m_AllGameObjects.push_back(pTower);
+            Table[CellY % 17][CellX % 30] = '0';
+            Table[CellY % 17][CellX % 30 + 1] = '0';  // nie mozna stawiac budynku od razu po prawej
+            Table[CellY % 17][CellX % 30 - 1] = '0';  // nie mozna stawiac budynku od razu po lewej
+            m_TowerID = eTowerID::NONE;
+            m_HoldTower = false;
+        }
+    }
+
+}
 
 InGameState::~InGameState()
 {
@@ -62,8 +98,10 @@ void InGameState::DestroyTextures()
 {
     SDL_DestroyTexture(m_pTexture);
     SDL_DestroyTexture(m_pOverlayTexture);
+    SDL_DestroyTexture(m_pSomeTower);
     m_pTexture = nullptr;
     m_pOverlayTexture = nullptr;
+    m_pSomeTower = nullptr;
 }
 
 void InGameState::InitializeInGameStateTextures()
@@ -83,6 +121,12 @@ void InGameState::InitializeInGameStateTextures()
 
 void InGameState::Update(float DeltaTime)
 {
+    int x = Engine::GetSingleton()->GetMousePos().x;
+    int y = Engine::GetSingleton()->GetMousePos().y;
+    int CellX = (x / 64);
+    int CellY = (y / 64);
+    char Test = Table[CellY % 17][CellX % 30];
+
     if (SDL_IsKeyPressed(SDL_SCANCODE_ESCAPE))
     {
         Mix_HaltChannel(-1);
@@ -90,6 +134,17 @@ void InGameState::Update(float DeltaTime)
         m_AllGameObjects.clear();
        // m_NextStateID = eStateID::MAINMENU;
         Engine::GetSingleton()->ExitGame();
+    }
+
+    if (Test == '2')
+    {
+        m_Cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+        SDL_SetCursor(m_Cursor);
+    }
+    else
+    {
+        m_Cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+        SDL_SetCursor(m_Cursor);
     }
 
 
@@ -123,26 +178,30 @@ void InGameState::Render()
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
 
+    // numer w rzedzie i w kolumnie 
     int CellX = (x / 64);
     int CellY = (y / 64);
 
-    char Test = Table[CellY % 16][CellX % 26];
+    char Test = Table[CellY % 17][CellX % 30];
 
     if (Test == '1')
         SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
-    else
+    else if (Test == '0')
         SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 255);
+ /*   else if (Test == '2')
+        SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 255, 255);*/
 
-    SDL_Rect rect = { CellX * 64, CellY * 64, 64, 64 };
-    SDL_RenderDrawRect(m_pRenderer, &rect);
+    if (m_HoldTower)
+    {
+        SDL_Rect rect = { CellX * 64, CellY * 64, 64, 64 };
+        SDL_RenderDrawRect(m_pRenderer, &rect);
+    }
 
     SDL_Rect Overlay = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_RenderCopy(m_pRenderer, m_pOverlayTexture, NULL, &Overlay);
 
     SDL_Rect Some_tower = { 1640, 280, 97, 95 };
     SDL_RenderCopy(m_pRenderer, m_pSomeTower, NULL, &Some_tower);
-
-    SDL_RenderPresent(m_pRenderer);
 
 
 
@@ -158,11 +217,6 @@ void InGameState::Render()
 void InGameState::CreateObject()
 {
 }
-
-// SCREEN_WIDTH / INVADER_WIDTH - 3: 12 invaderow po 50 pikseli (lacznie zajmuja 600 pikseli)
-// ROW * (SCREEN_WIDTH / 100): z odstepami po 8 pikseli miedzy kazdym (lacznie 100 pikseli)
-// z 50 pikselowymi przerwami na poczatku i koncu ekranu (100 pikseli)
-// 800 pikseli szerokosci ekranu
 
 void InGameState::OnEnter()
 {

@@ -13,6 +13,7 @@ public:
     virtual void Render() = 0;
     virtual void OnEnter();
     virtual void OnKeyDown(SDL_Scancode KeyCode) {};
+    virtual void OnMouseButtonDown(int Button) {};
     eStateID GetStateID()const;
     eStateID GetNextStateID()const;
 

@@ -91,6 +91,11 @@ void Engine::Loop()
             {
                 m_pCurrentState->OnKeyDown(EVENT.key.keysym.scancode);
             }
+
+            if (EVENT.type == SDL_MOUSEBUTTONDOWN)
+            {
+                m_pCurrentState->OnMouseButtonDown(EVENT.button.button);
+            }
         }
 
         SDL_Delay(1000 / 60);

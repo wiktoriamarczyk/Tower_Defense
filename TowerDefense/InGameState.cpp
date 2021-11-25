@@ -4,7 +4,7 @@
 
 InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : GameState(eStateID::INGAME)
 {
-    if (!ReadMap())
+    if (!ReadGrid())
     {
         std::cout << "File could not be loaded!" << std::endl;
         return;
@@ -13,9 +13,9 @@ InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : Gam
     m_pRenderer = pRenderer;
 }
 
-bool InGameState::ReadMap()
+bool InGameState::ReadGrid()
 {
-    fstream stream("../Data/Map.txt");
+    fstream stream("../Data/Grid.txt");
     if (!stream)
     {
         std::cout << "File could not be found!" << std::endl;
@@ -39,7 +39,7 @@ bool InGameState::ReadMap()
 
                 if (tmp_char != ',' && tmp_char != ';')
                 {
-                    Table[i][j] = tmp_char;
+                    Grid[i][j] = tmp_char;
                     ++j;
                 }
 
@@ -58,7 +58,7 @@ void InGameState::OnMouseButtonDown(int Button)
     int y = Engine::GetSingleton()->GetMousePos().y;
     int CellX = (x / 64);
     int CellY = (y / 64);
-    char Test = Table[CellY % 17][CellX % 30];
+    char Test = Grid[CellY % 17][CellX % 30];
 
     // wybieramy wieze do postawienia
     if (Test == '2' && m_TowerID == eTowerID::NONE)
@@ -79,9 +79,9 @@ void InGameState::OnMouseButtonDown(int Button)
         {
             auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), m_pSomeTower);
             m_AllGameObjects.push_back(pTower);
-            Table[CellY % 17][CellX % 30] = '0';
-            Table[CellY % 17][CellX % 30 + 1] = '0';  // nie mozna stawiac budynku od razu po prawej
-            Table[CellY % 17][CellX % 30 - 1] = '0';  // nie mozna stawiac budynku od razu po lewej
+            Grid[CellY % 17][CellX % 30] = '0';
+            Grid[CellY % 17][CellX % 30 + 1] = '0';  // nie mozna stawiac budynku od razu po prawej
+            Grid[CellY % 17][CellX % 30 - 1] = '0';  // nie mozna stawiac budynku od razu po lewej
             m_TowerID = eTowerID::NONE;
             m_HoldTower = false;
         }
@@ -125,7 +125,7 @@ void InGameState::Update(float DeltaTime)
     int y = Engine::GetSingleton()->GetMousePos().y;
     int CellX = (x / 64);
     int CellY = (y / 64);
-    char Test = Table[CellY % 17][CellX % 30];
+    char Test = Grid[CellY % 17][CellX % 30];
 
     if (SDL_IsKeyPressed(SDL_SCANCODE_ESCAPE))
     {
@@ -182,7 +182,7 @@ void InGameState::Render()
     int CellX = (x / 64);
     int CellY = (y / 64);
 
-    char Test = Table[CellY % 17][CellX % 30];
+    char Test = Grid[CellY % 17][CellX % 30];
 
     if (Test == '1')
         SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);

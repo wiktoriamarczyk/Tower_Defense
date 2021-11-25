@@ -12,7 +12,7 @@ public:
     void OnEnter()override;
     void CreateObject();
     void DestroyTextures();
-    bool ReadMap();
+    bool ReadGrid();
     void OnMouseButtonDown(int Button);
 
 private:
@@ -21,7 +21,7 @@ private:
     SDL_Texture* m_pSomeTower = nullptr;
     vector<shared_ptr<GameObject>> m_AllGameObjects;
     // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to "some_tower"
-    char Table[17][30] = {};
+    char Grid[17][30] = {};
     eTowerID m_TowerID = eTowerID::NONE;
     bool m_HoldTower = false;
     SDL_Cursor* m_Cursor;

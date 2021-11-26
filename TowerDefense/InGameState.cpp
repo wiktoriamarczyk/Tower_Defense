@@ -140,11 +140,13 @@ void InGameState::Update(float DeltaTime)
     {
         m_Cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
         SDL_SetCursor(m_Cursor);
+        m_MoveTower = true;
     }
     else
     {
         m_Cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
         SDL_SetCursor(m_Cursor);
+        m_MoveTower = false;
     }
 
 
@@ -191,6 +193,7 @@ void InGameState::Render()
  /*   else if (Test == '2')
         SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 255, 255);*/
 
+
     if (m_HoldTower)
     {
         SDL_Rect rect = { CellX * 64, CellY * 64, 64, 64 };
@@ -200,9 +203,18 @@ void InGameState::Render()
     SDL_Rect Overlay = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_RenderCopy(m_pRenderer, m_pOverlayTexture, NULL, &Overlay);
 
-    SDL_Rect Some_tower = { 1640, 280, 97, 95 };
-    SDL_RenderCopy(m_pRenderer, m_pSomeTower, NULL, &Some_tower);
 
+    vec2 NormalPos(1650, 280);
+    vec2 MovedPos(1640, 270);
+
+    SDL_Rect Some_tower = { (int)NormalPos.x, (int)NormalPos.y, 97, 95 };
+
+    if (m_MoveTower)
+    {
+        Some_tower = { (int)MovedPos.x, (int)MovedPos.y, 97, 95 };
+    }
+
+    SDL_RenderCopy(m_pRenderer, m_pSomeTower, NULL, &Some_tower);
 
 
     // render wszystkich obiektow

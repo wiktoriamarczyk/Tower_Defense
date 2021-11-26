@@ -25,5 +25,6 @@ private:
     eTowerID m_TowerID = eTowerID::NONE;
     bool m_HoldTower = false;
     SDL_Cursor* m_Cursor;
+    bool m_MoveTower = false;
 };
 

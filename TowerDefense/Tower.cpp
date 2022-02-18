@@ -15,8 +15,8 @@ void Tower::Update(float DeltaTime)
 void Tower::Render(SDL_Renderer* pRenderer)
 {
     vec2 TextureSize(128,128);
-    vec2 TowerCenter = m_StartingPointPosition + m_ObjectSize / 2;
-    vec2 TextureTopLeft = TowerCenter - TextureSize / 2;
+    vec2 TextureCenter = m_StartingPointPosition + m_ObjectSize / 2;
+    vec2 TextureTopLeft = TextureCenter - TextureSize / 2;
 
     SDL_Rect TowerRect = { TextureTopLeft.x, TextureTopLeft.y, TextureSize.x, TextureSize.y };
     SDL_RenderCopy(pRenderer, m_pTowerTexture, NULL, &TowerRect);

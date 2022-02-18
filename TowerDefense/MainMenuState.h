@@ -14,7 +14,7 @@ public:
     void OnEnter()override;
 
 private:
-    int m_Option = 0;
+    int  m_Option = 0;
     bool m_PlayMusicAgain = true;
 };
 

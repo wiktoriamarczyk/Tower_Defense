@@ -13,6 +13,11 @@ InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : Gam
     m_pRenderer = pRenderer;
 }
 
+InGameState::~InGameState()
+{
+    DestroyTextures();
+}
+
 bool InGameState::ReadGrid()
 {
     fstream stream("../Data/Grid.txt");
@@ -31,15 +36,15 @@ bool InGameState::ReadGrid()
             return true;
         }
 
-        for (int i = 0; i < 17; ++i)
+        for (int i = 0; i < GRID_ROWS; ++i)
         {
-            for (int j = 0; j < 31;)
+            for (int j = 0; j < (GRID_COLS + 1) ; )
             {
                 stream >> tmp_char;
 
                 if (tmp_char != ',' && tmp_char != ';')
                 {
-                    Grid[i][j] = tmp_char;
+                    m_Grid[i][j] = (eGridValue)tmp_char;
                     ++j;
                 }
 
@@ -56,67 +61,54 @@ void InGameState::OnMouseButtonDown(int Button)
 {
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
+    // numer w rzedzie i w kolumnie 
     int CellX = (x / 64);
     int CellY = (y / 64);
-    char Test = Grid[CellY % 17][CellX % 30];
+    // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to wieza
+    eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
 
     // wybieramy wieze do postawienia
-    if (Test == '2' && m_TowerID == eTowerID::NONE)
+    if (!m_HoldTower)
     {
-        m_TowerID = eTowerID::SOME_TOWER;
-        m_HoldTower = true;
-    }
-    // jesli klikamy jeszcze raz na wybor wiezy, owczesnie ja trzymajac, oddajemy ja spowrotem do schowka
-    else if (Test == '2' && m_TowerID == eTowerID::SOME_TOWER)
-    {
-        m_TowerID = eTowerID::NONE;
-        m_HoldTower = false;
-    }
-    // jesli trzymamy wieze i jestesmy na poprawnym polu, to po kliknieciu LPM stawiamy wieze
-    if (m_TowerID == eTowerID::SOME_TOWER)
-    {
-        if (Test == '1')
+        if (grid_state == eGridValue::TOWER1)
         {
-            auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), m_pSomeTower);
-            m_AllGameObjects.push_back(pTower);
-            Grid[CellY % 17][CellX % 30] = '0';
-            Grid[CellY % 17][CellX % 30 + 1] = '0';  // nie mozna stawiac budynku od razu po prawej
-            Grid[CellY % 17][CellX % 30 - 1] = '0';  // nie mozna stawiac budynku od razu po lewej
-            m_TowerID = eTowerID::NONE;
-            m_HoldTower = false;
+            m_HoldTower = true;
+            m_TowerID = eTowerID::TOWER1;
+        }
+        else if (grid_state == eGridValue::TOWER2)
+        {
+            m_HoldTower = true;
+            m_TowerID = eTowerID::TOWER2;
         }
     }
 
-}
+    else if (m_HoldTower)
+    {
+        // jesli klikamy jeszcze raz na wybor wiezy, owczesnie ja trzymajac, oddajemy ja spowrotem do schowka
+        if (grid_state != eGridValue::FREE && grid_state != eGridValue::BLOCKED)
+        {
+            m_HoldTower = false;
+            m_TowerID = eTowerID::NONE;
+        }
+        else if (grid_state == eGridValue::FREE)
+        {
+            // jesli trzymamy wieze i jestesmy na poprawnym polu, to po kliknieciu LPM stawiamy wieze
+            if (m_TowerID == eTowerID::TOWER1 && m_Money >= (int)eTowerPrice::TOWER1)
+            {
+                CreateObject(CellX, CellY, m_pTower1);
+                m_Money -= (int)eTowerPrice::TOWER1;
+            }
+            if (m_TowerID == eTowerID::TOWER2 && m_Money >= (int)eTowerPrice::TOWER2)
+            {
+                CreateObject(CellX, CellY, m_pTower2);
+                m_Money -= (int)eTowerPrice::TOWER2;
+            }
+        }
 
-InGameState::~InGameState()
-{
-    DestroyTextures();
-}
+        m_HoldTower = false;
+        m_TowerID = eTowerID::NONE;
 
-void InGameState::DestroyTextures()
-{
-    SDL_DestroyTexture(m_pTexture);
-    SDL_DestroyTexture(m_pOverlayTexture);
-    SDL_DestroyTexture(m_pSomeTower);
-    m_pTexture = nullptr;
-    m_pOverlayTexture = nullptr;
-    m_pSomeTower = nullptr;
-}
-
-void InGameState::InitializeInGameStateTextures()
-{
-    SDL_Surface* m_pImage = IMG_Load("../Data/Background.png");
-    m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
-    SDL_FreeSurface(m_pImage);
-
-    m_pImage = IMG_Load("../Data/Overlay.png");
-    m_pOverlayTexture = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
-    SDL_FreeSurface(m_pImage);
-
-    m_pImage = IMG_Load("../Data/some_tower.png");
-    m_pSomeTower = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
-    SDL_FreeSurface(m_pImage);
+    }
 }
 
 void InGameState::Update(float DeltaTime)
@@ -125,7 +117,7 @@ void InGameState::Update(float DeltaTime)
     int y = Engine::GetSingleton()->GetMousePos().y;
     int CellX = (x / 64);
     int CellY = (y / 64);
-    char Test = Grid[CellY % 17][CellX % 30];
+    eGridValue grid_state = m_Grid[CellY % 17][CellX % 30];
 
     if (SDL_IsKeyPressed(SDL_SCANCODE_ESCAPE))
     {
@@ -136,7 +128,7 @@ void InGameState::Update(float DeltaTime)
         Engine::GetSingleton()->ExitGame();
     }
 
-    if (Test == '2')
+    if (grid_state != eGridValue::FREE && grid_state != eGridValue::BLOCKED)
     {
         m_Cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
         SDL_SetCursor(m_Cursor);
@@ -167,6 +159,12 @@ void InGameState::Update(float DeltaTime)
 
 void InGameState::Render()
 {
+    int x = Engine::GetSingleton()->GetMousePos().x;
+    int y = Engine::GetSingleton()->GetMousePos().y;
+    int CellX = (x / 64);
+    int CellY = (y / 64);
+    eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
+
     SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
     SDL_RenderClear(m_pRenderer);
 
@@ -174,24 +172,13 @@ void InGameState::Render()
     SDL_Rect Map = { 0, 0, 1668, SCREEN_HEIGHT };
     //SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
     //SDL_RenderFillRect(pRenderer, &dstrect);
-    SDL_RenderCopy(m_pRenderer, m_pTexture, NULL, &Map);
+    SDL_RenderCopy(m_pRenderer, m_pBackground, NULL, &Map);
 
 
-    int x = Engine::GetSingleton()->GetMousePos().x;
-    int y = Engine::GetSingleton()->GetMousePos().y;
-
-    // numer w rzedzie i w kolumnie 
-    int CellX = (x / 64);
-    int CellY = (y / 64);
-
-    char Test = Grid[CellY % 17][CellX % 30];
-
-    if (Test == '1')
+    if (grid_state == eGridValue::FREE)
         SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
-    else if (Test == '0')
+    else if (grid_state == eGridValue::BLOCKED)
         SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 255);
- /*   else if (Test == '2')
-        SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 255, 255);*/
 
 
     if (m_HoldTower)
@@ -204,17 +191,27 @@ void InGameState::Render()
     SDL_RenderCopy(m_pRenderer, m_pOverlayTexture, NULL, &Overlay);
 
 
+    // render ikon obiektow
     vec2 NormalPos(1650, 280);
     vec2 MovedPos(1640, 270);
 
-    SDL_Rect Some_tower = { (int)NormalPos.x, (int)NormalPos.y, 97, 95 };
+    SDL_Rect Tower1 = { (int)NormalPos.x, (int)NormalPos.y, 97, 95 };
 
-    if (m_MoveTower)
+    if (grid_state == eGridValue::TOWER1 && m_MoveTower)
     {
-        Some_tower = { (int)MovedPos.x, (int)MovedPos.y, 97, 95 };
+        Tower1 = { (int)MovedPos.x, (int)MovedPos.y, 97, 95 };
     }
 
-    SDL_RenderCopy(m_pRenderer, m_pSomeTower, NULL, &Some_tower);
+    SDL_RenderCopy(m_pRenderer, m_pTower1, NULL, &Tower1);
+    //----------------------------------------------------------------------------
+    SDL_Rect Tower2 = { (int)NormalPos.x + 170, (int)NormalPos.y + 5, 58, 92 };
+
+    if (grid_state == eGridValue::TOWER2 && m_MoveTower)
+    {
+        Tower2 = { (int)MovedPos.x + 160, (int)MovedPos.y + 5, 58, 92 };
+    }
+
+    SDL_RenderCopy(m_pRenderer, m_pTower2, NULL, &Tower2);
 
 
     // render wszystkich obiektow
@@ -223,11 +220,23 @@ void InGameState::Render()
         m_AllGameObjects[i]->Render(m_pRenderer);
     }
 
-    SDL_RenderPresent(m_pRenderer);
-}
 
-void InGameState::CreateObject()
-{
+    m_Font->DrawText(m_pRenderer, 1, 60, 1058, ToString(m_Money).c_str());
+
+    if (m_Money < (int)eTowerPrice::TOWER1)
+    {
+        m_Font->DrawText(m_pRenderer, 1, 1700, 388, ToString((int)eTowerPrice::TOWER1).c_str(), 255, 0, 0);
+    }
+    else m_Font->DrawText(m_pRenderer, 1, 1700, 388, ToString((int)eTowerPrice::TOWER1).c_str());
+
+
+    if (m_Money < (int)eTowerPrice::TOWER2)
+    {
+        m_Font->DrawText(m_pRenderer, 1, 1835, 388, ToString((int)eTowerPrice::TOWER2).c_str(), 255, 0, 0);
+    }
+    else m_Font->DrawText(m_pRenderer, 1, 1835, 388, ToString((int)eTowerPrice::TOWER2).c_str());
+
+    SDL_RenderPresent(m_pRenderer);
 }
 
 void InGameState::OnEnter()
@@ -236,5 +245,54 @@ void InGameState::OnEnter()
     GameState::OnEnter();
     // inicjalizacja zasobow
     InitializeInGameStateTextures();
-    CreateObject();
+}
+
+void InGameState::CreateObject(int CellX, int CellY, SDL_Texture* pTextureName)
+{
+    auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), pTextureName);
+    m_AllGameObjects.push_back(pTower);
+
+    // posortuj wieze po pozycji y
+    sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> p1, shared_ptr<GameObject> p2) { return p1->GetObjectPosition().y < p2->GetObjectPosition().y;  });
+
+    m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS] = eGridValue::BLOCKED;
+
+    if (CellX < (GRID_COLS - 1))
+    {
+        m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS + 1] = eGridValue::BLOCKED;  // nie mozna stawiac budynku od razu po prawej
+    }
+
+    if (CellX > 0)
+    {
+        m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS - 1] = eGridValue::BLOCKED;  // nie mozna stawiac budynku od razu po lewej
+    }
+}
+
+void InGameState::InitializeInGameStateTextures()
+{
+    SDL_Surface* m_pImage = IMG_Load("../Data/Background.png");
+    m_pBackground = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
+    SDL_FreeSurface(m_pImage);
+
+    m_pImage = IMG_Load("../Data/Overlay.png");
+    m_pOverlayTexture = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
+    SDL_FreeSurface(m_pImage);
+
+    m_pImage = IMG_Load("../Data/Tower1.png");
+    m_pTower1 = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
+    SDL_FreeSurface(m_pImage);
+
+    m_pImage = IMG_Load("../Data/Tower2.png");
+    m_pTower2 = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
+    SDL_FreeSurface(m_pImage);
+}
+
+void InGameState::DestroyTextures()
+{
+    SDL_DestroyTexture(m_pBackground);
+    SDL_DestroyTexture(m_pOverlayTexture);
+    SDL_DestroyTexture(m_pTower1);
+    m_pBackground = nullptr;
+    m_pOverlayTexture = nullptr;
+    m_pTower1 = nullptr;
 }

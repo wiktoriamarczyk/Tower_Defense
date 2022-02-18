@@ -15,7 +15,7 @@ const CharacterData* Font::FindCharacter(char Character) const
     return nullptr;
 }
 
-void Font::DrawText(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const char* Text)
+void Font::DrawText(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const char* Text, Uint8 R, Uint8 G, Uint8 B)
 {
     const int CharacterSpacing = PixelSize * 8;
 
@@ -24,7 +24,7 @@ void Font::DrawText(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, 
         const CharacterData* pData = FindCharacter(Text[i]);
         if (pData == nullptr)
             continue;
-        DrawLines(pRenderer, PixelSize, PosX + i * CharacterSpacing, PosY, pData->m_ImageData);
+        DrawLines(pRenderer, PixelSize, PosX + i * CharacterSpacing, PosY, pData->m_ImageData, R,G,B);
     }
 }
 //==========================================================================================================
@@ -110,9 +110,9 @@ void DrawLine(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const 
     }
 }
 
-void DrawLines(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const vector<string>& Lines)
+void DrawLines(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const vector<string>& Lines, Uint8 R, Uint8 G, Uint8 B)
 {
-    SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(pRenderer, R, G, B, 255);
 
     for (int i = 0; i < Lines.size(); ++i)
     {
@@ -126,4 +126,9 @@ string ToString(int value)
     _itoa_s(value, buffer, 10);
 
     return buffer;
+}
+
+void SetRenderDrawColor(int R, int G, int B)
+{
+
 }

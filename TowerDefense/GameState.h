@@ -17,14 +17,13 @@ public:
     eStateID GetStateID()const;
     eStateID GetNextStateID()const;
 
-
 protected:
-    eStateID m_NextStateID = eStateID::UNKNOWN;
+    SDL_Renderer*    m_pRenderer = nullptr;
+    eStateID         m_NextStateID = eStateID::UNKNOWN;
     shared_ptr<Font> m_Font;
-    SDL_Renderer* m_pRenderer = nullptr;
-    static bool m_GameOver;
+    static bool      m_GameOver;
 
 private:
-    const eStateID m_StateID = eStateID::UNKNOWN;
+    const eStateID   m_StateID = eStateID::UNKNOWN;
 };
 

@@ -7,9 +7,11 @@
 #include<fstream>
 #include<stdlib.h>
 #include<time.h>
+#include<algorithm>
 #include<SDL.h>
 #include<SDL_Mixer.h>
 #include<SDL_image.h>
+
 
 using std::vector;
 using std::unique_ptr;
@@ -20,21 +22,14 @@ using std::move;
 using std::string;
 using std::fstream;
 using std::ifstream;
+using std::sort;
 
 enum : int
 {
     SCREEN_WIDTH = 1920,
     SCREEN_HEIGHT = 1080,
-    OBJECT_HEIGHT = 50,
-    OBJECT_WIDTH = 50,
-    BOSS_WIDTH = 200,
-    BOSS_HEIGHT = 100,
-    INVADER_SPEED = 2,
-    GUN_SPEED = 500,
-    BOSS_SPEED = 50,
-    SHOT_SPEED = 500,
-    SHOT_WIDTH = 3,
-    SHOT_HEIGHT = 9,
+    GRID_ROWS = 17,
+    GRID_COLS = 30,
 };
 
 enum class eStateID
@@ -46,11 +41,25 @@ enum class eStateID
     HOWTOPLAY = 4,
 };
 
+enum class eGridValue : char
+{
+    BLOCKED = '0',
+    FREE = '1',
+    TOWER1 = '2',
+    TOWER2 = '3',
+};
+
 enum class eTowerID
 {
     NONE = 0,
-    SOME_TOWER = 1,
+    TOWER1 = 1,
+    TOWER2 = 2,
 };
 
+enum class eTowerPrice
+{
+    TOWER1 = 100,
+    TOWER2 = 250,
+};
 
 bool SDL_IsKeyPressed(SDL_Scancode Code);

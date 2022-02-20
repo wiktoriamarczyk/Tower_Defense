@@ -257,15 +257,15 @@ void InGameState::CreateObject(int CellX, int CellY, SDL_Texture* pTextureName)
 
     m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS] = eGridValue::BLOCKED;
 
-    if (CellX < (GRID_COLS - 1))
-    {
-        m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS + 1] = eGridValue::BLOCKED;  // nie mozna stawiac budynku od razu po prawej
-    }
+    //if (CellX < (GRID_COLS - 1))
+    //{
+    //    m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS + 1] = eGridValue::BLOCKED;  // nie mozna stawiac budynku od razu po prawej
+    //}
 
-    if (CellX > 0)
-    {
-        m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS - 1] = eGridValue::BLOCKED;  // nie mozna stawiac budynku od razu po lewej
-    }
+    //if (CellX > 0)
+    //{
+    //    m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS - 1] = eGridValue::BLOCKED;  // nie mozna stawiac budynku od razu po lewej
+    //}
 }
 
 void InGameState::InitializeInGameStateTextures()

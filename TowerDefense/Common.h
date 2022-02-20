@@ -23,6 +23,7 @@ using std::string;
 using std::fstream;
 using std::ifstream;
 using std::sort;
+using std::cout;
 
 enum : int
 {

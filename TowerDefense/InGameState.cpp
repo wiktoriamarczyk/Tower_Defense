@@ -1,7 +1,7 @@
 #include "InGameState.h"
 #include "Engine.h"
 #include "Tower.h"
-
+#include "Button.h"
 
 InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : GameState(eStateID::INGAME)
 {
@@ -13,6 +13,7 @@ InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : Gam
     m_Font = MyFont;
     m_pRenderer = pRenderer;
 }
+
 
 InGameState::~InGameState()
 {
@@ -110,6 +111,11 @@ void InGameState::OnMouseButtonDown(int Button)
         m_PickedTowerID = eTowerID::NONE;
 
     }
+
+    for (int i = 0; i < m_AllGameObjects.size(); ++i)
+    {
+        m_AllGameObjects[i]->OnMouseButtonDown(Button);
+    }
 }
 
 void InGameState::Update(float DeltaTime)
@@ -192,6 +198,8 @@ void InGameState::Render()
 
     // render ikon obiektow
 
+
+
     vec2 NormalPos(1660, 290);
     vec2 MovedPos(1650, 280);
 
@@ -217,7 +225,6 @@ void InGameState::Render()
     {
         m_AllGameObjects[i]->Render(m_pRenderer);
     }
-
 
     // CZCIONKI
 

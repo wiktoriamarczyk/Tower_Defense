@@ -7,27 +7,21 @@ public:
     InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer);
     ~InGameState();
     void OnEnter()override;
+    void OnMouseButtonDown(int Button);
     void Update(float DeltaTime)override;
     void Render()override;
-    void InitializeInGameStateTextures();
+    void DisplayTexture(const string& FileName, int x, int y, int w, int h);
     void DestroyTextures();
-    void CreateObject(int CellX, int CellY, SDL_Texture* pTextureName);
+    void BuildTower(int CellX, int CellY, const string& TowerName);
     bool ReadGrid();
-    void OnMouseButtonDown(int Button);
-    bool CanAfford(eTowerPrice TowerName);
 
 private:
-    SDL_Texture*                   m_pBackground = nullptr;
-    SDL_Texture*                   m_pOverlayTexture = nullptr;
-    SDL_Texture*                   m_pTower1 = nullptr;
-    SDL_Texture*                   m_pTower2 = nullptr;
-
     SDL_Cursor*                    m_Cursor = nullptr;
 
     vector<shared_ptr<GameObject>> m_AllGameObjects;
 
     eGridValue                     m_Grid[GRID_ROWS][GRID_COLS] = {};
-    eTowerID                       m_TowerID = eTowerID::NONE;
+    eTowerID                       m_PickedTowerID = eTowerID::NONE;
     bool                           m_HoldTower = false;
     bool                           m_MoveTower = false;
 

@@ -15,6 +15,6 @@ public:
 private:
     Mix_Chunk* m_pSoundData = nullptr;
     Mix_Music* m_pMusic = nullptr;
-    string m_FileName;
+    string     m_FileName;
 };
 

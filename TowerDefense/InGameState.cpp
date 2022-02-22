@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Tower.h"
 
+
 InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : GameState(eStateID::INGAME)
 {
     if (!ReadGrid())
@@ -73,12 +74,12 @@ void InGameState::OnMouseButtonDown(int Button)
         if (grid_state == eGridValue::TOWER1)
         {
             m_HoldTower = true;
-            m_TowerID = eTowerID::TOWER1;
+            m_PickedTowerID = eTowerID::TOWER1;
         }
         else if (grid_state == eGridValue::TOWER2)
         {
             m_HoldTower = true;
-            m_TowerID = eTowerID::TOWER2;
+            m_PickedTowerID = eTowerID::TOWER2;
         }
     }
 
@@ -88,25 +89,25 @@ void InGameState::OnMouseButtonDown(int Button)
         if (grid_state != eGridValue::FREE && grid_state != eGridValue::BLOCKED)
         {
             m_HoldTower = false;
-            m_TowerID = eTowerID::NONE;
+            m_PickedTowerID = eTowerID::NONE;
         }
         else if (grid_state == eGridValue::FREE)
         {
             // jesli trzymamy wieze i jestesmy na poprawnym polu, to po kliknieciu LPM stawiamy wieze
-            if (m_TowerID == eTowerID::TOWER1 && m_Money >= (int)eTowerPrice::TOWER1)
+            if (m_PickedTowerID == eTowerID::TOWER1 && m_Money >= (int)eTowerPrice::TOWER1)
             {
-                CreateObject(CellX, CellY, m_pTower1);
+                BuildTower(CellX, CellY, "TOWER1");
                 m_Money -= (int)eTowerPrice::TOWER1;
             }
-            if (m_TowerID == eTowerID::TOWER2 && m_Money >= (int)eTowerPrice::TOWER2)
+            if (m_PickedTowerID == eTowerID::TOWER2 && m_Money >= (int)eTowerPrice::TOWER2)
             {
-                CreateObject(CellX, CellY, m_pTower2);
+                BuildTower(CellX, CellY, "TOWER2");
                 m_Money -= (int)eTowerPrice::TOWER2;
             }
         }
 
         m_HoldTower = false;
-        m_TowerID = eTowerID::NONE;
+        m_PickedTowerID = eTowerID::NONE;
 
     }
 }
@@ -122,7 +123,7 @@ void InGameState::Update(float DeltaTime)
     if (SDL_IsKeyPressed(SDL_SCANCODE_ESCAPE))
     {
         Mix_HaltChannel(-1);
-        DestroyTextures();
+        ///DestroyTextures();
         m_AllGameObjects.clear();
        // m_NextStateID = eStateID::MAINMENU;
         Engine::GetSingleton()->ExitGame();
@@ -168,12 +169,11 @@ void InGameState::Render()
     SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
     SDL_RenderClear(m_pRenderer);
 
-
-    SDL_Rect Map = { 0, 0, 1668, SCREEN_HEIGHT };
     //SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
     //SDL_RenderFillRect(pRenderer, &dstrect);
-    SDL_RenderCopy(m_pRenderer, m_pBackground, NULL, &Map);
 
+    ///Engine::GetSingleton()->DisplayTexture("Background.png", 0, 0, 1668, SCREEN_HEIGHT);
+    DisplayTexture("Background.png", 0, 0, 1668, SCREEN_HEIGHT);
 
     if (grid_state == eGridValue::FREE)
         SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
@@ -187,31 +187,29 @@ void InGameState::Render()
         SDL_RenderDrawRect(m_pRenderer, &rect);
     }
 
-    SDL_Rect Overlay = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-    SDL_RenderCopy(m_pRenderer, m_pOverlayTexture, NULL, &Overlay);
+    DisplayTexture("Overlay.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
     // render ikon obiektow
-    vec2 NormalPos(1650, 280);
-    vec2 MovedPos(1640, 270);
 
-    SDL_Rect Tower1 = { (int)NormalPos.x, (int)NormalPos.y, 97, 95 };
+    vec2 NormalPos(1660, 290);
+    vec2 MovedPos(1650, 280);
 
     if (grid_state == eGridValue::TOWER1 && m_MoveTower)
     {
-        Tower1 = { (int)MovedPos.x, (int)MovedPos.y, 97, 95 };
+        DisplayTexture("TOWER1.png", (int)MovedPos.x, (int)MovedPos.y, 0, 0);
     }
+    else 
+        DisplayTexture("TOWER1.png", (int)NormalPos.x, (int)NormalPos.y, 0, 0);
 
-    SDL_RenderCopy(m_pRenderer, m_pTower1, NULL, &Tower1);
+
     //----------------------------------------------------------------------------
-    SDL_Rect Tower2 = { (int)NormalPos.x + 170, (int)NormalPos.y + 5, 58, 92 };
 
     if (grid_state == eGridValue::TOWER2 && m_MoveTower)
     {
-        Tower2 = { (int)MovedPos.x + 160, (int)MovedPos.y + 5, 58, 92 };
+        DisplayTexture("TOWER2.png", (int)MovedPos.x + 150, (int)MovedPos.y - 4, 0, 0);
     }
-
-    SDL_RenderCopy(m_pRenderer, m_pTower2, NULL, &Tower2);
+    else DisplayTexture("TOWER2.png", (int)NormalPos.x + 160, (int)NormalPos.y - 4, 0, 0);
 
 
     // render wszystkich obiektow
@@ -220,6 +218,8 @@ void InGameState::Render()
         m_AllGameObjects[i]->Render(m_pRenderer);
     }
 
+
+    // CZCIONKI
 
     m_Font->DrawText(m_pRenderer, 1, 60, 1058, ToString(m_Money).c_str());
 
@@ -244,12 +244,12 @@ void InGameState::OnEnter()
     m_GameOver = false;
     GameState::OnEnter();
     // inicjalizacja zasobow
-    InitializeInGameStateTextures();
+    ///InitializeInGameStateTextures();
 }
 
-void InGameState::CreateObject(int CellX, int CellY, SDL_Texture* pTextureName)
+void InGameState::BuildTower(int CellX, int CellY, const string& TowerName)
 {
-    auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), pTextureName);
+    auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), TowerName);
     m_AllGameObjects.push_back(pTower);
 
     // posortuj wieze po pozycji y
@@ -268,31 +268,12 @@ void InGameState::CreateObject(int CellX, int CellY, SDL_Texture* pTextureName)
     //}
 }
 
-void InGameState::InitializeInGameStateTextures()
-{
-    SDL_Surface* m_pImage = IMG_Load("../Data/Background.png");
-    m_pBackground = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
-    SDL_FreeSurface(m_pImage);
-
-    m_pImage = IMG_Load("../Data/Overlay.png");
-    m_pOverlayTexture = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
-    SDL_FreeSurface(m_pImage);
-
-    m_pImage = IMG_Load("../Data/Tower1.png");
-    m_pTower1 = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
-    SDL_FreeSurface(m_pImage);
-
-    m_pImage = IMG_Load("../Data/Tower2.png");
-    m_pTower2 = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
-    SDL_FreeSurface(m_pImage);
-}
-
 void InGameState::DestroyTextures()
 {
-    SDL_DestroyTexture(m_pBackground);
-    SDL_DestroyTexture(m_pOverlayTexture);
-    SDL_DestroyTexture(m_pTower1);
-    m_pBackground = nullptr;
-    m_pOverlayTexture = nullptr;
-    m_pTower1 = nullptr;
+    Engine::GetSingleton()->DestroyTextures();
+}
+
+void InGameState::DisplayTexture(const string& FileName, int x, int y, int w, int h)
+{
+    Engine::GetSingleton()->DisplayTexture(("../Data/" + FileName).c_str(), x, y, w, h);
 }

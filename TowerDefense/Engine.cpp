@@ -146,6 +146,46 @@ void Engine::PlaySound(const string& FileName,float Volume )
     m_LoadedSounds.back()->Play();
 }
 
+void Engine::DisplayTexture(const string& FileName, int x, int y, int w, int h)
+{
+    for (int i = 0; i < m_LoadedTextures.size(); ++i)
+    {
+        if (m_LoadedTextures[i]->GetName() == FileName)
+        {
+            m_LoadedTextures[i]->Display(x, y, w, h);
+            return;
+        }
+    }
+    shared_ptr<Texture> temp_texture = make_shared<Texture>(m_pRenderer);
+    temp_texture->Load(FileName);
+    m_LoadedTextures.push_back(temp_texture);
+    m_LoadedTextures.back()->Display(x, y, w, h);
+    
+}
+
+void Engine::DestroyTextures()
+{
+    for (int i = 0; i < m_LoadedTextures.size(); ++i)
+    {
+        m_LoadedTextures[i]->FreeResources();
+    }
+}
+
+vec2i Engine::GetTextureSize(const string& FileName)
+{
+    for (int i = 0; i < m_LoadedTextures.size(); ++i)
+    {
+        if (m_LoadedTextures[i]->GetName() == FileName)
+        {
+           return m_LoadedTextures[i]->GetTextureSize();
+        }
+    }
+    shared_ptr<Texture> temp_texture = make_shared<Texture>(m_pRenderer);
+    temp_texture->Load(FileName);
+    m_LoadedTextures.push_back(temp_texture);
+    return m_LoadedTextures.back()->GetTextureSize();
+}
+
 vec2 Engine::GetMousePos() const
 {
     int x = 0, y = 0;

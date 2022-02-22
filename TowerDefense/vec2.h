@@ -4,8 +4,8 @@
 class vec2
 {
 public:
-    float x = 0;
-    float y = 0;
+    float x = 0.0;
+    float y = 0.0;
 
     vec2() = default;
     vec2(float _x, float _y);

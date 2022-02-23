@@ -10,14 +10,14 @@ public:
     bool Load(const string& FileName);
     void Display(int x, int y, optional<int> w, optional<int> h)const;
     void FreeResources();
-    vec2i GetTextureSize();
+    vec2i GetSize();
     string GetName();
 
 private:
     SDL_Renderer* m_pRenderer = nullptr;
     SDL_Surface*  m_pImage = nullptr;
     SDL_Texture*  m_pTexture = nullptr;
-    vec2i         m_TextureSize;
+    vec2i         m_Size;
     string        m_FileName;
 };
 

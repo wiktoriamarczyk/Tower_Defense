@@ -50,21 +50,21 @@ enum class eGridValue : char
 {
     BLOCKED = '0',
     FREE = '1',
-    TOWER1 = '2',
-    TOWER2 = '3',
+    Tower1 = '2',
+    Tower2 = '3',
 };
 
 enum class eTowerID
 {
     NONE = 0,
-    TOWER1 = 1,
-    TOWER2 = 2,
+    Tower1 = 1,
+    Tower2 = 2,
 };
 
 enum class eTowerPrice
 {
-    TOWER1 = 100,
-    TOWER2 = 250,
+    Tower1 = 100,
+    Tower2 = 250,
 };
 
 bool SDL_IsKeyPressed(SDL_Scancode Code);

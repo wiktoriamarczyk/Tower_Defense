@@ -6,9 +6,9 @@ class Button : public GameObject
 {
 public:
     Button(string TextureName, vec2i Position, vec2i Size, function<void()> Function);
-    void Update(float DeltaTime) {};
-    void Render(SDL_Renderer* pRenderer);
-    void OnMouseButtonDown(int Button);
+    void Update(float DeltaTime)override {};
+    void Render(SDL_Renderer* pRenderer)override;
+    bool OnMouseButtonDown(int Button)override;
     bool IsCursorOnButton()const;
 
 private:

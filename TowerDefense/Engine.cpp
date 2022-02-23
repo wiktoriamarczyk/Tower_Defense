@@ -146,21 +146,34 @@ void Engine::PlaySound(const string& FileName,float Volume )
     m_LoadedSounds.back()->Play();
 }
 
-void Engine::DisplayTexture(const string& FileName, int x, int y, optional<int> w, optional<int> h)
+shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
 {
     for (int i = 0; i < m_LoadedTextures.size(); ++i)
     {
         if (m_LoadedTextures[i]->GetName() == FileName)
         {
-            m_LoadedTextures[i]->Display(x, y, w, h);
-            return;
+            return m_LoadedTextures[i];
         }
     }
+
     shared_ptr<Texture> temp_texture = make_shared<Texture>(m_pRenderer);
-    temp_texture->Load(FileName);
+
+    if (!temp_texture->Load(FileName))
+    {
+        return nullptr;
+    }
+
     m_LoadedTextures.push_back(temp_texture);
-    m_LoadedTextures.back()->Display(x, y, w, h);
-    
+    return temp_texture;
+}
+
+void Engine::DisplayTexture(const string& FileName, int x, int y, optional<int> w, optional<int> h)
+{
+    // jesli znalezlismy teksture, wyswietl ja
+    if (auto pTexture = GetTexture(FileName))
+    {
+        pTexture->Display(x, y, w, h);
+    }
 }
 
 void Engine::DestroyTextures()
@@ -171,15 +184,13 @@ void Engine::DestroyTextures()
     }
 }
 
-vec2i Engine::GetTextureSize(const string& FileName)
+vec2i Engine::GetTextureSize(const string& FileName)const
 {
-    for (int i = 0; i < m_LoadedTextures.size(); ++i)
+    if (auto pTexture = GetTexture(FileName))
     {
-        if (m_LoadedTextures[i]->GetName() == FileName)
-        {
-           return m_LoadedTextures[i]->GetTextureSize();
-        }
+        return pTexture->GetSize();
     }
+    else vec2i(0,0);
 }
 
 vec2i Engine::GetMousePos() const

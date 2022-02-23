@@ -7,13 +7,13 @@ class GameObject
 public:
     virtual void Update(float DeltaTime) = 0;
     virtual void Render(SDL_Renderer* pRenderer) = 0;
-    virtual void OnMouseButtonDown(int Button) {};
-    vec2i GetObjectPosition()const;
-    bool GetObjectStatus()const;
-    void SetObjectPosition(vec2i ObjectPos);
-    void SetObjectStatus(bool ObjectStatus);
+    virtual bool OnMouseButtonDown(int Button) { return false; };
+    vec2i GetPosition()const;
+    bool GetStatus()const;
+    void SetPosition(vec2i Position);
+    void SetStatus(bool Status);
 protected:
     vec2i m_Position;
-    vec2i m_ObjectSize;
-    bool m_ObjectIsAlive = true;
+    vec2i m_Size;
+    bool m_IsAlive = true;
 };

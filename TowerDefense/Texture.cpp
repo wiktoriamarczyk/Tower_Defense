@@ -27,7 +27,7 @@ bool Texture::Load(const string& FileName)
 
     m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, m_pImage);
 
-    if (SDL_QueryTexture(m_pTexture, nullptr, nullptr, &m_TextureSize.x, &m_TextureSize.y) != 0)
+    if (SDL_QueryTexture(m_pTexture, nullptr, nullptr, &m_Size.x, &m_Size.y) != 0)
     {
         printf("Texture error! SDL_Error: %s\n", SDL_GetError());
         throw 1;
@@ -45,7 +45,7 @@ void Texture::Display(int x, int y, optional<int> w, optional<int> h)const
     //if (w)
     // value = *w;
 
-    SDL_Rect Rect = { x, y, w.value_or(m_TextureSize.x), h.value_or(m_TextureSize.y) };
+    SDL_Rect Rect = { x, y, w.value_or(m_Size.x), h.value_or(m_Size.y) };
     SDL_RenderCopy(m_pRenderer, m_pTexture, NULL, &Rect);
 }
 
@@ -54,11 +54,11 @@ void Texture::FreeResources()
     Texture::~Texture();
 }
 
-vec2i Texture::GetTextureSize()
+vec2i Texture::GetSize()
 {
     if (m_pTexture)
     {
-        return m_TextureSize;
+        return m_Size;
     }
     else
     {
@@ -66,7 +66,7 @@ vec2i Texture::GetTextureSize()
         throw 1;
     }
 
-    return m_TextureSize;
+    return m_Size;
 }
 
 string Texture::GetName()

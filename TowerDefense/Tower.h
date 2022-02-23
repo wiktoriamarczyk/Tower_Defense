@@ -8,7 +8,7 @@ public:
     void Update(float DeltaTime);
     void Render(SDL_Renderer* pRenderer);
 private:
-    string m_TowerName;
+    string m_Name;
     vec2i  m_TextureSize;
 };
 

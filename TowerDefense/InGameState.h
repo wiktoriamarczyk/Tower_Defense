@@ -21,10 +21,11 @@ private:
     vector<shared_ptr<GameObject>> m_AllGameObjects;
 
     eGridValue                     m_Grid[GRID_ROWS][GRID_COLS] = {};
-    eTowerID                       m_PickedTowerID = eTowerID::NONE;
+    //eTowerID                       m_PickedTowerID = eTowerID::NONE;
     bool                           m_HoldTower = false;
     bool                           m_MoveTower = false;
-
+    string                         m_TowerName;
+    int                            m_TowerCost = 0;
     int                            m_Money = 1000;
 };
 

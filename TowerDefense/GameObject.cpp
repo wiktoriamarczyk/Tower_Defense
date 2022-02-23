@@ -1,21 +1,21 @@
 #include "GameObject.h"
 
-vec2i GameObject::GetObjectPosition()const
+vec2i GameObject::GetPosition()const
 {
     return m_Position;
 }
 
-bool GameObject::GetObjectStatus()const
+bool GameObject::GetStatus()const
 {
-    return m_ObjectIsAlive;
+    return m_IsAlive;
 }
 
-void GameObject::SetObjectPosition(vec2i ObjectPos)
+void GameObject::SetPosition(vec2i Position)
 {
-    m_Position = ObjectPos;
+    m_Position = Position;
 }
 
-void GameObject::SetObjectStatus(bool ObjectStatus)
+void GameObject::SetStatus(bool Status)
 {
-    m_ObjectIsAlive = ObjectStatus;
+    m_IsAlive = Status;
 }

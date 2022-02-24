@@ -9,7 +9,7 @@ public:
     void Update(float DeltaTime)override {};
     void Render(SDL_Renderer* pRenderer)override;
     bool OnMouseButtonDown(int Button)override;
-    bool IsCursorOnButton()const;
+    bool IsCursorOnButton()const override;
 
 private:
     string m_TextureName;

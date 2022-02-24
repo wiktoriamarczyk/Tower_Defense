@@ -13,9 +13,9 @@ void Button::Render(SDL_Renderer* pRenderer)
 {
     if (IsCursorOnButton())
     {
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_TextureName).c_str(), m_Position.x - 5, m_Position.y + 5, m_Size.x, m_Size.y);
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_TextureName).c_str(), vec2i(m_Position.x - 5, m_Position.y + 5), vec2i(m_Size.x, m_Size.y));
     }
-    else Engine::GetSingleton()->DisplayTexture(("../Data/" + m_TextureName).c_str(), m_Position.x, m_Position.y, m_Size.x, m_Size.y);
+    else Engine::GetSingleton()->DisplayTexture(("../Data/" + m_TextureName).c_str(), vec2i(m_Position.x, m_Position.y), vec2i(m_Size.x, m_Size.y));
 }
 
 bool Button::OnMouseButtonDown(int Button)

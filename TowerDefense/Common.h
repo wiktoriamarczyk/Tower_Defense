@@ -28,6 +28,7 @@ using std::cout;
 using std::optional;
 using std::nullopt;
 using std::function;
+using std::none_of;
 
 enum : int
 {

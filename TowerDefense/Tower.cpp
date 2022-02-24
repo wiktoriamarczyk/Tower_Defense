@@ -20,5 +20,5 @@ void Tower::Render(SDL_Renderer* pRenderer)
     vec2i TextureCenter = m_Position + m_Size / 2;
     vec2i TextureTopLeft = TextureCenter - m_TextureSize / 2;
 
-    Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), TextureTopLeft.x, TextureTopLeft.y);
+    Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), TextureTopLeft);
 }

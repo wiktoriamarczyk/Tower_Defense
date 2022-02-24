@@ -36,7 +36,7 @@ bool Texture::Load(const string& FileName)
     return true;
 }
 
-void Texture::Display(int x, int y, optional<int> w, optional<int> h)const
+void Texture::Display(vec2i Position, optional<vec2i> Size)const
 {
     //int value = 0;
     //if( w.has_value() )
@@ -45,7 +45,9 @@ void Texture::Display(int x, int y, optional<int> w, optional<int> h)const
     //if (w)
     // value = *w;
 
-    SDL_Rect Rect = { x, y, w.value_or(m_Size.x), h.value_or(m_Size.y) };
+    vec2i tmp = Size.value_or(m_Size);
+
+    SDL_Rect Rect = { Position.x, Position.y, tmp.x, tmp.y };
     SDL_RenderCopy(m_pRenderer, m_pTexture, NULL, &Rect);
 }
 
@@ -62,7 +64,7 @@ vec2i Texture::GetSize()
     }
     else
     {
-        printf("Texture error! SDL_Error: %s\n");
+        printf("Texture error! \n");
         throw 1;
     }
 

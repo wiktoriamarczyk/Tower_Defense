@@ -8,7 +8,7 @@ public:
     Texture(SDL_Renderer* pRenderer);
     ~Texture();
     bool Load(const string& FileName);
-    void Display(int x, int y, optional<int> w, optional<int> h)const;
+    void Display(vec2i Position, optional<vec2i> Size = nullopt)const;
     void FreeResources();
     vec2i GetSize();
     string GetName();

@@ -16,7 +16,7 @@ public:
     void ExitGame();
     void PlaySound(const string& FileName,float Volume = 1.0f);
     shared_ptr<Texture> GetTexture(const string& FileName)const;
-    void DisplayTexture(const string& FileName, int x, int y, optional<int> w = nullopt, optional<int> h = nullopt);
+    void DisplayTexture(const string& FileName, vec2i Position, optional<vec2i> Size = nullopt);
     void DestroyTextures();
     vec2i GetTextureSize(const string& FileName)const;
     vec2i GetMousePos()const;

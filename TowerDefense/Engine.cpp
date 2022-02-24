@@ -167,12 +167,12 @@ shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
     return temp_texture;
 }
 
-void Engine::DisplayTexture(const string& FileName, int x, int y, optional<int> w, optional<int> h)
+void Engine::DisplayTexture(const string& FileName, vec2i Position, optional<vec2i> Size)
 {
     // jesli znalezlismy teksture, wyswietl ja
     if (auto pTexture = GetTexture(FileName))
     {
-        pTexture->Display(x, y, w, h);
+        pTexture->Display(Position, Size);
     }
 }
 

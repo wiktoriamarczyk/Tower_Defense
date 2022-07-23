@@ -4,13 +4,12 @@
 class MainMenuState : public GameState
 {
 public:
-    MainMenuState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer);
+    MainMenuState(shared_ptr<Font> MyFont);
     ~MainMenuState();
     void InitializeMainMenuStateTextures();
-    void DestroyTextures();
     void Update(float DeltaTime)override;
-    void Render()override;
-    void OnKeyDown(SDL_Scancode KeyCode)override;
+    void Render(sf::RenderWindow& Renderer)override;
+    void OnKeyDown(sf::Keyboard::Key KeyCode)override;
     void OnEnter()override;
 
 private:

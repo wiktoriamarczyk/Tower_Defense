@@ -15,7 +15,7 @@ const CharacterData* Font::FindCharacter(char Character) const
     return nullptr;
 }
 
-void Font::DrawText(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const char* Text, Uint8 R, Uint8 G, Uint8 B)
+void Font::DrawText(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const char* Text, sf::Color DrawColor)
 {
     const int CharacterSpacing = PixelSize * 8;
 
@@ -24,7 +24,7 @@ void Font::DrawText(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, 
         const CharacterData* pData = FindCharacter(Text[i]);
         if (pData == nullptr)
             continue;
-        DrawLines(pRenderer, PixelSize, PosX + i * CharacterSpacing, PosY, pData->m_ImageData, R,G,B);
+        DrawLines(Renderer, PixelSize, PosX + i * CharacterSpacing, PosY, pData->m_ImageData, DrawColor);
     }
 }
 //==========================================================================================================
@@ -94,29 +94,25 @@ vector<CharacterData> FillFontVector(const string& FileName)
     return Dictionary;
 }
 //==========================================================================================================
-void DrawLine(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const string& Pixels)
+void DrawLine(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const string& Pixels, sf::Color DrawColor)
 {
     for (int i = 0; i < Pixels.size(); ++i)
     {
         if (Pixels[i] != ' ')
         {
-            SDL_Rect PixelRect;
-            PixelRect.x = PosX + i * PixelSize;
-            PixelRect.y = PosY;
-            PixelRect.w = PixelSize;
-            PixelRect.h = PixelSize;
-            SDL_RenderFillRect(pRenderer, &PixelRect);
+            sf::RectangleShape PixelRect(sf::Vector2f(PixelSize, PixelSize));
+            PixelRect.setPosition(sf::Vector2f(PosX + i * PixelSize, PosY));
+            PixelRect.setFillColor(DrawColor);
+            Renderer.draw(PixelRect);
         }
     }
 }
 
-void DrawLines(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const vector<string>& Lines, Uint8 R, Uint8 G, Uint8 B)
+void DrawLines(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const vector<string>& Lines, sf::Color DrawColor)
 {
-    SDL_SetRenderDrawColor(pRenderer, R, G, B, 255);
-
     for (int i = 0; i < Lines.size(); ++i)
     {
-        DrawLine(pRenderer, PixelSize, PosX, PosY + i * PixelSize, Lines[i]);
+        DrawLine(Renderer, PixelSize, PosX, PosY + i * PixelSize, Lines[i], DrawColor);
     }
 }
 //==========================================================================================================
@@ -126,9 +122,4 @@ string ToString(int value)
     _itoa_s(value, buffer, 10);
 
     return buffer;
-}
-
-void SetRenderDrawColor(int R, int G, int B)
-{
-
 }

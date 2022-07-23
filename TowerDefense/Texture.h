@@ -5,7 +5,7 @@
 class Texture
 {
 public:
-    Texture(SDL_Renderer* pRenderer);
+    Texture(sf::RenderWindow* pRenderer);
     ~Texture();
     bool Load(const string& FileName);
     void Display(vec2i Position, optional<vec2i> Size = nullopt)const;
@@ -14,10 +14,9 @@ public:
     string GetName();
 
 private:
-    SDL_Renderer* m_pRenderer = nullptr;
-    SDL_Surface*  m_pImage = nullptr;
-    SDL_Texture*  m_pTexture = nullptr;
-    vec2i         m_Size;
-    string        m_FileName;
+    sf::RenderWindow* m_pRenderer = nullptr;
+    sf::Texture       m_Texture;
+    vec2i             m_Size;
+    string            m_FileName;
 };
 

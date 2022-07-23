@@ -6,7 +6,7 @@ class GameObject
 {
 public:
     virtual void Update(float DeltaTime) = 0;
-    virtual void Render(SDL_Renderer* pRenderer) = 0;
+    virtual void Render(sf::RenderWindow& Renderer) = 0;
     virtual bool OnMouseButtonDown(int Button) { return false; };
     virtual bool IsCursorOnButton()const { return false; };
     vec2i GetPosition()const;

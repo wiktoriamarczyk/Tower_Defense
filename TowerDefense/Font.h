@@ -14,13 +14,13 @@ class Font
 public:
     void LoadFont(const string& FileName);
     const CharacterData* FindCharacter(char Character)const;
-    void DrawText(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const char* Text, Uint8 R=255, Uint8 G=255, Uint8 B=255);
+    void DrawText(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const char* Text, sf::Color DrawColor = sf::Color::White);
 };
 
 
 bool ReadLine(fstream& FileStream, string& OutString, int ExpectedSize);
 bool LoadSingleCharacter(fstream& FileStream, CharacterData& DataOut);
 vector<CharacterData> FillFontVector(const string& FileName);
-void DrawLine(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const string& Pixels);
-void DrawLines(SDL_Renderer* pRenderer, int PixelSize, int PosX, int PosY, const vector<string>& Lines, Uint8 R, Uint8 G, Uint8 B);
+void DrawLine(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const string& Pixels, sf::Color DrawColor);
+void DrawLines(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const vector<string>& Lines, sf::Color DrawColor);
 string ToString(int value);

@@ -4,7 +4,7 @@
 #include "Button.h"
 
 
-InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : GameState(eStateID::INGAME)
+InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
 {
     if (!ReadGrid())
     {
@@ -13,10 +13,9 @@ InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : Gam
     }
 
     m_Font = MyFont;
-    m_pRenderer = pRenderer;
 
-    m_CursorHand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-    m_CursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    //m_CursorHand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+    //m_CursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 
     auto func = [this]()
     {
@@ -59,9 +58,8 @@ InGameState::InGameState(shared_ptr<Font> MyFont, SDL_Renderer* pRenderer) : Gam
 
 InGameState::~InGameState()
 {
-    DestroyTextures();
-    SDL_FreeCursor(m_CursorArrow);
-    SDL_FreeCursor(m_CursorHand);
+    //SDL_FreeCursor(m_CursorArrow);
+    //SDL_FreeCursor(m_CursorHand);
 }
 
 bool InGameState::ReadGrid()
@@ -141,9 +139,9 @@ void InGameState::Update(float DeltaTime)
 
     // PRZE£¥CZANIE STANOW
 
-    if (SDL_IsKeyPressed(SDL_SCANCODE_ESCAPE))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
     {
-        Mix_HaltChannel(-1);
+        //Mix_HaltChannel(-1);
         ///DestroyTextures();
         m_AllGameObjects.clear();
        // m_NextStateID = eStateID::MAINMENU;
@@ -158,12 +156,12 @@ void InGameState::Update(float DeltaTime)
         {
             if (o->IsCursorOnButton())
             {
-                SDL_SetCursor(m_CursorHand);
+                //SDL_SetCursor(m_CursorHand);
                 return true;
             }
             else
             {
-                SDL_SetCursor(m_CursorArrow);
+                //SDL_SetCursor(m_CursorArrow);
                 return false;
             }
         });
@@ -186,7 +184,7 @@ void InGameState::Update(float DeltaTime)
     }
 }
 
-void InGameState::Render()
+void InGameState::Render(sf::RenderWindow& Renderer)
 {
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
@@ -194,57 +192,53 @@ void InGameState::Render()
     int CellY = (y / 64);
     eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
 
-    SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_pRenderer);
-
-    //SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
-    //SDL_RenderFillRect(pRenderer, &dstrect);
+    Renderer.clear(sf::Color::Black);
 
     // RENDER MAPY
-
-    ///Engine::GetSingleton()->DisplayTexture("Background.png", 0, 0, 1668, SCREEN_HEIGHT);
     DisplayTexture("Background.png", vec2i(0,0), vec2i(1668, SCREEN_HEIGHT));
 
-    if (grid_state == eGridValue::FREE)
-        SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
-    else if (grid_state == eGridValue::BLOCKED)
-        SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 255);
+    sf::Color GridColor;
 
+    if (grid_state == eGridValue::FREE)
+        GridColor = sf::Color::White;
+    else if (grid_state == eGridValue::BLOCKED)
+        GridColor = sf::Color::Red;
 
     if (m_HoldTower)
     {
-        SDL_Rect rect = { CellX * 64, CellY * 64, 64, 64 };
-        SDL_RenderDrawRect(m_pRenderer, &rect);
+        sf::RectangleShape Rect(sf::Vector2f(64, 64));
+        Rect.setPosition(sf::Vector2f(CellX * 64, CellY * 64));
+        Rect.setOutlineThickness(3.f);
+        Rect.setOutlineColor(GridColor);
+        Rect.setFillColor(sf::Color::Transparent);
+        Renderer.draw(Rect);
     }
 
     DisplayTexture("Overlay.png", vec2i(0, 0), vec2i(SCREEN_WIDTH, SCREEN_HEIGHT));
 
-
     // RENDER OBIEKTOW
-
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
-        m_AllGameObjects[i]->Render(m_pRenderer);
+        m_AllGameObjects[i]->Render(Renderer);
     }
 
     // CZCIONKI
-
-    m_Font->DrawText(m_pRenderer, 1, 60, 1058, ToString(m_Money).c_str());
+    m_Font->DrawText(Renderer, 1, 60, 1058, ToString(m_Money).c_str());
 
     if (m_Money < (int)eTowerPrice::Tower1)
     {
-        m_Font->DrawText(m_pRenderer, 1, 1700, 388, ToString((int)eTowerPrice::Tower1).c_str(), 255, 0, 0);
+        m_Font->DrawText(Renderer, 1, 1700, 388, ToString((int)eTowerPrice::Tower1).c_str(), sf::Color::Red);
     }
-    else m_Font->DrawText(m_pRenderer, 1, 1700, 388, ToString((int)eTowerPrice::Tower1).c_str());
+    else m_Font->DrawText(Renderer, 1, 1700, 388, ToString((int)eTowerPrice::Tower1).c_str());
 
 
     if (m_Money < (int)eTowerPrice::Tower2)
     {
-        m_Font->DrawText(m_pRenderer, 1, 1835, 388, ToString((int)eTowerPrice::Tower2).c_str(), 255, 0, 0);
+        m_Font->DrawText(Renderer, 1, 1835, 388, ToString((int)eTowerPrice::Tower2).c_str(), sf::Color::Red);
     }
-    else m_Font->DrawText(m_pRenderer, 1, 1835, 388, ToString((int)eTowerPrice::Tower2).c_str());
+    else m_Font->DrawText(Renderer, 1, 1835, 388, ToString((int)eTowerPrice::Tower2).c_str());
 
-    SDL_RenderPresent(m_pRenderer);
+    Renderer.display();
 }
 
 void InGameState::OnEnter()

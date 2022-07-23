@@ -15,7 +15,7 @@ void Tower::Update(float DeltaTime)
 {
 }
 
-void Tower::Render(SDL_Renderer* pRenderer)
+void Tower::Render(sf::RenderWindow& Renderer)
 {
     vec2i TextureCenter = m_Position + m_Size / 2;
     vec2i TextureTopLeft = TextureCenter - m_TextureSize / 2;

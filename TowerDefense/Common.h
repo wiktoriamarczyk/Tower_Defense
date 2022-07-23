@@ -10,9 +10,8 @@
 #include<algorithm>
 #include<optional>
 #include<functional>
-#include<SDL.h>
-#include<SDL_Mixer.h>
-#include<SDL_image.h>
+#include<SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 
 using std::vector;
 using std::unique_ptr;
@@ -67,5 +66,3 @@ enum class eTowerPrice
     Tower1 = 100,
     Tower2 = 250,
 };
-
-bool SDL_IsKeyPressed(SDL_Scancode Code);

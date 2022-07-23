@@ -24,11 +24,8 @@ public:
 private:
     using TexturesVec = vector<shared_ptr<Texture>>;
 
-    bool                          m_IsRunning = true;
-                                  
     static Engine*                pSingleton;
-    SDL_Renderer*                 m_pRenderer = nullptr;
-    SDL_Window*                   m_pWindow = nullptr;
+    sf::RenderWindow              m_Renderer;
 
     GameState*                    m_pCurrentState = nullptr;
     vector<unique_ptr<GameState>> m_AllStates;

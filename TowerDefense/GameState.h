@@ -10,20 +10,19 @@ class GameState
 public:
     GameState(eStateID StateID);
     virtual void Update(float DeltaTime) = 0;
-    virtual void Render() = 0;
+    virtual void Render(sf::RenderWindow& Renderer) = 0;
     virtual void OnEnter();
-    virtual void OnKeyDown(SDL_Scancode KeyCode) {};
+    virtual void OnKeyDown(sf::Keyboard::Key KeyCode) {};
     virtual void OnMouseButtonDown(int Button) {};
     eStateID GetStateID()const;
     eStateID GetNextStateID()const;
 
 protected:
-    SDL_Renderer*    m_pRenderer = nullptr;
-    eStateID         m_NextStateID = eStateID::UNKNOWN;
-    shared_ptr<Font> m_Font;
-    static bool      m_GameOver;
+    eStateID            m_NextStateID = eStateID::UNKNOWN;
+    shared_ptr<Font>    m_Font;
+    static bool         m_GameOver;
 
 private:
-    const eStateID   m_StateID = eStateID::UNKNOWN;
+    const eStateID      m_StateID = eStateID::UNKNOWN;
 };
 

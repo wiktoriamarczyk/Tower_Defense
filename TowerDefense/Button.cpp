@@ -9,7 +9,7 @@ Button::Button(string TextureName, vec2i Position, vec2i Size, function<void()> 
     m_Function = Function;
 }
 
-void Button::Render(SDL_Renderer* pRenderer)
+void Button::Render(sf::RenderWindow& Renderer)
 {
     if (IsCursorOnButton())
     {

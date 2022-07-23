@@ -3,6 +3,11 @@
 
 vec2::vec2(float _x, float _y) : x(_x), y(_y) {}
 
+vec2::vec2(const sf::Vector2f& vector)
+{
+    x = vector.x;
+    y = vector.y;
+}
 
 float vec2::GetLength()const
 {
@@ -22,6 +27,14 @@ vec2 vec2::GetNormalized()const
     result.y = y / length;;
 
     return result;
+}
+
+vec2::operator sf::Vector2f() const
+{
+    sf::Vector2f vector;
+    vector.x = x;
+    vector.y = y;
+    return vector;
 }
 
 vec2 vec2::operator+(const vec2& other)const
@@ -89,6 +102,17 @@ vec2 vec2::operator/(float scalar)const
 
 vec2i::vec2i(int _x, int _y) : x(_x), y(_y) {}
 
+vec2i::vec2i(const sf::Vector2i& vector)
+{
+    x = vector.x;
+    y = vector.y;
+}
+
+vec2i::vec2i(const sf::Vector2u& vector)
+{
+    x = int(vector.x);
+    y = int(vector.y);
+}
 
 int vec2i::GetLength()const
 {
@@ -173,4 +197,12 @@ vec2i vec2i::operator/(int scalar)const
 vec2i::operator vec2()const
 {
     return vec2(float(x),float(y));
+}
+
+vec2i::operator sf::Vector2i() const
+{
+    sf::Vector2i vector;
+    vector.x = x;
+    vector.y = y;
+    return vector;
 }

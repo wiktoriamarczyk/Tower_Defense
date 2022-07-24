@@ -205,19 +205,19 @@ void InGameState::Render()
 
     if (grid_state == eGridValue::TOWER1 && m_MoveTower)
     {
-        DisplayTexture("TOWER1.png", (int)MovedPos.x, (int)MovedPos.y, 0, 0);
+        DisplayTexture("TOWER1.png", (int)MovedPos.x, (int)MovedPos.y);
     }
     else 
-        DisplayTexture("TOWER1.png", (int)NormalPos.x, (int)NormalPos.y, 0, 0);
+        DisplayTexture("TOWER1.png", (int)NormalPos.x, (int)NormalPos.y);
 
 
     //----------------------------------------------------------------------------
 
     if (grid_state == eGridValue::TOWER2 && m_MoveTower)
     {
-        DisplayTexture("TOWER2.png", (int)MovedPos.x + 150, (int)MovedPos.y - 4, 0, 0);
+        DisplayTexture("TOWER2.png", (int)MovedPos.x + 150, (int)MovedPos.y - 4);
     }
-    else DisplayTexture("TOWER2.png", (int)NormalPos.x + 160, (int)NormalPos.y - 4, 0, 0);
+    else DisplayTexture("TOWER2.png", (int)NormalPos.x + 160, (int)NormalPos.y - 4);
 
 
     // render wszystkich obiektow
@@ -280,7 +280,7 @@ void InGameState::DestroyTextures()
     Engine::GetSingleton()->DestroyTextures();
 }
 
-void InGameState::DisplayTexture(const string& FileName, int x, int y, int w, int h)
+void InGameState::DisplayTexture(const string& FileName, int x, int y, optional<int> w, optional<int> h)
 {
     Engine::GetSingleton()->DisplayTexture(("../Data/" + FileName).c_str(), x, y, w, h);
 }

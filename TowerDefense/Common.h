@@ -8,10 +8,11 @@
 #include<stdlib.h>
 #include<time.h>
 #include<algorithm>
+#include<optional>
+#include<functional>
 #include<SDL.h>
 #include<SDL_Mixer.h>
 #include<SDL_image.h>
-
 
 using std::vector;
 using std::unique_ptr;
@@ -24,6 +25,9 @@ using std::fstream;
 using std::ifstream;
 using std::sort;
 using std::cout;
+using std::optional;
+using std::nullopt;
+using std::function;
 
 enum : int
 {

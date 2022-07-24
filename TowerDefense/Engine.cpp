@@ -146,7 +146,7 @@ void Engine::PlaySound(const string& FileName,float Volume )
     m_LoadedSounds.back()->Play();
 }
 
-void Engine::DisplayTexture(const string& FileName, int x, int y, int w, int h)
+void Engine::DisplayTexture(const string& FileName, int x, int y, optional<int> w, optional<int> h)
 {
     for (int i = 0; i < m_LoadedTextures.size(); ++i)
     {
@@ -180,15 +180,11 @@ vec2i Engine::GetTextureSize(const string& FileName)
            return m_LoadedTextures[i]->GetTextureSize();
         }
     }
-    shared_ptr<Texture> temp_texture = make_shared<Texture>(m_pRenderer);
-    temp_texture->Load(FileName);
-    m_LoadedTextures.push_back(temp_texture);
-    return m_LoadedTextures.back()->GetTextureSize();
 }
 
-vec2 Engine::GetMousePos() const
+vec2i Engine::GetMousePos() const
 {
     int x = 0, y = 0;
     SDL_GetMouseState(&x, &y);
-    return vec2(float(x),float(y));
+    return vec2i(x, y);
 }

@@ -10,7 +10,7 @@ public:
     void OnMouseButtonDown(int Button);
     void Update(float DeltaTime)override;
     void Render()override;
-    void DisplayTexture(const string& FileName, int x, int y, int w, int h);
+    void DisplayTexture(const string& FileName, int x, int y, optional<int> w = nullopt, optional<int> h = nullopt);
     void DestroyTextures();
     void BuildTower(int CellX, int CellY, const string& TowerName);
     bool ReadGrid();

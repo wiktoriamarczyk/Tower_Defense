@@ -14,8 +14,8 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
 
     m_Font = MyFont;
 
-    //m_CursorHand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-    //m_CursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    m_CursorHand.loadFromSystem(sf::Cursor::Hand);
+    m_CursorArrow.loadFromSystem(sf::Cursor::Arrow);
 
     auto func = [this]()
     {
@@ -156,12 +156,12 @@ void InGameState::Update(float DeltaTime)
         {
             if (o->IsCursorOnButton())
             {
-                //SDL_SetCursor(m_CursorHand);
+                Engine::GetSingleton()->GetWindow().setMouseCursor(m_CursorHand);
                 return true;
             }
             else
             {
-                //SDL_SetCursor(m_CursorArrow);
+                Engine::GetSingleton()->GetWindow().setMouseCursor(m_CursorArrow);
                 return false;
             }
         });

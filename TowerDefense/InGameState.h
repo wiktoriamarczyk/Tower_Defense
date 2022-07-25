@@ -16,8 +16,8 @@ public:
     bool ReadGrid();
 
 private:
-    //SDL_Cursor*                    m_CursorHand = nullptr;
-    //SDL_Cursor*                    m_CursorArrow = nullptr;
+    sf::Cursor                      m_CursorHand;
+    sf::Cursor                      m_CursorArrow;
 
     vector<shared_ptr<GameObject>> m_AllGameObjects;
 

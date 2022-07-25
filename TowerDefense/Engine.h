@@ -20,7 +20,7 @@ public:
     void DestroyTextures();
     vec2i GetTextureSize(const string& FileName)const;
     vec2i GetMousePos()const;
-
+    sf::Window& GetWindow() { return m_Renderer; }
 private:
     using TexturesVec = vector<shared_ptr<Texture>>;
 

@@ -19,6 +19,8 @@ bool Engine::Initialize()
 {
     srand(time(NULL));
 
+    sf::err().rdbuf(std::cout.rdbuf());
+
     pSingleton = this;
 
     // stworzenie okna

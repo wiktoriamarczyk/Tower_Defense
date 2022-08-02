@@ -56,6 +56,15 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 ADD_EXECUTABLE(TowerDefense ${APP_SRC_FILES_LIST} )
 
 #*****************************************************
+# enable multi processor compilation 
+#  - for visual "/MP" flag must be set
+#*****************************************************
+
+if(MSVC)
+    target_compile_options(TowerDefense PRIVATE "/MP")
+endif()
+
+#*****************************************************
 # Set language version to C++20
 #*****************************************************
 

@@ -56,11 +56,7 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
 }
 
 
-InGameState::~InGameState()
-{
-    //SDL_FreeCursor(m_CursorArrow);
-    //SDL_FreeCursor(m_CursorHand);
-}
+InGameState::~InGameState() {}
 
 bool InGameState::ReadGrid()
 {
@@ -110,7 +106,6 @@ void InGameState::OnMouseButtonDown(int Button)
     // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to wieza
     eGridValue grid_state = m_Grid[Cell.y % GRID_ROWS][Cell.x % GRID_COLS];
 
-
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
         if (m_AllGameObjects[i]->OnMouseButtonDown(Button))
@@ -129,6 +124,27 @@ void InGameState::OnMouseButtonDown(int Button)
     }
 }
 
+void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
+{
+    if (KeyCode == sf::Keyboard::Key::Escape)
+    {
+        m_AllGameObjects.clear();
+        //m_NextStateID = eStateID::MAINMENU;
+        Engine::GetSingleton()->ExitGame();
+    }
+
+    if ((_gridDebug == false) && (KeyCode == sf::Keyboard::Key::Numpad0) )
+    {
+        _gridDebug = true;
+    }
+
+    else if ( (_gridDebug == true) && (KeyCode == sf::Keyboard::Key::Numpad0))
+    {
+        _gridDebug = false;
+    }
+
+}
+
 void InGameState::Update(float DeltaTime)
 {
     int x = Engine::GetSingleton()->GetMousePos().x;
@@ -137,19 +153,7 @@ void InGameState::Update(float DeltaTime)
     int CellY = (y / 64);
     eGridValue grid_state = m_Grid[CellY % 17][CellX % 30];
 
-    // PRZE£¥CZANIE STANOW
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
-    {
-        //Mix_HaltChannel(-1);
-        ///DestroyTextures();
-        m_AllGameObjects.clear();
-       // m_NextStateID = eStateID::MAINMENU;
-        Engine::GetSingleton()->ExitGame();
-    }
-
    // ZMIANA KURSORA
-
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
         none_of(m_AllGameObjects.begin(), m_AllGameObjects.end(), [this](shared_ptr<GameObject> o)
@@ -168,7 +172,6 @@ void InGameState::Update(float DeltaTime)
     }
 
     // UPDATE OBIEKTOW
-
     for (int i = 0; i < m_AllGameObjects.size();)
     {
         m_AllGameObjects[i]->Update(DeltaTime);
@@ -186,23 +189,23 @@ void InGameState::Update(float DeltaTime)
 
 void InGameState::Render(sf::RenderWindow& Renderer)
 {
+    Renderer.clear(sf::Color::Black);
+
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
     int CellX = (x / 64);
     int CellY = (y / 64);
     eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
 
-    Renderer.clear(sf::Color::Black);
-
-    // RENDER MAPY
+    // RENDER INTERFEJSU
     DisplayTexture("Background.png", vec2i(0,0), vec2i(1668, SCREEN_HEIGHT));
 
     sf::Color GridColor;
 
     if (grid_state == eGridValue::FREE)
-        GridColor = sf::Color::White;
+       GridColor = sf::Color::White;
     else if (grid_state == eGridValue::BLOCKED)
-        GridColor = sf::Color::Red;
+       GridColor = sf::Color::Red;
 
     if (m_HoldTower)
     {
@@ -214,7 +217,38 @@ void InGameState::Render(sf::RenderWindow& Renderer)
         Renderer.draw(Rect);
     }
 
+    // RENDER MAPY
     DisplayTexture("Overlay.png", vec2i(0, 0), vec2i(SCREEN_WIDTH, SCREEN_HEIGHT));
+
+    // ----------------------debug--------------------------------
+
+
+
+    if (_gridDebug)
+    {
+        for(int _x = 0; _x < SCREEN_WIDTH; _x += 64)
+        {
+            for(int _y = 0; _y < SCREEN_HEIGHT; _y += 64)
+            {
+                int _CellX = (_x / 64);
+                int _CellY = (_y / 64);
+
+                eGridValue grid_state = m_Grid[_CellY % GRID_ROWS][_CellX % GRID_COLS];
+
+                if (grid_state == eGridValue::FREE)
+                GridColor = sf::Color::White;
+                else if (grid_state == eGridValue::BLOCKED)
+                GridColor = sf::Color::Red;
+
+                sf::RectangleShape Rect(sf::Vector2f(64, 64));
+                Rect.setPosition(sf::Vector2f(_CellX * 64, _CellY * 64));
+                Rect.setOutlineThickness(2.f);
+                Rect.setOutlineColor(GridColor);
+                Rect.setFillColor(sf::Color::Transparent);
+                Renderer.draw(Rect);
+            }
+        }
+    }
 
     // RENDER OBIEKTOW
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
@@ -222,7 +256,7 @@ void InGameState::Render(sf::RenderWindow& Renderer)
         m_AllGameObjects[i]->Render(Renderer);
     }
 
-    // CZCIONKI
+    // RYSOWANIE CZCIONKI
     m_Font->DrawText(Renderer, 1, 60, 1058, ToString(m_Money).c_str());
 
     if (m_Money < (int)eTowerPrice::Tower1)
@@ -245,8 +279,6 @@ void InGameState::OnEnter()
 {
     m_GameOver = false;
     GameState::OnEnter();
-    // inicjalizacja zasobow
-    ///InitializeInGameStateTextures();
 }
 
 void InGameState::BuildTower(vec2i Position, const string& TowerName)
@@ -254,7 +286,7 @@ void InGameState::BuildTower(vec2i Position, const string& TowerName)
     auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), TowerName);
     m_AllGameObjects.push_back(pTower);
 
-    // posortuj wieze po pozycji y
+    // sortowanie wiezy po pozycji y, aby wieze znajdujace sie "blizej" gracza byly widoczne na 1 planie
     sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> p1, shared_ptr<GameObject> p2) { return p1->GetPosition().y < p2->GetPosition().y;  });
 
     m_Grid[Position.y % GRID_ROWS][Position.x % GRID_COLS] = eGridValue::BLOCKED;

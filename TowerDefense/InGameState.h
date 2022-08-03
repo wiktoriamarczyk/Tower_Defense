@@ -7,7 +7,8 @@ public:
     InGameState(shared_ptr<Font> MyFont);
     ~InGameState();
     void OnEnter()override;
-    void OnMouseButtonDown(int Button);
+    void OnMouseButtonDown(int Button)override;
+    void OnKeyDown(sf::Keyboard::Key KeyCode)override;
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
     void DisplayTexture(const string& FileName, vec2i Position, optional<vec2i> Size = nullopt);
@@ -28,5 +29,9 @@ private:
     string                         m_TowerName;
     int                            m_TowerCost = 0;
     int                            m_Money = 1000;
+
+
+    // debug
+    bool _gridDebug = false;
 };
 

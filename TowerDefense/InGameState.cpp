@@ -191,13 +191,13 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 {
     Renderer.clear(sf::Color::Black);
 
-    int x = Engine::GetSingleton()->GetMousePos().x;
-    int y = Engine::GetSingleton()->GetMousePos().y;
-    int CellX = (x / 64);
-    int CellY = (y / 64);
+    int MouseX = Engine::GetSingleton()->GetMousePos().x;
+    int MouseY = Engine::GetSingleton()->GetMousePos().y;
+    int CellX = (MouseX / 64);
+    int CellY = (MouseY / 64);
     eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
 
-    // RENDER INTERFEJSU
+    // RENDER MAPY
     DisplayTexture("Background.png", vec2i(0,0), vec2i(1668, SCREEN_HEIGHT));
 
     sf::Color GridColor;
@@ -217,13 +217,10 @@ void InGameState::Render(sf::RenderWindow& Renderer)
         Renderer.draw(Rect);
     }
 
-    // RENDER MAPY
+    // RENDER INTERFEJSU
     DisplayTexture("Overlay.png", vec2i(0, 0), vec2i(SCREEN_WIDTH, SCREEN_HEIGHT));
 
     // ----------------------debug--------------------------------
-
-
-
     if (_gridDebug)
     {
         for(int _x = 0; _x < SCREEN_WIDTH; _x += 64)
@@ -233,11 +230,11 @@ void InGameState::Render(sf::RenderWindow& Renderer)
                 int _CellX = (_x / 64);
                 int _CellY = (_y / 64);
 
-                eGridValue grid_state = m_Grid[_CellY % GRID_ROWS][_CellX % GRID_COLS];
+                eGridValue _grid_state = m_Grid[_CellY % GRID_ROWS][_CellX % GRID_COLS];
 
-                if (grid_state == eGridValue::FREE)
+                if (_grid_state == eGridValue::FREE)
                 GridColor = sf::Color::White;
-                else if (grid_state == eGridValue::BLOCKED)
+                else if (_grid_state == eGridValue::BLOCKED)
                 GridColor = sf::Color::Red;
 
                 sf::RectangleShape Rect(sf::Vector2f(64, 64));
@@ -249,6 +246,12 @@ void InGameState::Render(sf::RenderWindow& Renderer)
             }
         }
     }
+
+    // POZYCJA MYSZKI W PRAWYM DOLNYM ROGU
+    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(MouseX).c_str());
+    m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(MouseY).c_str());
+
+    // -----------------------------------------------------------
 
     // RENDER OBIEKTOW
     for (int i = 0; i < m_AllGameObjects.size(); ++i)

@@ -9,7 +9,6 @@ public:
     void Update(float DeltaTime);
     void Render(sf::RenderWindow& Renderer);
 private:
-    string m_Name;
     vec2i  m_TextureSize;
 };
 

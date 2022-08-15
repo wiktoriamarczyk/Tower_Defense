@@ -8,7 +8,7 @@ public:
     Texture(sf::RenderWindow* pRenderer);
     ~Texture();
     bool Load(const string& FileName);
-    void Display(vec2i Position, DisplayParameters Param = {})const;
+    void Display(vec2 Position, DisplayParameters Param = {})const;
     void FreeResources();
     vec2i GetSize();
     string GetName();

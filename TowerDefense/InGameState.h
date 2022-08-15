@@ -14,6 +14,7 @@ public:
     void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
     void BuildTower(vec2i Position, const string& TowerName);
+    void CreateUnit(vec2i Position, const string& UnitName);
     bool ReadGrid();
 
 private:
@@ -29,7 +30,6 @@ private:
     string                         m_TowerName;
     int                            m_TowerCost = 0;
     int                            m_Money = 1000;
-
 
     // debug
     bool _gridDebug = false;

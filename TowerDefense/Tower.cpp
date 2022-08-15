@@ -27,8 +27,8 @@ void Tower::Update(float DeltaTime)
 
 void Tower::Render(sf::RenderWindow& Renderer)
 {
-    vec2i TextureCenter = m_Position + m_Size / 2;
-    vec2i TextureTopLeft = TextureCenter - m_TextureSize / 2;
+    vec2 TextureCenter = m_Position + m_Size / 2;
+    vec2 TextureTopLeft = TextureCenter - m_TextureSize / 2;
 
     Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), TextureTopLeft);
 }

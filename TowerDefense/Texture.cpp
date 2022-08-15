@@ -22,14 +22,14 @@ bool Texture::Load(const string& FileName)
     return true;
 }
 
-void Texture::Display(vec2i Position, DisplayParameters Param)const
+void Texture::Display(vec2 Position, DisplayParameters Param)const
 {
     vec2 finalSize = vec2(m_Size) * Param.DrawScale;
-    vec2 finalPos = vec2(Position) - finalSize * Param.Pivot;
+    vec2 finalPos = Position - finalSize * Param.Pivot;
 
     sf::Sprite sprite;
     sprite.setTexture(m_Texture);
-    sprite.setPosition(vec2(finalPos));
+    sprite.setPosition(finalPos);
     sprite.setScale(Param.DrawScale);
     sprite.setColor(Param.DrawColor);
     sprite.setRotation(Param.Rotation);

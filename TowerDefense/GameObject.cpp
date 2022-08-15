@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-vec2i GameObject::GetPosition()const
+vec2 GameObject::GetPosition()const
 {
     return m_Position;
 }

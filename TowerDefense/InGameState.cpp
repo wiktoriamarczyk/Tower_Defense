@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Tower.h"
 #include "Button.h"
+#include "Unit.h"
 
 
 InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
@@ -52,6 +53,8 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
     ButtonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower2.png");
     shared_ptr<Button> Tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), ButtonSize, func2);
     m_AllGameObjects.push_back(Tower2Button);
+
+    CreateUnit(vec2i(556, 297), "FirstUnit");
 
 }
 
@@ -285,6 +288,14 @@ void InGameState::BuildTower(vec2i Position, const string& TowerName)
     sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> p1, shared_ptr<GameObject> p2) { return p1->GetPosition().y < p2->GetPosition().y;  });
 
     m_Grid[Position.y % GRID_ROWS][Position.x % GRID_COLS] = eGridValue::BLOCKED;
+}
+
+void InGameState::CreateUnit(vec2i Position, const string& UnitName)
+{
+    auto pUnit = make_shared<Unit>(Position, UnitName);
+    m_AllGameObjects.push_back(pUnit);
+
+    pUnit->MoveTo(vec2(1000, 600));
 }
 
 void InGameState::DestroyTextures()

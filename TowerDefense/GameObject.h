@@ -16,5 +16,5 @@ public:
 protected:
     vec2i m_Position;
     vec2i m_Size;
-    bool m_IsAlive = true;
+    bool  m_IsAlive = true;
 };

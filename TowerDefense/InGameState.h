@@ -11,7 +11,7 @@ public:
     void OnKeyDown(sf::Keyboard::Key KeyCode)override;
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
-    void DisplayTexture(const string& FileName, vec2i Position, optional<vec2i> Size = nullopt);
+    void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
     void BuildTower(vec2i Position, const string& TowerName);
     bool ReadGrid();

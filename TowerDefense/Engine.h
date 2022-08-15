@@ -16,11 +16,12 @@ public:
     void ExitGame();
     void PlaySound(const string& FileName,float Volume = 1.0f);
     shared_ptr<Texture> GetTexture(const string& FileName)const;
-    void DisplayTexture(const string& FileName, vec2i Position, optional<vec2i> Size = nullopt);
+    void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
     vec2i GetTextureSize(const string& FileName)const;
     vec2i GetMousePos()const;
     sf::Window& GetWindow() { return m_Renderer; }
+    const sf::Window& GetWindow()const { return m_Renderer; }
 private:
     using TexturesVec = vector<shared_ptr<Texture>>;
 

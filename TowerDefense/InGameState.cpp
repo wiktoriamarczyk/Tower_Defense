@@ -118,9 +118,8 @@ void InGameState::OnMouseButtonDown(int Button)
         {
             BuildTower(Cell, m_TowerName);
             m_Money -= m_TowerCost;
+            m_HoldTower = false;
         }
-
-        m_HoldTower = false;
     }
 }
 
@@ -138,7 +137,7 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
         _gridDebug = true;
     }
 
-    else if ( (_gridDebug == true) && (KeyCode == sf::Keyboard::Key::Numpad0))
+    else if ((_gridDebug == true) && (KeyCode == sf::Keyboard::Key::Numpad0))
     {
         _gridDebug = false;
     }
@@ -149,8 +148,8 @@ void InGameState::Update(float DeltaTime)
 {
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
-    int CellX = (x / 64);
-    int CellY = (y / 64);
+    int CellX = (x / CELL_SIZE);
+    int CellY = (y / CELL_SIZE);
     eGridValue grid_state = m_Grid[CellY % 17][CellX % 30];
 
    // ZMIANA KURSORA
@@ -193,12 +192,12 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 
     int MouseX = Engine::GetSingleton()->GetMousePos().x;
     int MouseY = Engine::GetSingleton()->GetMousePos().y;
-    int CellX = (MouseX / 64);
-    int CellY = (MouseY / 64);
+    int CellX = (MouseX / CELL_SIZE);
+    int CellY = (MouseY / CELL_SIZE);
     eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
 
     // RENDER MAPY
-    DisplayTexture("Background.png", vec2i(0,0), vec2i(1668, SCREEN_HEIGHT));
+    DisplayTexture("Background.png", vec2i(0,0));
 
     sf::Color GridColor;
 
@@ -208,24 +207,17 @@ void InGameState::Render(sf::RenderWindow& Renderer)
        GridColor = sf::Color::Red;
 
     if (m_HoldTower)
-    {
-        sf::RectangleShape Rect(sf::Vector2f(64, 64));
-        Rect.setPosition(sf::Vector2f(CellX * 64, CellY * 64));
-        Rect.setOutlineThickness(3.f);
-        Rect.setOutlineColor(GridColor);
-        Rect.setFillColor(sf::Color::Transparent);
-        Renderer.draw(Rect);
-    }
+        Tower::DrawTowerOverlay(m_TowerName, Renderer, grid_state == eGridValue::BLOCKED);
 
     // RENDER INTERFEJSU
-    DisplayTexture("Overlay.png", vec2i(0, 0), vec2i(SCREEN_WIDTH, SCREEN_HEIGHT));
+    DisplayTexture("Overlay.png", vec2i(0, 0));
 
     // ----------------------debug--------------------------------
     if (_gridDebug)
     {
-        for(int _x = 0; _x < SCREEN_WIDTH; _x += 64)
+        for(int _x = 0; _x < SCREEN_WIDTH; _x += CELL_SIZE)
         {
-            for(int _y = 0; _y < SCREEN_HEIGHT; _y += 64)
+            for(int _y = 0; _y < SCREEN_HEIGHT; _y += CELL_SIZE)
             {
                 int _CellX = (_x / 64);
                 int _CellY = (_y / 64);
@@ -237,8 +229,8 @@ void InGameState::Render(sf::RenderWindow& Renderer)
                 else if (_grid_state == eGridValue::BLOCKED)
                 GridColor = sf::Color::Red;
 
-                sf::RectangleShape Rect(sf::Vector2f(64, 64));
-                Rect.setPosition(sf::Vector2f(_CellX * 64, _CellY * 64));
+                sf::RectangleShape Rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+                Rect.setPosition(sf::Vector2f(_CellX * CELL_SIZE, _CellY * CELL_SIZE));
                 Rect.setOutlineThickness(2.f);
                 Rect.setOutlineColor(GridColor);
                 Rect.setFillColor(sf::Color::Transparent);
@@ -300,7 +292,7 @@ void InGameState::DestroyTextures()
     Engine::GetSingleton()->DestroyTextures();
 }
 
-void InGameState::DisplayTexture(const string& FileName, vec2i Position, optional<vec2i> Size)
+void InGameState::DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param)
 {
-    Engine::GetSingleton()->DisplayTexture(("../Data/" + FileName).c_str(), Position, Size);
+    Engine::GetSingleton()->DisplayTexture(("../Data/" + FileName).c_str(), Position, Param);
 }

@@ -1,9 +1,8 @@
 #include "Common.h"
 #include "Engine.h"
 
-#ifdef main
-// erase SDL2 #define of 'main' keyword
-#undef main
+#if defined(WIN32)
+    #include<Windows.h>
 #endif
 
 int main()
@@ -14,6 +13,10 @@ int main()
     {
         return 1;
     }
+    
+#if defined(WIN32)
+    ShowWindow( MyEngine.GetSingleton()->GetWindow().getSystemHandle() , SW_MAXIMIZE);
+#endif
 
     MyEngine.Loop();
 

@@ -22,25 +22,24 @@ bool Texture::Load(const string& FileName)
     return true;
 }
 
-void Texture::Display(vec2i Position, optional<vec2i> Size)const
+void Texture::Display(vec2i Position, DisplayParameters Param)const
 {
-    //int value = 0;
-    //if( w.has_value() )
-    //    value = w.value();
-    
-    //if (w)
-    // value = *w;
-
-    //vec2i tmp = Size.value_or(m_Size);
-
-    //SDL_Rect Rect = { Position.x, Position.y, tmp.x, tmp.y };
-    //SDL_RenderCopy(m_pRenderer, m_pTexture, NULL, &Rect);
+    vec2 finalSize = vec2(m_Size) * Param.DrawScale;
+    vec2 finalPos = vec2(Position) - finalSize * Param.Pivot;
 
     sf::Sprite sprite;
     sprite.setTexture(m_Texture);
-    sprite.setPosition(vec2(Position));
+    sprite.setPosition(vec2(finalPos));
+    sprite.setScale(Param.DrawScale);
+    sprite.setColor(Param.DrawColor);
+    sprite.setRotation(Param.Rotation);
 
-    m_pRenderer->draw(sprite);
+    sf::RenderStates states;
+
+    if (Param.DrawMode == eDrawMode::ADDITIVE)
+        states.blendMode = sf::BlendAdd;
+
+    m_pRenderer->draw(sprite, states);
 }
 
 void Texture::FreeResources()

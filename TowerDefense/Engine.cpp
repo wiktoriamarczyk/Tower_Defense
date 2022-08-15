@@ -135,12 +135,12 @@ shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
     return temp_texture;
 }
 
-void Engine::DisplayTexture(const string& FileName, vec2i Position, optional<vec2i> Size)
+void Engine::DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param)
 {
     // jesli znalezlismy teksture, wyswietl ja
     if (auto pTexture = GetTexture(FileName))
     {
-        pTexture->Display(Position, Size);
+        pTexture->Display(Position, Param);
     }
 }
 
@@ -163,5 +163,7 @@ vec2i Engine::GetTextureSize(const string& FileName)const
 
 vec2i Engine::GetMousePos() const
 {
-    return sf::Mouse::getPosition();
+    auto real_window_size = GetWindow().getSize();
+    vec2 SCREEN_RATIO = vec2(SCREEN_WIDTH / (float)real_window_size.x, SCREEN_HEIGHT / (float)real_window_size.y);
+    return vec2i(int(sf::Mouse::getPosition(GetWindow()).x * SCREEN_RATIO.x), int(sf::Mouse::getPosition(GetWindow()).y *  SCREEN_RATIO.y));
 }

@@ -8,8 +8,8 @@ public:
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
-    void MoveTo(vec2 TargetPosition);
+    void MoveTo(vector<vec2> TargetPosition);
 private:
-    vec2 m_TargetPosition;
-    float m_Speed = 60.f;
+    vector<vec2> m_TargetPositions;
+    float        m_Speed = 400.f;
 };

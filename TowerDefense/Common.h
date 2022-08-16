@@ -75,6 +75,15 @@ enum class eDrawMode
     ADDITIVE,
 };
 
+enum class eGraphicLayer
+{
+    BACKGROUND,
+    FOREGROUND,
+    EFFECTS,
+    OVERLAY,
+    UI,
+};
+
 struct DisplayParameters
 {
     //optional<vec2i> DisplaySize;

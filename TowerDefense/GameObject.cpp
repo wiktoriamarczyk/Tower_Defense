@@ -10,6 +10,11 @@ bool GameObject::GetStatus()const
     return m_IsAlive;
 }
 
+eGraphicLayer GameObject::GetGraphicLayer() const
+{
+    return m_Layer;
+}
+
 void GameObject::SetPosition(vec2i Position)
 {
     m_Position = Position;
@@ -18,4 +23,9 @@ void GameObject::SetPosition(vec2i Position)
 void GameObject::SetStatus(bool Status)
 {
     m_IsAlive = Status;
+}
+
+void GameObject::SetGraphicLayer(eGraphicLayer Layer)
+{
+    m_Layer = Layer;
 }

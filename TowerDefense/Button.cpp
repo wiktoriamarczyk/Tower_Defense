@@ -7,6 +7,7 @@ Button::Button(string TextureName, vec2i Position, vec2i Size, function<void()> 
     m_Position = Position;
     m_Size = Size;
     m_Function = Function;
+    m_Layer = eGraphicLayer::UI;
 }
 
 void Button::Render(sf::RenderWindow& Renderer)

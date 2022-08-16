@@ -3,6 +3,7 @@
 #include "Tower.h"
 #include "Button.h"
 #include "Unit.h"
+#include "Image.h"
 
 
 InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
@@ -54,8 +55,15 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
     shared_ptr<Button> Tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), ButtonSize, func2);
     m_AllGameObjects.push_back(Tower2Button);
 
-    CreateUnit(vec2i(556, 297), "FirstUnit");
+    CreateUnit(vec2i(60, -100), "FirstUnit");
 
+    shared_ptr<Image> BackgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
+    BackgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
+    m_AllGameObjects.push_back(BackgroundImage);
+
+    shared_ptr<Image> OverlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
+    OverlayImage->SetGraphicLayer(eGraphicLayer::FOREGROUND);
+    m_AllGameObjects.push_back(OverlayImage);
 }
 
 
@@ -193,6 +201,8 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 {
     Renderer.clear(sf::Color::Black);
 
+    std::stable_sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> A, shared_ptr<GameObject> B){return A->GetGraphicLayer() < B->GetGraphicLayer();});
+
     int MouseX = Engine::GetSingleton()->GetMousePos().x;
     int MouseY = Engine::GetSingleton()->GetMousePos().y;
     int CellX = (MouseX / CELL_SIZE);
@@ -200,7 +210,7 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
 
     // RENDER MAPY
-    DisplayTexture("Background.png", vec2i(0,0));
+    //DisplayTexture("Background.png", vec2i(0,0));
 
     sf::Color GridColor;
 
@@ -211,9 +221,6 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 
     if (m_HoldTower)
         Tower::DrawTowerOverlay(m_TowerName, Renderer, grid_state == eGridValue::BLOCKED);
-
-    // RENDER INTERFEJSU
-    DisplayTexture("Overlay.png", vec2i(0, 0));
 
     // ----------------------debug--------------------------------
     if (_gridDebug)
@@ -253,6 +260,9 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     {
         m_AllGameObjects[i]->Render(Renderer);
     }
+
+    // RENDER INTERFEJSU
+    //DisplayTexture("Overlay.png", vec2i(0, 0));
 
     // RYSOWANIE CZCIONKI
     m_Font->DrawText(Renderer, 1, 60, 1058, ToString(m_Money).c_str());
@@ -295,7 +305,7 @@ void InGameState::CreateUnit(vec2i Position, const string& UnitName)
     auto pUnit = make_shared<Unit>(Position, UnitName);
     m_AllGameObjects.push_back(pUnit);
 
-    pUnit->MoveTo(vec2(1000, 600));
+    pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
 }
 
 void InGameState::DestroyTextures()

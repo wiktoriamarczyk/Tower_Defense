@@ -54,6 +54,7 @@ enum class eGridValue : char
     FREE = '1',
     Tower1 = '2',
     Tower2 = '3',
+    PATH = '4',
 };
 
 enum class eTowerID

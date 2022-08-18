@@ -47,6 +47,9 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
         }
     };
 
+        if (!m_PathFinder.InitFinder(m_Grid))
+        std::cout << "dupa" << std::endl;
+
     vec2i ButtonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower1.png");
     shared_ptr<Button> Tower1Button = make_shared<Button>("Tower1.png", vec2i(1660, 290), ButtonSize, func);
     m_AllGameObjects.push_back(Tower1Button);
@@ -113,11 +116,11 @@ void InGameState::OnMouseButtonDown(int Button)
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
     // numer w rzedzie i w kolumnie 
-    vec2i Cell ((x / 64), (y / 64));
+    vec2i Cell ((x / CELL_SIZE), (y / CELL_SIZE));
     // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to wieza
     eGridValue grid_state = m_Grid[Cell.y % GRID_ROWS][Cell.x % GRID_COLS];
 
-    for (int i = 0; i < m_AllGameObjects.size(); ++i)
+    for (int i = 0; i < m_AllGameObjects.size(); ++i) 
     {
         if (m_AllGameObjects[i]->OnMouseButtonDown(Button))
             return;
@@ -201,16 +204,20 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 {
     Renderer.clear(sf::Color::Black);
 
+    // poprawne wyswietlanie obiektow roznych warstw na ekranie
     std::stable_sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> A, shared_ptr<GameObject> B){return A->GetGraphicLayer() < B->GetGraphicLayer();});
+
+    // RENDER OBIEKTOW
+    for (int i = 0; i < m_AllGameObjects.size(); ++i)
+    {
+        m_AllGameObjects[i]->Render(Renderer);
+    }
 
     int MouseX = Engine::GetSingleton()->GetMousePos().x;
     int MouseY = Engine::GetSingleton()->GetMousePos().y;
     int CellX = (MouseX / CELL_SIZE);
     int CellY = (MouseY / CELL_SIZE);
     eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
-
-    // RENDER MAPY
-    //DisplayTexture("Background.png", vec2i(0,0));
 
     sf::Color GridColor;
 
@@ -250,19 +257,14 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     }
 
     // POZYCJA MYSZKI W PRAWYM DOLNYM ROGU
-    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(MouseX).c_str());
+    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(MouseX).c_str()); // ??????????????????????
     m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(MouseY).c_str());
 
     // -----------------------------------------------------------
 
-    // RENDER OBIEKTOW
-    for (int i = 0; i < m_AllGameObjects.size(); ++i)
-    {
-        m_AllGameObjects[i]->Render(Renderer);
-    }
-
-    // RENDER INTERFEJSU
-    //DisplayTexture("Overlay.png", vec2i(0, 0));
+    // POZYCJA MYSZKI W PRAWYM DOLNYM ROGU
+    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(MouseX).c_str()); // ??????????????????????
+    m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(MouseY).c_str());
 
     // RYSOWANIE CZCIONKI
     m_Font->DrawText(Renderer, 1, 60, 1058, ToString(m_Money).c_str());
@@ -287,6 +289,7 @@ void InGameState::OnEnter()
 {
     m_GameOver = false;
     GameState::OnEnter();
+
 }
 
 void InGameState::BuildTower(vec2i Position, const string& TowerName)
@@ -294,7 +297,7 @@ void InGameState::BuildTower(vec2i Position, const string& TowerName)
     auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), TowerName);
     m_AllGameObjects.push_back(pTower);
 
-    // sortowanie wiezy po pozycji y, aby wieze znajdujace sie "blizej" gracza byly widoczne na 1 planie
+    // sortowanie wiezy po pozycji y, aby wieze znajdujace sie "blizej" gracza, byly widoczne na 1 planie
     sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> p1, shared_ptr<GameObject> p2) { return p1->GetPosition().y < p2->GetPosition().y;  });
 
     m_Grid[Position.y % GRID_ROWS][Position.x % GRID_COLS] = eGridValue::BLOCKED;
@@ -305,7 +308,14 @@ void InGameState::CreateUnit(vec2i Position, const string& UnitName)
     auto pUnit = make_shared<Unit>(Position, UnitName);
     m_AllGameObjects.push_back(pUnit);
 
-    pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
+    //pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
+
+    vector<vec2> UnitPath;
+
+    if(!m_PathFinder.FindPath(vec2i(60, 580), vec2i(1480, 580), UnitPath))
+        std::cout << "Path could not be founded!" << std::endl;
+
+    pUnit->MoveTo(UnitPath);
 }
 
 void InGameState::DestroyTextures()

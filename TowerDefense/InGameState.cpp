@@ -47,6 +47,20 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
         }
     };
 
+    auto func3 = [this]()
+    {
+        if (!m_HoldTower)
+        {
+            m_HoldTower = true;
+            m_TowerName = "Tower3";
+            m_TowerCost = 50;
+        }
+        else if (m_HoldTower)
+        {
+            m_HoldTower = false;
+        }
+    };
+
         if (!m_PathFinder.InitFinder(m_Grid))
         std::cout << "dupa" << std::endl;
 
@@ -58,7 +72,11 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
     shared_ptr<Button> Tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), ButtonSize, func2);
     m_AllGameObjects.push_back(Tower2Button);
 
-    CreateUnit(vec2i(60, -100), "FirstUnit");
+    ButtonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower3.png");
+    shared_ptr<Button> Tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 420), ButtonSize, func3);
+    m_AllGameObjects.push_back(Tower3Button);
+
+    CreateUnit(vec2i(60, -100), "Dragon.anim");
 
     shared_ptr<Image> BackgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
     BackgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
@@ -223,15 +241,16 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 
     if (grid_state == eGridValue::FREE)
        GridColor = sf::Color::White;
-    else if (grid_state == eGridValue::BLOCKED)
+    else
        GridColor = sf::Color::Red;
 
     if (m_HoldTower)
-        Tower::DrawTowerOverlay(m_TowerName, Renderer, grid_state == eGridValue::BLOCKED);
+        Tower::DrawTowerOverlay(m_TowerName, Renderer, grid_state != eGridValue::FREE);
 
     // ----------------------debug--------------------------------
     if (_gridDebug)
     {
+
         for(int _x = 0; _x < SCREEN_WIDTH; _x += CELL_SIZE)
         {
             for(int _y = 0; _y < SCREEN_HEIGHT; _y += CELL_SIZE)
@@ -240,16 +259,17 @@ void InGameState::Render(sf::RenderWindow& Renderer)
                 int _CellY = (_y / 64);
 
                 eGridValue _grid_state = m_Grid[_CellY % GRID_ROWS][_CellX % GRID_COLS];
-
+                
+                sf::Color _GridColor;
                 if (_grid_state == eGridValue::FREE)
-                GridColor = sf::Color::White;
+                _GridColor = sf::Color::White;
                 else if (_grid_state == eGridValue::BLOCKED)
-                GridColor = sf::Color::Red;
+                _GridColor = sf::Color::Red;
 
                 sf::RectangleShape Rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
                 Rect.setPosition(sf::Vector2f(_CellX * CELL_SIZE, _CellY * CELL_SIZE));
                 Rect.setOutlineThickness(2.f);
-                Rect.setOutlineColor(GridColor);
+                Rect.setOutlineColor(_GridColor);
                 Rect.setFillColor(sf::Color::Transparent);
                 Renderer.draw(Rect);
             }
@@ -312,7 +332,7 @@ void InGameState::CreateUnit(vec2i Position, const string& UnitName)
 
     vector<vec2> UnitPath;
 
-    if(!m_PathFinder.FindPath(vec2i(60, 580), vec2i(1480, 580), UnitPath))
+    if(!m_PathFinder.FindPath(vec2i(50, 50), vec2i(1480, 580), UnitPath))
         std::cout << "Path could not be founded!" << std::endl;
 
     pUnit->MoveTo(UnitPath);

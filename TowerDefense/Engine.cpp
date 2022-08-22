@@ -35,6 +35,37 @@ bool Engine::Initialize()
     shared_ptr<Font> MyFont = make_shared<Font>();
     MyFont->LoadFont("../Data/FontData.txt");
 
+
+    // zaladowanie animacji jednostki
+    vector<shared_ptr<Texture>> DragonAnimationFrames;
+    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn13.png"));
+    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
+    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
+    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn16.png"));
+    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
+    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
+
+    shared_ptr<AnimatedTexture> DragonAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
+    DragonAnimationTexture->Load(DragonAnimationFrames, "../Data/Dragon.anim");
+    m_LoadedTextures.push_back(DragonAnimationTexture);
+
+    
+    vector<shared_ptr<Texture>> TowerAnimationFrames;
+    TowerAnimationFrames.push_back(GetTexture("AVSschm0B0.png"));
+    TowerAnimationFrames.push_back(GetTexture("AVSschm1B0.png"));
+    TowerAnimationFrames.push_back(GetTexture("AVSschm2B0.png"));
+    TowerAnimationFrames.push_back(GetTexture("AVSschm3B0.png"));
+    TowerAnimationFrames.push_back(GetTexture("AVSschm4B0.png"));
+    TowerAnimationFrames.push_back(GetTexture("AVSschm5B0.png"));
+    TowerAnimationFrames.push_back(GetTexture("AVSschm6B0.png"));
+    TowerAnimationFrames.push_back(GetTexture("AVSschm7B0.png"));
+
+    
+    shared_ptr<AnimatedTexture> TowerAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
+    TowerAnimationTexture->Load(TowerAnimationFrames, "../Data/Tower3.png");
+    m_LoadedTextures.push_back(TowerAnimationTexture);
+
+
     // dodanie wszystkich stanow gry do wektora
     m_AllStates.push_back(make_unique<InGameState>(MyFont));
     m_AllStates.push_back(make_unique<MainMenuState>(MyFont));
@@ -67,6 +98,11 @@ void Engine::Loop()
         }
 
         sf::sleep(sf::milliseconds(1000 / 60));
+
+        for (int i = 0; i < m_LoadedTextures.size(); ++i)
+        {
+            m_LoadedTextures[i]->Update(1.0f / 60.0f);
+        }
 
         m_pCurrentState->Update(1.0f / 60.0f);
         m_pCurrentState->Render(m_Renderer);

@@ -56,3 +56,24 @@ string Texture::GetName()
 {
     return m_FileName;
 }
+
+void AnimatedTexture::Display(vec2 Position, DisplayParameters Param) const
+{
+    m_Frames[(int)m_CurrentFrame]->Display(Position, Param);
+}
+
+void AnimatedTexture::Update(float DeltaTime)
+{
+    m_CurrentFrame += DeltaTime * m_FrameSpeed;
+
+    if (m_CurrentFrame >= m_Frames.size())
+        m_CurrentFrame = 0;
+}
+
+void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName)
+{
+    m_Frames = Frames;
+    m_FileName = AnimatedTxtName;
+    if( m_Frames.size() )
+        m_Size = m_Frames[0]->GetSize();
+}

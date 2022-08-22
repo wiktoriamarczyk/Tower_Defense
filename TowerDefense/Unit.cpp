@@ -1,4 +1,5 @@
 #include "Unit.h"
+#include "Engine.h"
 
 Unit::Unit(vec2i Position, const string& UnitName)
 {
@@ -35,12 +36,29 @@ void Unit::Update(float DeltaTime)
 
 void Unit::Render(sf::RenderWindow& Renderer)
 {
-    vec2 Center_position = m_Position - m_Size / 2;
+    /*vec2 Center_position = m_Position - m_Size / 2;
     sf::RectangleShape Rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
     Rect.setOutlineThickness(4.f);
     Rect.setFillColor(sf::Color::Blue);
-    Rect.setPosition(vec2(Center_position));
-    Renderer.draw(Rect);
+    Rect.setPosition(vec2(Center_position) + vec2(CELL_SIZE/2, CELL_SIZE/2));*/
+
+    // debug 
+    vector<sf::Vertex> vertices;
+
+    for (auto el : m_TargetPositions)
+    {
+        vertices.push_back(sf::Vertex((sf::Vector2f)el, sf::Color::Cyan));
+    }
+
+    // przekazujemy .data(), gdy¿ funkcja draw() przyjmuje wskaŸnik na pierwszy element i liczbê elementów w CPojemniku
+    Renderer.draw(vertices.data(), vertices.size(), sf::LineStrip);
+
+    /*Renderer.draw(Rect);*/
+
+    Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + m_Size / 2, DisplayParameters{.Pivot{0.5, 0.5}});
+
+
+
 }
 
 bool Unit::OnMouseButtonDown(int Button)

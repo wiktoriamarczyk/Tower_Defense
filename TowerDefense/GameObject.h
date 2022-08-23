@@ -12,7 +12,7 @@ public:
     vec2 GetPosition()const;
     bool GetStatus()const;
     eGraphicLayer GetGraphicLayer()const;
-    void SetPosition(vec2i Position);
+    void SetPosition(vec2 Position);
     void SetStatus(bool Status);
     void SetGraphicLayer(eGraphicLayer Layer);
 protected:

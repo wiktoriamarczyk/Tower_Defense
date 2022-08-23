@@ -10,6 +10,7 @@
 #include<algorithm>
 #include<optional>
 #include<functional>
+#include<cmath>
 #include"vec2.h"
 #include<SFML/Graphics.hpp>
 #include<SFML/Audio.hpp>

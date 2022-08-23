@@ -4,7 +4,7 @@
 #include "Button.h"
 #include "Unit.h"
 #include "Image.h"
-
+#include "Shot.h"
 
 InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
 {
@@ -64,27 +64,27 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
         if (!m_PathFinder.InitFinder(m_Grid))
         std::cout << "dupa" << std::endl;
 
-    vec2i ButtonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower1.png");
-    shared_ptr<Button> Tower1Button = make_shared<Button>("Tower1.png", vec2i(1660, 290), ButtonSize, func);
-    m_AllGameObjects.push_back(Tower1Button);
+    vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower1.png");
+    shared_ptr<Button> tower1Button = make_shared<Button>("Tower1.png", vec2i(1660, 290), buttonSize, func);
+    m_AllGameObjects.push_back(tower1Button);
 
-    ButtonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower2.png");
-    shared_ptr<Button> Tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), ButtonSize, func2);
-    m_AllGameObjects.push_back(Tower2Button);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower2.png");
+    shared_ptr<Button> tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), buttonSize, func2);
+    m_AllGameObjects.push_back(tower2Button);
 
-    ButtonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower3.png");
-    shared_ptr<Button> Tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 420), ButtonSize, func3);
-    m_AllGameObjects.push_back(Tower3Button);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower3.png");
+    shared_ptr<Button> tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 420), buttonSize, func3);
+    m_AllGameObjects.push_back(tower3Button);
 
     CreateUnit(vec2i(60, -100), "Dragon.anim");
 
-    shared_ptr<Image> BackgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
-    BackgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
-    m_AllGameObjects.push_back(BackgroundImage);
+    shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
+    backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
+    m_AllGameObjects.push_back(backgroundImage);
 
-    shared_ptr<Image> OverlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
-    OverlayImage->SetGraphicLayer(eGraphicLayer::FOREGROUND);
-    m_AllGameObjects.push_back(OverlayImage);
+    shared_ptr<Image> overlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
+    overlayImage->SetGraphicLayer(eGraphicLayer::FOREGROUND);
+    m_AllGameObjects.push_back(overlayImage);
 }
 
 
@@ -134,9 +134,9 @@ void InGameState::OnMouseButtonDown(int Button)
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
     // numer w rzedzie i w kolumnie 
-    vec2i Cell ((x / CELL_SIZE), (y / CELL_SIZE));
+    vec2i cell ((x / CELL_SIZE), (y / CELL_SIZE));
     // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to wieza
-    eGridValue grid_state = m_Grid[Cell.y % GRID_ROWS][Cell.x % GRID_COLS];
+    eGridValue gridState = m_Grid[cell.y % GRID_ROWS][cell.x % GRID_COLS];
 
     for (int i = 0; i < m_AllGameObjects.size(); ++i) 
     {
@@ -146,9 +146,9 @@ void InGameState::OnMouseButtonDown(int Button)
 
     if (m_HoldTower)
     {
-        if (grid_state == eGridValue::FREE)
+        if (gridState == eGridValue::FREE)
         {
-            BuildTower(Cell, m_TowerName);
+            BuildTower(cell, m_TowerName);
             m_Money -= m_TowerCost;
             m_HoldTower = false;
         }
@@ -178,12 +178,6 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
 
 void InGameState::Update(float DeltaTime)
 {
-    int x = Engine::GetSingleton()->GetMousePos().x;
-    int y = Engine::GetSingleton()->GetMousePos().y;
-    int CellX = (x / CELL_SIZE);
-    int CellY = (y / CELL_SIZE);
-    eGridValue grid_state = m_Grid[CellY % 17][CellX % 30];
-
    // ZMIANA KURSORA
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
@@ -231,21 +225,21 @@ void InGameState::Render(sf::RenderWindow& Renderer)
         m_AllGameObjects[i]->Render(Renderer);
     }
 
-    int MouseX = Engine::GetSingleton()->GetMousePos().x;
-    int MouseY = Engine::GetSingleton()->GetMousePos().y;
-    int CellX = (MouseX / CELL_SIZE);
-    int CellY = (MouseY / CELL_SIZE);
-    eGridValue grid_state = m_Grid[CellY % GRID_ROWS][CellX % GRID_COLS];
+    int mouseX = Engine::GetSingleton()->GetMousePos().x;
+    int mouseY = Engine::GetSingleton()->GetMousePos().y;
+    int cellX = (mouseX / CELL_SIZE);
+    int cellY = (mouseY / CELL_SIZE);
+    eGridValue gridState = m_Grid[cellY % GRID_ROWS][cellX % GRID_COLS];
 
-    sf::Color GridColor;
+    sf::Color gridColor;
 
-    if (grid_state == eGridValue::FREE)
-       GridColor = sf::Color::White;
+    if (gridState == eGridValue::FREE)
+       gridColor = sf::Color::White;
     else
-       GridColor = sf::Color::Red;
+       gridColor = sf::Color::Red;
 
     if (m_HoldTower)
-        Tower::DrawTowerOverlay(m_TowerName, Renderer, grid_state != eGridValue::FREE);
+        Tower::DrawTowerOverlay(m_TowerName, Renderer, gridState != eGridValue::FREE);
 
     // ----------------------debug--------------------------------
     if (_gridDebug)
@@ -275,16 +269,11 @@ void InGameState::Render(sf::RenderWindow& Renderer)
             }
         }
     }
-
-    // POZYCJA MYSZKI W PRAWYM DOLNYM ROGU
-    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(MouseX).c_str()); // ??????????????????????
-    m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(MouseY).c_str());
-
     // -----------------------------------------------------------
 
     // POZYCJA MYSZKI W PRAWYM DOLNYM ROGU
-    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(MouseX).c_str()); // ??????????????????????
-    m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(MouseY).c_str());
+    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(mouseX).c_str());
+    m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(mouseY).c_str());
 
     // RYSOWANIE CZCIONKI
     m_Font->DrawText(Renderer, 1, 60, 1058, ToString(m_Money).c_str());
@@ -312,30 +301,29 @@ void InGameState::OnEnter()
 
 }
 
-void InGameState::BuildTower(vec2i Position, const string& TowerName)
+void InGameState::BuildTower(vec2 Position, const string& TowerName)
 {
-    auto pTower = make_shared<Tower>(Engine::GetSingleton()->GetMousePos(), TowerName);
+    auto pTower = make_shared<Tower>(*this, Engine::GetSingleton()->GetMousePos(), TowerName);
     m_AllGameObjects.push_back(pTower);
 
     // sortowanie wiezy po pozycji y, aby wieze znajdujace sie "blizej" gracza, byly widoczne na 1 planie
     sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> p1, shared_ptr<GameObject> p2) { return p1->GetPosition().y < p2->GetPosition().y;  });
 
-    m_Grid[Position.y % GRID_ROWS][Position.x % GRID_COLS] = eGridValue::BLOCKED;
+    m_Grid[int(Position.y) % GRID_ROWS][int(Position.x) % GRID_COLS] = eGridValue::BLOCKED;
 }
 
-void InGameState::CreateUnit(vec2i Position, const string& UnitName)
+void InGameState::CreateUnit(vec2 Position, const string& UnitName)
 {
     auto pUnit = make_shared<Unit>(Position, UnitName);
     m_AllGameObjects.push_back(pUnit);
 
     //pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
+    vector<vec2> unitPath;
 
-    vector<vec2> UnitPath;
-
-    if(!m_PathFinder.FindPath(vec2i(50, 50), vec2i(1480, 580), UnitPath))
+    if(!m_PathFinder.FindPath(vec2i(50, 50), vec2i(1480, 580), unitPath))
         std::cout << "Path could not be founded!" << std::endl;
 
-    pUnit->MoveTo(UnitPath);
+    pUnit->MoveTo(unitPath);
 }
 
 void InGameState::DestroyTextures()
@@ -346,4 +334,10 @@ void InGameState::DestroyTextures()
 void InGameState::DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param)
 {
     Engine::GetSingleton()->DisplayTexture(("../Data/" + FileName).c_str(), Position, Param);
+}
+
+void InGameState::Shoot(vec2 Position, vec2 TargetPosition)
+{
+    shared_ptr<Shot> pShot = make_shared<Shot>(Position, TargetPosition);
+    m_AllGameObjects.push_back(pShot);
 }

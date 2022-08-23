@@ -31,15 +31,15 @@ bool Button::OnMouseButtonDown(int Button)
 
 bool Button::IsCursorOnButton()const
 {
-    vec2i MousePos = Engine::GetSingleton()->GetMousePos();
+    vec2i mousePos = Engine::GetSingleton()->GetMousePos();
 
-    vec2 TextureCenter = m_Position + m_Size / 2;
-    vec2 TextureTopLeft = TextureCenter - m_Size / 2;
-    vec2 TextureBottomLeft = TextureCenter + m_Size / 2;
+    vec2 textureCenter = m_Position + m_Size / 2;
+    vec2 textureTopLeft = textureCenter - m_Size / 2;
+    vec2 textureBottomLeft = textureCenter + m_Size / 2;
 
-    if (MousePos.x >= TextureTopLeft.x &&  MousePos.x <= TextureBottomLeft.x)
+    if (mousePos.x >= textureTopLeft.x &&  mousePos.x <= textureBottomLeft.x)
     {
-        if (MousePos.y >= TextureTopLeft.y && MousePos.y <= TextureBottomLeft.y)
+        if (mousePos.y >= textureTopLeft.y && mousePos.y <= textureBottomLeft.y)
         {
             return true;
         }

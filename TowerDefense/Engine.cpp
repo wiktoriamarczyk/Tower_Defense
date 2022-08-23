@@ -32,43 +32,43 @@ bool Engine::Initialize()
     }*/
 
     // stworzenie czcionki
-    shared_ptr<Font> MyFont = make_shared<Font>();
-    MyFont->LoadFont("../Data/FontData.txt");
+    shared_ptr<Font> myFont = make_shared<Font>();
+    myFont->LoadFont("../Data/FontData.txt");
 
 
     // zaladowanie animacji jednostki
-    vector<shared_ptr<Texture>> DragonAnimationFrames;
-    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn13.png"));
-    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
-    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
-    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn16.png"));
-    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
-    DragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
+    vector<shared_ptr<Texture>> dragonAnimationFrames;
+    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn13.png"));
+    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
+    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
+    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn16.png"));
+    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
+    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
 
-    shared_ptr<AnimatedTexture> DragonAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
-    DragonAnimationTexture->Load(DragonAnimationFrames, "../Data/Dragon.anim");
-    m_LoadedTextures.push_back(DragonAnimationTexture);
-
-    
-    vector<shared_ptr<Texture>> TowerAnimationFrames;
-    TowerAnimationFrames.push_back(GetTexture("AVSschm0B0.png"));
-    TowerAnimationFrames.push_back(GetTexture("AVSschm1B0.png"));
-    TowerAnimationFrames.push_back(GetTexture("AVSschm2B0.png"));
-    TowerAnimationFrames.push_back(GetTexture("AVSschm3B0.png"));
-    TowerAnimationFrames.push_back(GetTexture("AVSschm4B0.png"));
-    TowerAnimationFrames.push_back(GetTexture("AVSschm5B0.png"));
-    TowerAnimationFrames.push_back(GetTexture("AVSschm6B0.png"));
-    TowerAnimationFrames.push_back(GetTexture("AVSschm7B0.png"));
+    shared_ptr<AnimatedTexture> dragonAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
+    dragonAnimationTexture->Load(dragonAnimationFrames, "../Data/Dragon.anim");
+    m_LoadedTextures.push_back(dragonAnimationTexture);
 
     
-    shared_ptr<AnimatedTexture> TowerAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
-    TowerAnimationTexture->Load(TowerAnimationFrames, "../Data/Tower3.png");
-    m_LoadedTextures.push_back(TowerAnimationTexture);
+    vector<shared_ptr<Texture>> towerAnimationFrames;
+    towerAnimationFrames.push_back(GetTexture("AVSschm0B0.png"));
+    towerAnimationFrames.push_back(GetTexture("AVSschm1B0.png"));
+    towerAnimationFrames.push_back(GetTexture("AVSschm2B0.png"));
+    towerAnimationFrames.push_back(GetTexture("AVSschm3B0.png"));
+    towerAnimationFrames.push_back(GetTexture("AVSschm4B0.png"));
+    towerAnimationFrames.push_back(GetTexture("AVSschm5B0.png"));
+    towerAnimationFrames.push_back(GetTexture("AVSschm6B0.png"));
+    towerAnimationFrames.push_back(GetTexture("AVSschm7B0.png"));
+
+    
+    shared_ptr<AnimatedTexture> towerAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
+    towerAnimationTexture->Load(towerAnimationFrames, "../Data/Tower3.png");
+    m_LoadedTextures.push_back(towerAnimationTexture);
 
 
     // dodanie wszystkich stanow gry do wektora
-    m_AllStates.push_back(make_unique<InGameState>(MyFont));
-    m_AllStates.push_back(make_unique<MainMenuState>(MyFont));
+    m_AllStates.push_back(make_unique<InGameState>(myFont));
+    m_AllStates.push_back(make_unique<MainMenuState>(myFont));
 
     // pierwszym stanem jest Menu gry
     ChangeState(eStateID::INGAME);
@@ -160,15 +160,15 @@ shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
         }
     }
 
-    shared_ptr<Texture> temp_texture = make_shared<Texture>(const_cast<sf::RenderWindow*>(&m_Renderer));
+    shared_ptr<Texture> tmpTexture = make_shared<Texture>(const_cast<sf::RenderWindow*>(&m_Renderer));
 
-    if (!temp_texture->Load(FileName))
+    if (!tmpTexture->Load(FileName))
     {
         return nullptr;
     }
 
-    m_LoadedTextures.push_back(temp_texture);
-    return temp_texture;
+    m_LoadedTextures.push_back(tmpTexture);
+    return tmpTexture;
 }
 
 void Engine::DisplayTexture(const string& FileName, vec2 Position, DisplayParameters Param)
@@ -199,7 +199,7 @@ vec2i Engine::GetTextureSize(const string& FileName)const
 
 vec2i Engine::GetMousePos() const
 {
-    auto real_window_size = GetWindow().getSize();
-    vec2 SCREEN_RATIO = vec2(SCREEN_WIDTH / (float)real_window_size.x, SCREEN_HEIGHT / (float)real_window_size.y);
+    auto realWindowSize = GetWindow().getSize();
+    vec2 SCREEN_RATIO = vec2(SCREEN_WIDTH / (float)realWindowSize.x, SCREEN_HEIGHT / (float)realWindowSize.y);
     return vec2i(int(sf::Mouse::getPosition(GetWindow()).x * SCREEN_RATIO.x), int(sf::Mouse::getPosition(GetWindow()).y *  SCREEN_RATIO.y));
 }

@@ -14,9 +14,13 @@ public:
     void Render(sf::RenderWindow& Renderer)override;
     void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
-    void BuildTower(vec2i Position, const string& TowerName);
-    void CreateUnit(vec2i Position, const string& UnitName);
+    void BuildTower(vec2 Position, const string& TowerName);
+    void CreateUnit(vec2 Position, const string& UnitName);
+    void Shoot(vec2 Position, vec2 TargetPosition);
     bool ReadGrid();
+
+    template<typename T>
+    vector<shared_ptr<T>> GetObjects();
 
 private:
     sf::Cursor                      m_CursorHand;
@@ -36,3 +40,18 @@ private:
     bool _gridDebug = false;
 };
 
+template<typename T>
+vector<shared_ptr<T>> InGameState::GetObjects()
+{
+    vector<shared_ptr<T>> specificObjects;
+
+    for (size_t i = 0; i < m_AllGameObjects.size(); ++i)
+    {
+        shared_ptr<T> object = dynamic_pointer_cast<T>(m_AllGameObjects[i]);
+
+        if (object)
+            specificObjects.push_back(object);
+    }
+
+    return specificObjects;
+}

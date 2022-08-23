@@ -44,6 +44,8 @@ SET(APP_SRC_FILES_LIST
     TowerDefense/Image.h
     TowerDefense/AStar.cpp
     TowerDefense/AStar.h
+	TowerDefense/Shot.cpp
+	TowerDefense/Shot.h
 )
 
 #*****************************************************

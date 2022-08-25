@@ -1,6 +1,7 @@
 #pragma once
 #include "GameState.h"
 #include "AStar.h"
+#include "Unit.h"
 
 class InGameState : public GameState
 {
@@ -16,7 +17,7 @@ public:
     void DestroyTextures();
     void BuildTower(vec2 Position, const string& TowerName);
     void CreateUnit(vec2 Position, const string& UnitName);
-    void Shoot(vec2 Position, vec2 TargetPosition);
+    void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
     bool ReadGrid();
 
     template<typename T>
@@ -35,6 +36,8 @@ private:
     int                            m_TowerCost = 0;
     int                            m_Money = 1000;
     AStar                          m_PathFinder;
+
+    float                          m_SpawningTimer = 0;
 
     // debug
     bool _gridDebug = false;

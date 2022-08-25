@@ -1,5 +1,9 @@
 #include "vec2.h"
 
+namespace math
+{
+    static constexpr double PI = 3.141592653589793238462643383279502884;
+}
 
 vec2::vec2(float _x, float _y) : x(_x), y(_y) {}
 
@@ -27,6 +31,14 @@ vec2 vec2::GetNormalized()const
     result.y = y / length;;
 
     return result;
+}
+
+float vec2::GetAngleFromVec()const
+{
+    if (x == 0 && y == 0)
+        return 0;
+
+    return float(atan2(y, x) / math::PI * 180);
 }
 
 vec2::operator sf::Vector2f() const

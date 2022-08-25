@@ -2,7 +2,6 @@
 #include "Engine.h"
 #include "Tower.h"
 #include "Button.h"
-#include "Unit.h"
 #include "Image.h"
 #include "Shot.h"
 
@@ -75,8 +74,6 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
     buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower3.png");
     shared_ptr<Button> tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 420), buttonSize, func3);
     m_AllGameObjects.push_back(tower3Button);
-
-    CreateUnit(vec2i(60, -100), "Dragon.anim");
 
     shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
     backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
@@ -178,6 +175,14 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
 
 void InGameState::Update(float DeltaTime)
 {
+    m_SpawningTimer -= DeltaTime;
+
+    if (m_SpawningTimer <= 0)
+    {
+        CreateUnit(vec2i(60, -100), "Dragon.anim");
+        m_SpawningTimer = 3.f;
+    }
+
    // ZMIANA KURSORA
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
@@ -336,8 +341,8 @@ void InGameState::DisplayTexture(const string& FileName, vec2i Position, Display
     Engine::GetSingleton()->DisplayTexture(("../Data/" + FileName).c_str(), Position, Param);
 }
 
-void InGameState::Shoot(vec2 Position, vec2 TargetPosition)
+void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 {
-    shared_ptr<Shot> pShot = make_shared<Shot>(Position, TargetPosition);
+    shared_ptr<Shot> pShot = make_shared<Shot>(StartingPosition, Target);
     m_AllGameObjects.push_back(pShot);
 }

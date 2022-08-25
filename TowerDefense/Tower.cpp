@@ -44,7 +44,7 @@ void Tower::Update(float DeltaTime)
         if (checkIfInCircle <= pow(m_DetectionRadius, 2))
         {
             m_DetectionArea.setOutlineColor(sf::Color::Red);
-            Shoot(units[i]->GetPosition());
+            Shoot(GetPosition(), units[i]);
         }
         else 
         {
@@ -65,11 +65,11 @@ void Tower::Render(sf::RenderWindow& Renderer)
     // Renderer.draw(m_DetectionArea);
 }
 
-void Tower::Shoot(vec2 TargetPosition)
+void Tower::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 {
     if (m_ShootingTimer <= 0)
     {
-        m_Game.Shoot(GetPosition(), TargetPosition);
+        m_Game.Shoot(StartingPosition, Target);
         m_ShootingTimer = 1.f;
     }
 }

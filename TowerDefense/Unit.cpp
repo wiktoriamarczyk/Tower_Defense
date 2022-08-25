@@ -15,6 +15,17 @@ void Unit::Update(float DeltaTime)
         return;
     }
 
+    m_HurtTimer -= DeltaTime;
+
+    if (GetLifeCount() <= 0)
+        m_IsAlive = false;
+
+    if (GetDamageStatus())
+    {
+        m_IsHurt = false;
+        m_HurtTimer = 1.f;
+    }
+
     if (m_Position != m_TargetPositions[0])
     {
         // wektor kierunkowy v = [x2 - x1, y2 - y1]
@@ -36,12 +47,6 @@ void Unit::Update(float DeltaTime)
 
 void Unit::Render(sf::RenderWindow& Renderer)
 {
-    /*vec2 Center_position = m_Position - m_Size / 2;
-    sf::RectangleShape Rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-    Rect.setOutlineThickness(4.f);
-    Rect.setFillColor(sf::Color::Blue);
-    Rect.setPosition(vec2(Center_position) + vec2(CELL_SIZE/2, CELL_SIZE/2));*/
-
     // debug 
     // vector<sf::Vertex> vertices;
     // for (auto el : m_TargetPositions)
@@ -52,9 +57,33 @@ void Unit::Render(sf::RenderWindow& Renderer)
     // przekazujemy .data(), gdy� funkcja draw() przyjmuje wska�nik na pierwszy element i liczb� element�w w CPojemniku
     // Renderer.draw(vertices.data(), vertices.size(), sf::LineStrip);
 
-    /*Renderer.draw(Rect);*/
+    // TEKSTURA
+    if (m_HurtTimer >= 0)
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + m_Size / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+    else 
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + m_Size / 2, DisplayParameters{.Pivot{0.5, 0.5}});
 
-    Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + m_Size / 2, DisplayParameters{.Pivot{0.5, 0.5}});
+
+    // POZIOM HP
+    sf::RectangleShape lifeBar(vec2(50.f, 15.f));
+    lifeBar.setFillColor(sf::Color::Transparent);
+    lifeBar.setOutlineColor(sf::Color::White);
+    lifeBar.setOutlineThickness(1.f);
+    lifeBar.setPosition(vec2(GetPosition().x, GetPosition().y - 30.f));
+
+    sf::RectangleShape lifeBarFilling;
+
+    if (GetLifeCount() > 1)
+        lifeBarFilling.setSize(vec2(45.f, 10.f));
+    else lifeBarFilling.setSize(vec2(20.f, 10.f));
+
+    lifeBarFilling.setFillColor(sf::Color::Red);
+    lifeBarFilling.setOutlineColor(sf::Color::Red);
+    lifeBarFilling.setOutlineThickness(1.f);
+    lifeBarFilling.setPosition(vec2(GetPosition().x + 3.f, GetPosition().y - 28.f));
+
+    Renderer.draw(lifeBar);
+    Renderer.draw(lifeBarFilling);
 }
 
 bool Unit::OnMouseButtonDown(int Button)
@@ -65,4 +94,24 @@ bool Unit::OnMouseButtonDown(int Button)
 void Unit::MoveTo(vector<vec2> TargetPositions)
 {
     m_TargetPositions = TargetPositions;
+}
+
+ bool Unit::GetDamageStatus()const
+ {
+    return m_IsHurt;
+ }
+ 
+int Unit::GetLifeCount()const
+{
+    return m_LifeCount;
+}
+
+void Unit::SetDamageStatus(bool Info)
+{
+    m_IsHurt = Info;
+}
+
+void Unit::SetLifeCount(int Value)
+{
+    m_LifeCount = Value;
 }

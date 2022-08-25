@@ -15,6 +15,11 @@ eGraphicLayer GameObject::GetGraphicLayer() const
     return m_Layer;
 }
 
+vec2i GameObject::GetSize()const
+{
+    return m_Size;
+}
+
 void GameObject::SetPosition(vec2 Position)
 {
     m_Position = Position;

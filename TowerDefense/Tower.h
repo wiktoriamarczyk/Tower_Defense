@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "InGameState.h"
+#include "Unit.h"
 
 class Tower : public GameObject
 {
@@ -9,7 +10,7 @@ public:
     static void DrawTowerOverlay(string TextureName, sf::RenderWindow& Renderer, bool IsBlocked);
     void Update(float DeltaTime);
     void Render(sf::RenderWindow& Renderer);
-    void Shoot(vec2 TargetPosition);
+    void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
 private:
     InGameState&    m_Game;
     vec2i           m_TextureSize;

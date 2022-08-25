@@ -15,6 +15,8 @@ public:
     float GetLength()const;
     vec2 GetNormalized()const;
 
+    float GetAngleFromVec()const;
+
     operator sf::Vector2f()const;
 
     vec2 operator+(const vec2& other)const;

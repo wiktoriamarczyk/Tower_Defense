@@ -7,81 +7,21 @@
 
 InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
 {
+    m_Font = MyFont;
+
     if (!ReadGrid())
     {
         std::cout << "File could not be loaded!" << std::endl;
         return;
     }
 
-    m_Font = MyFont;
-
     m_CursorHand.loadFromSystem(sf::Cursor::Hand);
     m_CursorArrow.loadFromSystem(sf::Cursor::Arrow);
 
-    auto func = [this]()
-    {
-        if (!m_HoldTower)
-        {
-            m_HoldTower = true;
-            m_TowerName = "Tower1";
-            m_TowerCost = 100;
-        }
-        else if (m_HoldTower)
-        {
-            m_HoldTower = false;
-        }
-    };
+    if (!m_PathFinder.InitFinder(m_Grid))
+        std::cout << "Path could not be found!" << std::endl;
 
-    auto func2 = [this]()
-    {
-        if (!m_HoldTower)
-        {
-            m_HoldTower = true;
-            m_TowerName = "Tower2";
-            m_TowerCost = 250;
-        }
-        else if (m_HoldTower)
-        {
-            m_HoldTower = false;
-        }
-    };
-
-    auto func3 = [this]()
-    {
-        if (!m_HoldTower)
-        {
-            m_HoldTower = true;
-            m_TowerName = "Tower3";
-            m_TowerCost = 50;
-        }
-        else if (m_HoldTower)
-        {
-            m_HoldTower = false;
-        }
-    };
-
-        if (!m_PathFinder.InitFinder(m_Grid))
-        std::cout << "dupa" << std::endl;
-
-    vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower1.png");
-    shared_ptr<Button> tower1Button = make_shared<Button>("Tower1.png", vec2i(1660, 290), buttonSize, func);
-    m_AllGameObjects.push_back(tower1Button);
-
-    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower2.png");
-    shared_ptr<Button> tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), buttonSize, func2);
-    m_AllGameObjects.push_back(tower2Button);
-
-    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower3.png");
-    shared_ptr<Button> tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 420), buttonSize, func3);
-    m_AllGameObjects.push_back(tower3Button);
-
-    shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
-    backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
-    m_AllGameObjects.push_back(backgroundImage);
-
-    shared_ptr<Image> overlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
-    overlayImage->SetGraphicLayer(eGraphicLayer::FOREGROUND);
-    m_AllGameObjects.push_back(overlayImage);
+    CreateGameObjects();
 }
 
 
@@ -145,7 +85,7 @@ void InGameState::OnMouseButtonDown(int Button)
     {
         if (gridState == eGridValue::FREE)
         {
-            BuildTower(cell, m_TowerName);
+            BuildTower(cell, m_ObjectName, m_TowerCost);
             m_Money -= m_TowerCost;
             m_HoldTower = false;
         }
@@ -161,14 +101,29 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
         Engine::GetSingleton()->ExitGame();
     }
 
-    if ((_gridDebug == false) && (KeyCode == sf::Keyboard::Key::Numpad0) )
+    // wyswietlanie siatki gry
+    if (KeyCode == sf::Keyboard::Key::Numpad0)
     {
-        _gridDebug = true;
+        _gridDebug = !_gridDebug;
     }
 
-    else if ((_gridDebug == true) && (KeyCode == sf::Keyboard::Key::Numpad0))
+    // przyspieszanie/zwalnianie czasu gry
+    if (KeyCode == sf::Keyboard::Key::Add)
     {
-        _gridDebug = false;
+        float currentFramesPerSec = Engine::GetSingleton()->GetFramesPerSecondValue();
+
+        if (currentFramesPerSec > 10)
+            Engine::GetSingleton()->SetFramesPerSecond(currentFramesPerSec - 10.f);
+        
+        std::cout << Engine::GetSingleton()->GetFramesPerSecondValue() << std::endl;
+    }
+
+    if (KeyCode == sf::Keyboard::Key::Subtract)
+    {
+        float currentFramesPerSec = Engine::GetSingleton()->GetFramesPerSecondValue();
+        Engine::GetSingleton()->SetFramesPerSecond(currentFramesPerSec + 10.f);
+
+        std::cout << Engine::GetSingleton()->GetFramesPerSecondValue() << std::endl;
     }
 
 }
@@ -183,7 +138,7 @@ void InGameState::Update(float DeltaTime)
         m_SpawningTimer = 3.f;
     }
 
-   // ZMIANA KURSORA
+   // zmiana kursora
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
         none_of(m_AllGameObjects.begin(), m_AllGameObjects.end(), [this](shared_ptr<GameObject> o)
@@ -201,7 +156,7 @@ void InGameState::Update(float DeltaTime)
         });
     }
 
-    // UPDATE OBIEKTOW
+    // update obiektow gry
     for (int i = 0; i < m_AllGameObjects.size();)
     {
         m_AllGameObjects[i]->Update(DeltaTime);
@@ -224,7 +179,7 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     // poprawne wyswietlanie obiektow roznych warstw na ekranie
     std::stable_sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> A, shared_ptr<GameObject> B){return A->GetGraphicLayer() < B->GetGraphicLayer();});
 
-    // RENDER OBIEKTOW
+    // render obiektow gry
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
         m_AllGameObjects[i]->Render(Renderer);
@@ -244,7 +199,7 @@ void InGameState::Render(sf::RenderWindow& Renderer)
        gridColor = sf::Color::Red;
 
     if (m_HoldTower)
-        Tower::DrawTowerOverlay(m_TowerName, Renderer, gridState != eGridValue::FREE);
+        Tower::DrawTowerOverlay(m_ObjectName, Renderer, gridState != eGridValue::FREE);
 
     // ----------------------debug--------------------------------
     if (_gridDebug)
@@ -276,11 +231,11 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     }
     // -----------------------------------------------------------
 
-    // POZYCJA MYSZKI W PRAWYM DOLNYM ROGU
+    // wyswietlanie pozycji myszki na ekranie
     m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(mouseX).c_str());
     m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(mouseY).c_str());
 
-    // RYSOWANIE CZCIONKI
+    // rysowanie czcionki
     m_Font->DrawText(Renderer, 1, 60, 1058, ToString(m_Money).c_str());
 
     if (m_Money < (int)eTowerPrice::Tower1)
@@ -303,18 +258,17 @@ void InGameState::OnEnter()
 {
     m_GameOver = false;
     GameState::OnEnter();
-
 }
 
-void InGameState::BuildTower(vec2 Position, const string& TowerName)
+void InGameState::BuildTower(vec2 Cell, const string& TowerName, int Cost)
 {
-    auto pTower = make_shared<Tower>(*this, Engine::GetSingleton()->GetMousePos(), TowerName);
+    auto pTower = make_shared<Tower>(*this, Engine::GetSingleton()->GetMousePos(), TowerName, Cost);
     m_AllGameObjects.push_back(pTower);
 
     // sortowanie wiezy po pozycji y, aby wieze znajdujace sie "blizej" gracza, byly widoczne na 1 planie
     sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](shared_ptr<GameObject> p1, shared_ptr<GameObject> p2) { return p1->GetPosition().y < p2->GetPosition().y;  });
 
-    m_Grid[int(Position.y) % GRID_ROWS][int(Position.x) % GRID_COLS] = eGridValue::BLOCKED;
+    m_Grid[int(Cell.y) % GRID_ROWS][int(Cell.x) % GRID_COLS] = eGridValue::BLOCKED;
 }
 
 void InGameState::CreateUnit(vec2 Position, const string& UnitName)
@@ -346,3 +300,92 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     shared_ptr<Shot> pShot = make_shared<Shot>(StartingPosition, Target);
     m_AllGameObjects.push_back(pShot);
 }
+
+ void InGameState::CreateGameObjects()
+ {
+    auto func = [this]()
+    {
+        if (!m_HoldTower)
+        {
+            m_HoldTower = true;
+            m_ObjectName = "Tower1";
+            m_TowerCost = 100;
+        }
+        else if (m_HoldTower)
+        {
+            m_HoldTower = false;
+        }
+    };
+
+    auto func2 = [this]()
+    {
+        if (!m_HoldTower)
+        {
+            m_HoldTower = true;
+            m_ObjectName = "Tower2";
+            m_TowerCost = 250;
+        }
+        else if (m_HoldTower)
+        {
+            m_HoldTower = false;
+        }
+    };
+
+    auto func3 = [this]()
+    {
+        if (!m_HoldTower)
+        {
+            m_HoldTower = true;
+            m_ObjectName = "Tower3";
+            m_TowerCost = 50;
+        }
+        else if (m_HoldTower)
+        {
+            m_HoldTower = false;
+        }
+    };
+
+    auto func4 = [this]()
+    {
+        m_ObjectName = "TrashCan";
+
+        vector<shared_ptr<Tower>> towers = GetObjects<Tower>();
+
+        for (size_t i = 0; i < towers.size(); ++i)
+        {
+            if(towers[i]->IsPicked())
+            {
+                m_Money += towers[i]->GetPrize() / 2;
+                int cellX = (towers[i]->GetPosition().x / CELL_SIZE);
+                int cellY = (towers[i]->GetPosition().y / CELL_SIZE);
+                m_Grid[cellY % GRID_ROWS][cellX % GRID_COLS] = eGridValue::FREE;
+                towers[i]->SetStatus(false);
+            }
+        }
+    };
+
+
+    vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower1.png");
+    shared_ptr<Button> tower1Button = make_shared<Button>("Tower1.png", vec2i(1660, 290), buttonSize, func);
+    m_AllGameObjects.push_back(tower1Button);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower2.png");
+    shared_ptr<Button> tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), buttonSize, func2);
+    m_AllGameObjects.push_back(tower2Button);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/Tower3.png");
+    shared_ptr<Button> tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 410), buttonSize, func3);
+    m_AllGameObjects.push_back(tower3Button);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/TrashCan.png");
+    shared_ptr<Button> TrashCanButton = make_shared<Button>("TrashCan.png", vec2i(1680, 825), buttonSize, func4);
+    m_AllGameObjects.push_back(TrashCanButton);
+
+    shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
+    backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
+    m_AllGameObjects.push_back(backgroundImage);
+
+    shared_ptr<Image> overlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
+    overlayImage->SetGraphicLayer(eGraphicLayer::FOREGROUND);
+    m_AllGameObjects.push_back(overlayImage);
+ }

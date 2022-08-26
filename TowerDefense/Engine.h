@@ -15,13 +15,19 @@ public:
     void ChangeState(eStateID StateID);
     void ExitGame();
     void PlaySound(const string& FileName,float Volume = 1.0f);
-    shared_ptr<Texture> GetTexture(const string& FileName)const;
     void DisplayTexture(const string& FileName, vec2 Position, DisplayParameters Param = {});
     void DestroyTextures();
+
+    shared_ptr<Texture> GetTexture(const string& FileName)const;
     vec2i GetTextureSize(const string& FileName)const;
     vec2i GetMousePos()const;
     sf::Window& GetWindow() { return m_Renderer; }
     const sf::Window& GetWindow()const { return m_Renderer; }
+
+    // debug
+    float GetFramesPerSecondValue()const;
+    void SetFramesPerSecond(float Value);
+
 private:
     using TexturesVec = vector<shared_ptr<Texture>>;
 
@@ -32,4 +38,6 @@ private:
     vector<unique_ptr<GameState>> m_AllStates;
     vector<shared_ptr<Sound>>     m_LoadedSounds;
     mutable TexturesVec           m_LoadedTextures;
+
+    float                         m_FramesPerSec = 60.0f;
 };

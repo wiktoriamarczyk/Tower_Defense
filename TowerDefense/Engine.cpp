@@ -26,15 +26,9 @@ bool Engine::Initialize()
     // stworzenie okna
     m_Renderer.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Tower Defense");
 
-    /*if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-    {
-        return false;
-    }*/
-
     // stworzenie czcionki
     shared_ptr<Font> myFont = make_shared<Font>();
     myFont->LoadFont("../Data/FontData.txt");
-
 
     // zaladowanie animacji jednostki
     vector<shared_ptr<Texture>> dragonAnimationFrames;
@@ -49,7 +43,6 @@ bool Engine::Initialize()
     dragonAnimationTexture->Load(dragonAnimationFrames, "../Data/Dragon.anim");
     m_LoadedTextures.push_back(dragonAnimationTexture);
 
-    
     vector<shared_ptr<Texture>> towerAnimationFrames;
     towerAnimationFrames.push_back(GetTexture("AVSschm0B0.png"));
     towerAnimationFrames.push_back(GetTexture("AVSschm1B0.png"));
@@ -60,11 +53,9 @@ bool Engine::Initialize()
     towerAnimationFrames.push_back(GetTexture("AVSschm6B0.png"));
     towerAnimationFrames.push_back(GetTexture("AVSschm7B0.png"));
 
-    
     shared_ptr<AnimatedTexture> towerAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
     towerAnimationTexture->Load(towerAnimationFrames, "../Data/Tower3.png");
     m_LoadedTextures.push_back(towerAnimationTexture);
-
 
     // dodanie wszystkich stanow gry do wektora
     m_AllStates.push_back(make_unique<InGameState>(myFont));
@@ -96,15 +87,15 @@ void Engine::Loop()
                 m_pCurrentState->OnMouseButtonDown(event.mouseButton.button);
             }
         }
-
+        
         sf::sleep(sf::milliseconds(1000 / 60));
 
         for (int i = 0; i < m_LoadedTextures.size(); ++i)
         {
-            m_LoadedTextures[i]->Update(1.0f / 60.0f);
+            m_LoadedTextures[i]->Update(1.0f / m_FramesPerSec);
         }
 
-        m_pCurrentState->Update(1.0f / 60.0f);
+        m_pCurrentState->Update(1.0f / m_FramesPerSec);
         m_pCurrentState->Render(m_Renderer);
 
         // domyslnie nastepny stan jest UNKNOWN, gdy nie chcemy przechodzic do nowego stanu, zatem jesli jest tam cos innego, tzn. ze bylo zazadanie zmiany stanu
@@ -202,4 +193,14 @@ vec2i Engine::GetMousePos() const
     auto realWindowSize = GetWindow().getSize();
     vec2 SCREEN_RATIO = vec2(SCREEN_WIDTH / (float)realWindowSize.x, SCREEN_HEIGHT / (float)realWindowSize.y);
     return vec2i(int(sf::Mouse::getPosition(GetWindow()).x * SCREEN_RATIO.x), int(sf::Mouse::getPosition(GetWindow()).y *  SCREEN_RATIO.y));
+}
+
+float Engine::GetFramesPerSecondValue()const
+{
+    return m_FramesPerSec;
+}
+
+void Engine::SetFramesPerSecond(float Value)
+{
+    m_FramesPerSec = Value;
 }

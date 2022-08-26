@@ -35,11 +35,11 @@ bool Button::IsCursorOnButton()const
 
     vec2 textureCenter = m_Position + m_Size / 2;
     vec2 textureTopLeft = textureCenter - m_Size / 2;
-    vec2 textureBottomLeft = textureCenter + m_Size / 2;
+    vec2 textureBottomRight = textureCenter + m_Size / 2;
 
-    if (mousePos.x >= textureTopLeft.x &&  mousePos.x <= textureBottomLeft.x)
+    if (mousePos.x >= textureTopLeft.x &&  mousePos.x <= textureBottomRight.x)
     {
-        if (mousePos.y >= textureTopLeft.y && mousePos.y <= textureBottomLeft.y)
+        if (mousePos.y >= textureTopLeft.y && mousePos.y <= textureBottomRight.y)
         {
             return true;
         }

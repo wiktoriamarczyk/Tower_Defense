@@ -15,24 +15,25 @@ public:
     void Render(sf::RenderWindow& Renderer)override;
     void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
-    void BuildTower(vec2 Position, const string& TowerName);
+    void BuildTower(vec2 Cell, const string& TowerName, int Cost);
     void CreateUnit(vec2 Position, const string& UnitName);
     void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
     bool ReadGrid();
+    void CreateGameObjects();
 
     template<typename T>
     vector<shared_ptr<T>> GetObjects();
 
 private:
-    sf::Cursor                      m_CursorHand;
-    sf::Cursor                      m_CursorArrow;
+    sf::Cursor                     m_CursorHand;
+    sf::Cursor                     m_CursorArrow;
 
     vector<shared_ptr<GameObject>> m_AllGameObjects;
     eGridValue                     m_Grid[GRID_ROWS][GRID_COLS] = {};
     //eTowerID                     m_PickedTowerID = eTowerID::NONE;
     bool                           m_HoldTower = false;
     bool                           m_MoveTower = false;
-    string                         m_TowerName;
+    string                         m_ObjectName;
     int                            m_TowerCost = 0;
     int                            m_Money = 1000;
     AStar                          m_PathFinder;

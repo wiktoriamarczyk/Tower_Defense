@@ -2,11 +2,12 @@
 #include "Engine.h"
 #include "Unit.h"
 
-Tower::Tower(InGameState& Game, vec2 Position, const string& TowerName) : m_Game(Game)
+Tower::Tower(InGameState& Game, vec2 Position, const string& TowerName, int Cost) : m_Game(Game)
 {
     m_DetectionArea.setRadius(m_DetectionRadius);
 
     m_Name = TowerName;
+    m_Cost = Cost;
     m_Size = vec2i(CELL_SIZE,CELL_SIZE);
     m_Position.x = (int(Position.x)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2;
     m_Position.y = (int(Position.y)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2;
@@ -56,7 +57,10 @@ void Tower::Update(float DeltaTime)
 
 void Tower::Render(sf::RenderWindow& Renderer)
 {
-    Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), m_Position, DisplayParameters{.Pivot{0.5, 0.5}});
+    if (IsPicked())
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), m_Position, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+    else
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), m_Position, DisplayParameters{.Pivot{0.5, 0.5}});
 
     // -------debug-----------
     // m_DetectionArea.setFillColor(sf::Color::Transparent);
@@ -73,3 +77,42 @@ void Tower::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
         m_ShootingTimer = 1.f;
     }
 }
+
+bool Tower::OnMouseButtonDown(int Button)
+{
+    if (IsCursorOnButton())
+    {
+        m_Picked = !m_Picked;
+        return true;
+    }
+
+    return false;
+}
+
+bool Tower::IsCursorOnButton()const
+{
+    vec2i mousePos = Engine::GetSingleton()->GetMousePos();
+
+    vec2 objectTopLeft = m_Position - m_Size / 2;
+    vec2 objectBottomRight = m_Position + m_Size / 2;
+
+    if (mousePos.x >= objectTopLeft.x &&  mousePos.x <= objectBottomRight.x)
+    {
+        if (mousePos.y >= objectTopLeft.y && mousePos.y <= objectBottomRight.y)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Tower::IsPicked()const
+{
+    return m_Picked;
+}
+
+ int Tower::GetPrize()const
+ {
+    return m_Cost;
+ }

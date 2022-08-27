@@ -26,7 +26,7 @@ void Shot::Update(float DeltaTime)
         && GetPosition().y >= unitTopLeft.y && GetPosition().y <= unitBottomRight.y)
         {
             m_Target->SetDamageStatus(true);
-            m_Target->SetLifeCount(m_Target->GetLifeCount() - 1);
+            m_Target->SetHP(m_Target->GetHP() - 1);
             m_IsAlive = false;
         }
 

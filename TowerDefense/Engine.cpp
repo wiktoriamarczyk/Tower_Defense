@@ -30,6 +30,10 @@ bool Engine::Initialize()
     shared_ptr<Font> myFont = make_shared<Font>();
     myFont->LoadFont("../Data/FontData.txt");
 
+    // zaladowanie definicji
+    LoadDefinition("Dragon.xml");
+    LoadDefinition("Basilisk.xml");
+
     // zaladowanie animacji jednostki
     vector<shared_ptr<Texture>> dragonAnimationFrames;
     dragonAnimationFrames.push_back(GetTexture("WALKCadrgn13.png"));
@@ -56,6 +60,22 @@ bool Engine::Initialize()
     shared_ptr<AnimatedTexture> towerAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
     towerAnimationTexture->Load(towerAnimationFrames, "../Data/Tower3.png");
     m_LoadedTextures.push_back(towerAnimationTexture);
+
+    vector<shared_ptr<Texture>> basiliskAnimationFrames;
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil51.png"));
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil52.png"));
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil53.png"));
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil54.png"));
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil55.png"));
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil56.png"));
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil57.png"));
+    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil58.png"));
+
+    shared_ptr<AnimatedTexture> basiliskAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
+    basiliskAnimationTexture->Load(basiliskAnimationFrames, "../Data/Basilisk.anim");
+    m_LoadedTextures.push_back(basiliskAnimationTexture);
+
+
 
     // dodanie wszystkich stanow gry do wektora
     m_AllStates.push_back(make_unique<InGameState>(myFont));
@@ -179,6 +199,17 @@ void Engine::DestroyTextures()
     }
 }
 
+const Definition* Engine::FindDefinition(const string& FileName) const
+{
+    for (size_t i = 0; i < m_Definitions.size(); ++i)
+    {
+        if (m_Definitions[i]->GetName() == FileName)
+            return m_Definitions[i].get();
+    }
+
+    return nullptr;
+}
+
 vec2i Engine::GetTextureSize(const string& FileName)const
 {
     if (auto pTexture = GetTexture(FileName))
@@ -193,6 +224,18 @@ vec2i Engine::GetMousePos() const
     auto realWindowSize = GetWindow().getSize();
     vec2 SCREEN_RATIO = vec2(SCREEN_WIDTH / (float)realWindowSize.x, SCREEN_HEIGHT / (float)realWindowSize.y);
     return vec2i(int(sf::Mouse::getPosition(GetWindow()).x * SCREEN_RATIO.x), int(sf::Mouse::getPosition(GetWindow()).y *  SCREEN_RATIO.y));
+}
+
+bool Engine::LoadDefinition(const string& FileName)
+{
+    unique_ptr<Definition> pDef = make_unique<Definition>();
+
+    if (!pDef->LoadFromFile(FileName))
+        return false;
+
+    m_Definitions.push_back(move(pDef));
+
+    return true;
 }
 
 float Engine::GetFramesPerSecondValue()const

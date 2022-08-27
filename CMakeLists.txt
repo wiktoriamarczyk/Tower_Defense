@@ -44,8 +44,13 @@ SET(APP_SRC_FILES_LIST
     TowerDefense/Image.h
     TowerDefense/AStar.cpp
     TowerDefense/AStar.h
-	TowerDefense/Shot.cpp
-	TowerDefense/Shot.h
+    TowerDefense/Shot.cpp
+    TowerDefense/Shot.h
+	TowerDefense/Definition.cpp
+	TowerDefense/Definition.h
+    TowerDefense/lib/pugiconfig.hpp
+    TowerDefense/lib/pugixml.cpp
+    TowerDefense/lib/pugixml.hpp
 )
 
 #*****************************************************

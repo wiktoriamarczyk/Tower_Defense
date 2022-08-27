@@ -1,29 +1,28 @@
 #include "Unit.h"
 #include "Engine.h"
 
-Unit::Unit(vec2 Position, const string& UnitName)
+Unit::Unit(vec2 Position)
 {
     m_Position = Position;
-    m_Name = UnitName;
     m_Size = vec2i(CELL_SIZE, CELL_SIZE);
 }
 
 void Unit::Update(float DeltaTime)
 {
-    if (m_TargetPositions.empty())
-    {
-        return;
-    }
-
     m_HurtTimer -= DeltaTime;
 
-    if (GetLifeCount() <= 0)
+    if (GetHP() <= 0)
         m_IsAlive = false;
 
     if (GetDamageStatus())
     {
         m_IsHurt = false;
         m_HurtTimer = 1.f;
+    }
+
+    if (m_TargetPositions.empty())
+    {
+        return;
     }
 
     if (m_Position != m_TargetPositions[0])
@@ -73,9 +72,8 @@ void Unit::Render(sf::RenderWindow& Renderer)
 
     sf::RectangleShape lifeBarFilling;
 
-    if (GetLifeCount() > 1)
-        lifeBarFilling.setSize(vec2(45.f, 10.f));
-    else lifeBarFilling.setSize(vec2(20.f, 10.f));
+    float lifePercent = m_HP / m_MaxHP;
+    lifeBarFilling.setSize(vec2(45.f * lifePercent, 10.f));
 
     lifeBarFilling.setFillColor(sf::Color::Red);
     lifeBarFilling.setOutlineColor(sf::Color::Red);
@@ -96,14 +94,27 @@ void Unit::MoveTo(vector<vec2> TargetPositions)
     m_TargetPositions = TargetPositions;
 }
 
+void Unit::Initialize(const Definition& Def)
+{
+    m_Name = Def.GetStringValue("Name", "MissingTexture");
+    m_Speed = Def.GetFloatValue("Speed", 200.f);
+    m_MaxHP = Def.GetFloatValue("HP", 2);
+    m_HP = m_MaxHP;
+}
+
  bool Unit::GetDamageStatus()const
  {
     return m_IsHurt;
  }
  
-int Unit::GetLifeCount()const
+int Unit::GetHP()const
 {
-    return m_LifeCount;
+    return m_HP;
+}
+
+int Unit::GetMaxHP() const
+{
+    return m_MaxHP;
 }
 
 void Unit::SetDamageStatus(bool Info)
@@ -111,7 +122,7 @@ void Unit::SetDamageStatus(bool Info)
     m_IsHurt = Info;
 }
 
-void Unit::SetLifeCount(int Value)
+void Unit::SetHP(int Value)
 {
-    m_LifeCount = Value;
+    m_HP = Value;
 }

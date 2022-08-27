@@ -134,7 +134,10 @@ void InGameState::Update(float DeltaTime)
 
     if (m_SpawningTimer <= 0)
     {
-        CreateUnit(vec2i(60, -100), "Dragon.anim");
+        vector<const char*> Units = { "Dragon.xml" , "Basilisk.xml" };
+        auto SelectedUnit = rand() % (Units.size());
+
+        CreateUnit(vec2i(60, -100), Units[SelectedUnit] );
         m_SpawningTimer = 3.f;
     }
 
@@ -273,9 +276,15 @@ void InGameState::BuildTower(vec2 Cell, const string& TowerName, int Cost)
 
 void InGameState::CreateUnit(vec2 Position, const string& UnitName)
 {
-    auto pUnit = make_shared<Unit>(Position, UnitName);
-    m_AllGameObjects.push_back(pUnit);
+    const Definition* pDef = Engine::GetSingleton()->FindDefinition(UnitName);
 
+    if (!pDef)
+        return;
+     
+    auto pUnit = make_shared<Unit>(Position);
+    pUnit->Initialize(*pDef);
+    m_AllGameObjects.push_back(pUnit);
+    
     //pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
     vector<vec2> unitPath;
 
@@ -347,7 +356,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 
     auto func4 = [this]()
     {
-        m_ObjectName = "TrashCan";
+        m_ObjectName = "SellButton";
 
         vector<shared_ptr<Tower>> towers = GetObjects<Tower>();
 
@@ -377,8 +386,8 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     shared_ptr<Button> tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 410), buttonSize, func3);
     m_AllGameObjects.push_back(tower3Button);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/TrashCan.png");
-    shared_ptr<Button> TrashCanButton = make_shared<Button>("TrashCan.png", vec2i(1680, 825), buttonSize, func4);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/SellButton.png");
+    shared_ptr<Button> TrashCanButton = make_shared<Button>("SellButton.png", vec2i(1680, 825), buttonSize, func4);
     m_AllGameObjects.push_back(TrashCanButton);
 
     shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 

@@ -1,25 +1,29 @@
 #pragma once
 #include "GameObject.h"
+#include "Definition.h"
 
 class Unit : public GameObject
 {
 public:
-    Unit(vec2 Position, const string& UnitName);
+    Unit(vec2 Position);
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
     void MoveTo(vector<vec2> TargetPosition);
+    void Initialize(const Definition& Def);
 
     bool GetDamageStatus()const;
-    int GetLifeCount()const;
+    int GetHP()const;
+    int GetMaxHP()const;
     
     void SetDamageStatus(bool Status);
-    void SetLifeCount(int Value);
+    void SetHP(int Value);
 
 private:
     vector<vec2> m_TargetPositions;
-    float        m_Speed = 200.f;
-    int          m_LifeCount = 2;
+    float        m_Speed = 10.f;
+    float        m_HP = 100.f;
+    float        m_MaxHP = 100.f;
     bool         m_IsHurt = false;
     float        m_HurtTimer = 0;
 };

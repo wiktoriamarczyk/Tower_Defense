@@ -164,7 +164,7 @@ void InGameState::Update(float DeltaTime)
     {
         m_AllGameObjects[i]->Update(DeltaTime);
     
-        if (m_AllGameObjects[i]->GetStatus() == false)
+        if (m_AllGameObjects[i]->GetLifeStatus() == false)
         {
             m_AllGameObjects.erase(m_AllGameObjects.begin() + i);
         }
@@ -288,7 +288,7 @@ void InGameState::CreateUnit(vec2 Position, const string& UnitName)
     //pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
     vector<vec2> unitPath;
 
-    if(!m_PathFinder.FindPath(vec2i(50, 50), vec2i(1480, 580), unitPath))
+    if(!m_PathFinder.FindPath(vec2i(50, 50), vec2i(1480, 910), unitPath))
         std::cout << "Path could not be founded!" << std::endl;
 
     pUnit->MoveTo(unitPath);
@@ -368,7 +368,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
                 int cellX = (towers[i]->GetPosition().x / CELL_SIZE);
                 int cellY = (towers[i]->GetPosition().y / CELL_SIZE);
                 m_Grid[cellY % GRID_ROWS][cellX % GRID_COLS] = eGridValue::FREE;
-                towers[i]->SetStatus(false);
+                towers[i]->SetLifeStatus(false);
             }
         }
     };
@@ -387,7 +387,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     m_AllGameObjects.push_back(tower3Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("../Data/SellButton.png");
-    shared_ptr<Button> TrashCanButton = make_shared<Button>("SellButton.png", vec2i(1680, 825), buttonSize, func4);
+    shared_ptr<Button> TrashCanButton = make_shared<Button>("SellButton.png", vec2i(1660, 925), buttonSize, func4);
     m_AllGameObjects.push_back(TrashCanButton);
 
     shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 

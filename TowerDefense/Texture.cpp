@@ -17,14 +17,14 @@ bool Texture::Load(const string& FileName)
         return false;
     }
 
-    m_Size = m_Texture.getSize();
+    SetSize(m_Texture.getSize());
 
     return true;
 }
 
 void Texture::Display(vec2 Position, DisplayParameters Param)const
 {
-    vec2 finalSize = vec2(m_Size) * Param.DrawScale;
+    vec2 finalSize = vec2(GetSize()) * Param.DrawScale;
     vec2 finalPos = Position - finalSize * Param.Pivot;
 
     sf::Sprite sprite;
@@ -47,16 +47,6 @@ void Texture::FreeResources()
     Texture::~Texture();
 }
 
-vec2i Texture::GetSize()
-{
-    return m_Size;
-}
-
-string Texture::GetName()
-{
-    return m_FileName;
-}
-
 void AnimatedTexture::Display(vec2 Position, DisplayParameters Param) const
 {
     m_Frames[(int)m_CurrentFrame]->Display(Position, Param);
@@ -74,6 +64,22 @@ void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& Ani
 {
     m_Frames = Frames;
     m_FileName = AnimatedTxtName;
-    if( m_Frames.size() )
-        m_Size = m_Frames[0]->GetSize();
+
+    if(m_Frames.size())
+        SetSize(m_Frames[0]->GetSize());
+}
+
+vec2i Texture::GetSize()const
+{
+    return m_Size;
+}
+
+string Texture::GetName()const
+{
+    return m_FileName;
+}
+
+void Texture::SetSize(vec2i Size)
+{
+    m_Size = Size;
 }

@@ -16,8 +16,8 @@ void Shot::Update(float DeltaTime)
 
     SetPosition(GetPosition() + shiftPerFrame);
 
-    vec2 objectTopLeft = m_Position - m_Size / 2;
-    vec2 objectBottomRight = m_Position + m_Size / 2;
+    vec2 objectTopLeft = GetPosition() - GetSize() / 2;
+    vec2 objectBottomRight = GetPosition() + GetSize() / 2;
 
     vec2 unitTopLeft = m_Target->GetPosition() - m_Target->GetSize() / 2;
     vec2 unitBottomRight =  m_Target->GetPosition() + m_Target->GetSize() / 2;
@@ -31,7 +31,9 @@ void Shot::Update(float DeltaTime)
         }
 
     if (objectTopLeft.x < 0 || objectBottomRight.x >= SCREEN_WIDTH || objectBottomRight.y < 0 || objectTopLeft.y >= SCREEN_HEIGHT)
-        m_IsAlive = false;
+    {
+        SetLifeStatus(false);
+    }
 }
 
 void Shot::Render(sf::RenderWindow& Renderer)
@@ -40,7 +42,7 @@ void Shot::Render(sf::RenderWindow& Renderer)
     //shot.setFillColor(sf::Color::Green);
     //shot.setPosition(GetPosition());
 
-    Engine::GetSingleton()->DisplayTexture("Shot.png", m_Position, DisplayParameters{.DrawScale{0.1f, 0.1f}, .Pivot{0.5, 0.5}, .Rotation{m_NormalizedDir.GetAngleFromVec()}});
+    Engine::GetSingleton()->DisplayTexture("Shot.png", GetPosition(), DisplayParameters{.DrawScale{0.1f, 0.1f}, .Pivot{0.5, 0.5}, .Rotation{m_NormalizedDir.GetAngleFromVec()}});
 
     //Renderer.draw(shot);
 

@@ -5,7 +5,12 @@ vec2 GameObject::GetPosition()const
     return m_Position;
 }
 
-bool GameObject::GetStatus()const
+vec2i GameObject::GetSize()const
+{
+    return m_Size;
+}
+
+bool GameObject::GetLifeStatus()const
 {
     return m_IsAlive;
 }
@@ -15,17 +20,17 @@ eGraphicLayer GameObject::GetGraphicLayer() const
     return m_Layer;
 }
 
-vec2i GameObject::GetSize()const
-{
-    return m_Size;
-}
-
 void GameObject::SetPosition(vec2 Position)
 {
     m_Position = Position;
 }
 
-void GameObject::SetStatus(bool Status)
+void GameObject::SetSize(vec2i Size)
+{
+    m_Size = Size;
+}
+
+void GameObject::SetLifeStatus(bool Status)
 {
     m_IsAlive = Status;
 }

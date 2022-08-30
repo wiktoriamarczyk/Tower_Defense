@@ -3,8 +3,8 @@
 
 Unit::Unit(vec2 Position)
 {
-    m_Position = Position;
-    m_Size = vec2i(CELL_SIZE, CELL_SIZE);
+    SetPosition(Position);
+    SetSize(vec2i(CELL_SIZE, CELL_SIZE));
 }
 
 void Unit::Update(float DeltaTime)
@@ -12,7 +12,9 @@ void Unit::Update(float DeltaTime)
     m_HurtTimer -= DeltaTime;
 
     if (GetHP() <= 0)
-        m_IsAlive = false;
+    {
+        SetLifeStatus(false);
+    }
 
     if (GetDamageStatus())
     {
@@ -20,23 +22,25 @@ void Unit::Update(float DeltaTime)
         m_HurtTimer = 1.f;
     }
 
+    // podazanie wyznaczona w InGameState sciezka
     if (m_TargetPositions.empty())
     {
+        SetLifeStatus(false);
         return;
     }
 
-    if (m_Position != m_TargetPositions[0])
+    if (GetPosition() != m_TargetPositions[0])
     {
         // wektor kierunkowy v = [x2 - x1, y2 - y1]
-        vec2 dir(m_TargetPositions[0] - m_Position);
+        vec2 dir(m_TargetPositions[0] - GetPosition());
         vec2 normalizedDir = dir.GetNormalized();
         vec2 shiftPerFrame = normalizedDir * m_Speed * DeltaTime; 
 
         // jesli odleglosc do naszego punktu docelowego jest mniejsza niz odleglosc jaka przebedziemy w jednej klatce, to od razu wyladuj u celu
         if (shiftPerFrame.GetLength() > dir.GetLength())
-            m_Position = m_TargetPositions[0];
+            SetPosition(m_TargetPositions[0]);
         else
-            m_Position += shiftPerFrame;
+            SetPosition(GetPosition() + shiftPerFrame);
     }
     else
     {
@@ -58,9 +62,9 @@ void Unit::Render(sf::RenderWindow& Renderer)
 
     // TEKSTURA
     if (m_HurtTimer >= 0)
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + m_Size / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else 
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + m_Size / 2, DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
 
 
     // POZIOM HP

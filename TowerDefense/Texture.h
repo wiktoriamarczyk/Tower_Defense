@@ -11,8 +11,11 @@ public:
     virtual void Display(vec2 Position, DisplayParameters Param = {})const;
     virtual void Update(float DeltaTime){};
     void FreeResources();
-    vec2i GetSize();
-    string GetName();
+
+    vec2i GetSize()const;
+    string GetName()const;
+
+    void SetSize(vec2i Size);
 
 protected:
     sf::RenderWindow* m_pRenderer = nullptr;

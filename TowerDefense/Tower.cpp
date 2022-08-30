@@ -8,10 +8,8 @@ Tower::Tower(InGameState& Game, vec2 Position, const string& TowerName, int Cost
 
     m_Name = TowerName;
     m_Cost = Cost;
-    m_Size = vec2i(CELL_SIZE,CELL_SIZE);
-    m_Position.x = (int(Position.x)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2;
-    m_Position.y = (int(Position.y)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2;
-
+    SetSize(vec2i(CELL_SIZE,CELL_SIZE));
+    SetPosition(vec2(((int(Position.x)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2), (int(Position.y)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2));
     m_TextureSize = Engine::GetSingleton()->GetTextureSize(("../Data/" + TowerName + ".png").c_str());
 }
 
@@ -27,8 +25,8 @@ void Tower::DrawTowerOverlay(string TextureName, sf::RenderWindow& Renderer, boo
 
 void Tower::Update(float DeltaTime)
 {
-    vec2 objectTopLeft = m_Position - m_Size / 2;
-    vec2 objectBottomRight = m_Position + m_Size / 2;
+    vec2 objectTopLeft = GetPosition() - GetSize() / 2;
+    vec2 objectBottomRight = GetPosition() + GetSize() / 2;
 
     m_ShootingTimer -= DeltaTime;
 
@@ -58,9 +56,9 @@ void Tower::Update(float DeltaTime)
 void Tower::Render(sf::RenderWindow& Renderer)
 {
     if (IsPicked())
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), m_Position, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), m_Position, DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
 
     // -------debug-----------
     // m_DetectionArea.setFillColor(sf::Color::Transparent);
@@ -93,8 +91,8 @@ bool Tower::IsCursorOnButton()const
 {
     vec2i mousePos = Engine::GetSingleton()->GetMousePos();
 
-    vec2 objectTopLeft = m_Position - m_Size / 2;
-    vec2 objectBottomRight = m_Position + m_Size / 2;
+    vec2 objectTopLeft = GetPosition() - GetSize() / 2;
+    vec2 objectBottomRight = GetPosition() + GetSize() / 2;
 
     if (mousePos.x >= objectTopLeft.x &&  mousePos.x <= objectBottomRight.x)
     {

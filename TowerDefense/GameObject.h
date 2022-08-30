@@ -11,14 +11,15 @@ public:
     virtual bool IsCursorOnButton()const { return false; };
 
     vec2 GetPosition()const;
-    bool GetStatus()const;
-    eGraphicLayer GetGraphicLayer()const;
     vec2i GetSize()const;
+    bool GetLifeStatus()const;
+    eGraphicLayer GetGraphicLayer()const;
 
-    
     void SetPosition(vec2 Position);
-    void SetStatus(bool Status);
+    void SetSize(vec2i Size);
+    void SetLifeStatus(bool Status);
     void SetGraphicLayer(eGraphicLayer Layer);
+
 protected:
     string        m_Name;
     vec2          m_Position;

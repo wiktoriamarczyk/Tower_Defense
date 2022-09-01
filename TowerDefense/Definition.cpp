@@ -15,6 +15,26 @@ string Definition::GetStringValue(const string& ValueName, string DefaultValue) 
     return m_Data.child("Data").child(ValueName.c_str()).text().as_string(DefaultValue.c_str());
 }
 
+vector<string> Definition::GetStringValuesVector(const string& ValueName)const
+{
+    vector<string> vec;
+
+     auto dataNode = m_Data.child("Data");
+     auto frameNode = dataNode.child(ValueName.c_str());
+
+     if (dataNode && frameNode)
+     {
+         vec.push_back(frameNode.text().as_string());
+
+         while (frameNode = frameNode.next_sibling(ValueName.c_str()))
+         {
+             vec.push_back(frameNode.text().as_string());
+         }
+     }
+
+     return vec;
+}
+
 bool Definition::LoadFromFile(const string& FileName)
 {
     if(!m_Data.load_file(("../Data/" + FileName).c_str()))

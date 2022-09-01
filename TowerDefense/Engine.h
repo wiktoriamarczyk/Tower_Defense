@@ -33,6 +33,7 @@ public:
 private:
     void LoadAnimations(); 
     bool LoadDefinition(const string& FileName);
+    bool LoadAnimation(const string& FileName);
 
     using TexturesVec = vector<shared_ptr<Texture>>;
 

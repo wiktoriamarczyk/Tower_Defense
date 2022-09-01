@@ -14,9 +14,9 @@ void Button::Render(sf::RenderWindow& Renderer)
 {
     if (IsCursorOnButton())
     {
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_TextureName).c_str(), vec2i(GetPosition().x - 5, GetPosition().y + 5));
+        Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x - 5, GetPosition().y + 5));
     }
-    else Engine::GetSingleton()->DisplayTexture(("../Data/" + m_TextureName).c_str(), vec2i(GetPosition().x, GetPosition().y));
+    else Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x, GetPosition().y));
 }
 
 bool Button::OnMouseButtonDown(int Button)

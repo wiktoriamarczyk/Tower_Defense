@@ -62,9 +62,9 @@ void Unit::Render(sf::RenderWindow& Renderer)
 
     // TEKSTURA
     if (m_HurtTimer >= 0)
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_Name, GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else 
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name).c_str(), GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_Name, GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
 
 
     // POZIOM HP

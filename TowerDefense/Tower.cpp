@@ -10,7 +10,7 @@ Tower::Tower(InGameState& Game, vec2 Position, const string& TowerName, int Cost
     m_Cost = Cost;
     SetSize(vec2i(CELL_SIZE,CELL_SIZE));
     SetPosition(vec2(((int(Position.x)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2), (int(Position.y)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2));
-    m_TextureSize = Engine::GetSingleton()->GetTextureSize(("../Data/" + TowerName + ".png").c_str());
+    m_TextureSize = Engine::GetSingleton()->GetTextureSize((TowerName + ".png").c_str());
 }
 
 void Tower::DrawTowerOverlay(string TextureName, sf::RenderWindow& Renderer, bool IsBlocked)
@@ -18,9 +18,9 @@ void Tower::DrawTowerOverlay(string TextureName, sf::RenderWindow& Renderer, boo
     auto mousePos = (Engine::GetSingleton()->GetMousePos() / CELL_SIZE) * CELL_SIZE;
     
     if (IsBlocked)
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + TextureName + ".png").c_str(), mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5), .DrawColor = sf::Color::Red});
+        Engine::GetSingleton()->DisplayTexture((TextureName + ".png").c_str(), mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5), .DrawColor = sf::Color::Red});
     else
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + TextureName + ".png").c_str(), mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5)});
+        Engine::GetSingleton()->DisplayTexture((TextureName + ".png").c_str(), mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5)});
 }
 
 void Tower::Update(float DeltaTime)
@@ -56,9 +56,9 @@ void Tower::Update(float DeltaTime)
 void Tower::Render(sf::RenderWindow& Renderer)
 {
     if (IsPicked())
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture((m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else
-        Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture((m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
 
     // -------debug-----------
     // m_DetectionArea.setFillColor(sf::Color::Transparent);

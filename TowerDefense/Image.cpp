@@ -15,5 +15,5 @@ void Image::Update(float DeltaTime)
 
 void Image::Render(sf::RenderWindow& Renderer)
 {
-    Engine::GetSingleton()->DisplayTexture(("../Data/" + m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.Pivot = m_Pivot});
+    Engine::GetSingleton()->DisplayTexture((m_Name + ".png").c_str(), GetPosition(), DisplayParameters{.Pivot = m_Pivot});
 }

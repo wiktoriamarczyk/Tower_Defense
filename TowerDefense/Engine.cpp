@@ -35,7 +35,9 @@ bool Engine::Initialize()
     LoadDefinition("Basilisk.xml");
 
     // zaladowanie animacji obiektow
-    LoadAnimations();
+    LoadAnimation("DragonAnim.xml");
+    LoadAnimation("BasiliskAnim.xml");
+    LoadAnimation("Tower3Anim.xml");
 
     // dodanie wszystkich stanow gry do wektora
     m_AllStates.push_back(make_unique<InGameState>(myFont));
@@ -186,6 +188,16 @@ vec2i Engine::GetMousePos() const
     return vec2i(int(sf::Mouse::getPosition(GetWindow()).x * SCREEN_RATIO.x), int(sf::Mouse::getPosition(GetWindow()).y *  SCREEN_RATIO.y));
 }
 
+float Engine::GetFramesPerSecondValue()const
+{
+    return m_FramesPerSec;
+}
+
+void Engine::SetFramesPerSecond(float Value)
+{
+    m_FramesPerSec = Value;
+}
+
 bool Engine::LoadDefinition(const string& FileName)
 {
     unique_ptr<Definition> pDef = make_unique<Definition>();
@@ -198,31 +210,29 @@ bool Engine::LoadDefinition(const string& FileName)
     return true;
 }
 
-float Engine::GetFramesPerSecondValue()const
+bool Engine::LoadAnimation(const string& FileName)
 {
-    return m_FramesPerSec;
-}
+    if (!LoadDefinition(FileName))
+       return false;
 
-void Engine::SetFramesPerSecond(float Value)
-{
-    m_FramesPerSec = Value;
+    auto pDef = FindDefinition(FileName);
+    vector<shared_ptr<Texture>> unitAnimationFrames;
+    vector<string> textureNames = pDef->GetStringValuesVector("Frame");
+
+    for (size_t i = 0; i < textureNames.size(); ++i)
+    {
+        unitAnimationFrames.push_back(GetTexture(textureNames[i]));
+    }
+
+    shared_ptr<AnimatedTexture> unitAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
+    unitAnimationTexture->Load(unitAnimationFrames, FileName);
+    m_LoadedTextures.push_back(unitAnimationTexture);
+
+   return true;
 }
 
 void Engine::LoadAnimations()
 {
-    // zaladowanie animacji jednostki
-    vector<shared_ptr<Texture>> dragonAnimationFrames;
-    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn13.png"));
-    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
-    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
-    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn16.png"));
-    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn15.png"));
-    dragonAnimationFrames.push_back(GetTexture("WALKCadrgn14.png"));
-
-    shared_ptr<AnimatedTexture> dragonAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
-    dragonAnimationTexture->Load(dragonAnimationFrames, "../Data/Dragon.anim");
-    m_LoadedTextures.push_back(dragonAnimationTexture);
-
     vector<shared_ptr<Texture>> towerAnimationFrames;
     towerAnimationFrames.push_back(GetTexture("AVSschm0B0.png"));
     towerAnimationFrames.push_back(GetTexture("AVSschm1B0.png"));
@@ -234,20 +244,7 @@ void Engine::LoadAnimations()
     towerAnimationFrames.push_back(GetTexture("AVSschm7B0.png"));
 
     shared_ptr<AnimatedTexture> towerAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
-    towerAnimationTexture->Load(towerAnimationFrames, "../Data/Tower3.png");
+    towerAnimationTexture->Load(towerAnimationFrames, "Tower3.png");
     m_LoadedTextures.push_back(towerAnimationTexture);
 
-    vector<shared_ptr<Texture>> basiliskAnimationFrames;
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil51.png"));
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil52.png"));
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil53.png"));
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil54.png"));
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil55.png"));
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil56.png"));
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil57.png"));
-    basiliskAnimationFrames.push_back(GetTexture("WALKcbasil58.png"));
-
-    shared_ptr<AnimatedTexture> basiliskAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
-    basiliskAnimationTexture->Load(basiliskAnimationFrames, "../Data/Basilisk.anim");
-    m_LoadedTextures.push_back(basiliskAnimationTexture);
 }

@@ -51,6 +51,9 @@ SET(APP_SRC_FILES_LIST
     TowerDefense/lib/pugiconfig.hpp
     TowerDefense/lib/pugixml.cpp
     TowerDefense/lib/pugixml.hpp
+	TowerDefense/resource.h
+	TowerDefense/TowerDefense.rc
+	Data/TowerDefense.ico
 )
 
 #*****************************************************

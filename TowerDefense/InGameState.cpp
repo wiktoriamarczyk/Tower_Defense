@@ -85,8 +85,8 @@ void InGameState::OnMouseButtonDown(int Button)
     {
         if (gridState == eGridValue::FREE)
         {
-            BuildTower(cell, m_ObjectName, m_TowerCost);
-            m_Money -= m_TowerCost;
+            BuildTower(cell, m_TowerDef);
+            m_Money -= Engine::GetSingleton()->FindDefinition(m_TowerDef)->GetFloatValue("Cost");
             m_HoldTower = false;
         }
     }
@@ -202,7 +202,14 @@ void InGameState::Render(sf::RenderWindow& Renderer)
        gridColor = sf::Color::Red;
 
     if (m_HoldTower)
-        Tower::DrawTowerOverlay(m_ObjectName, Renderer, gridState != eGridValue::FREE);
+    {
+        auto pDef = Engine::GetSingleton()->FindDefinition(m_TowerDef);
+
+        if (pDef)
+        {
+            Tower::DrawTowerOverlay(pDef->GetStringValue("Name"), Renderer, gridState != eGridValue::FREE);
+        }
+    }
 
     // ----------------------debug--------------------------------
     if (_gridDebug)
@@ -263,9 +270,16 @@ void InGameState::OnEnter()
     GameState::OnEnter();
 }
 
-void InGameState::BuildTower(vec2 Cell, const string& TowerName, int Cost)
+void InGameState::BuildTower(vec2 Cell, const string& DefName)
 {
-    auto pTower = make_shared<Tower>(*this, Engine::GetSingleton()->GetMousePos(), TowerName, Cost);
+    auto pTower = make_shared<Tower>(*this, Engine::GetSingleton()->GetMousePos());
+    auto pDef = Engine::GetSingleton()->FindDefinition(DefName);
+
+    if (!pDef)
+        return;
+
+    pTower->Initialize(*pDef);
+
     m_AllGameObjects.push_back(pTower);
 
     // sortowanie wiezy po pozycji y, aby wieze znajdujace sie "blizej" gracza, byly widoczne na 1 planie
@@ -317,8 +331,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
         if (!m_HoldTower)
         {
             m_HoldTower = true;
-            m_ObjectName = "Tower1";
-            m_TowerCost = 100;
+            m_TowerDef = "Tower1.xml";
         }
         else if (m_HoldTower)
         {
@@ -331,8 +344,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
         if (!m_HoldTower)
         {
             m_HoldTower = true;
-            m_ObjectName = "Tower2";
-            m_TowerCost = 250;
+            m_TowerDef = "Tower2.xml";
         }
         else if (m_HoldTower)
         {
@@ -345,8 +357,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
         if (!m_HoldTower)
         {
             m_HoldTower = true;
-            m_ObjectName = "Tower3";
-            m_TowerCost = 50;
+            m_TowerDef = "Tower3.xml";
         }
         else if (m_HoldTower)
         {
@@ -356,10 +367,6 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 
     auto func4 = [this]()
     {
-        if (!m_HoldTower)   //!!!!!!!!!!
-        {
-            m_ObjectName = "SellButton";
-
             vector<shared_ptr<Tower>> towers = GetObjects<Tower>();
 
             for (size_t i = 0; i < towers.size(); ++i)
@@ -373,7 +380,6 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
                     towers[i]->SetLifeStatus(false);
             }   
             }
-        }
     };
 
 
@@ -381,17 +387,17 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     shared_ptr<Button> tower1Button = make_shared<Button>("Tower1.png", vec2i(1660, 290), buttonSize, func);
     m_AllGameObjects.push_back(tower1Button);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("/Tower2.png");
+    buttonSize = Engine::GetSingleton()->GetTextureSize("Tower2.png");
     shared_ptr<Button> tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), buttonSize, func2);
     m_AllGameObjects.push_back(tower2Button);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("Tower3.png");
-    shared_ptr<Button> tower3Button = make_shared<Button>("Tower3.png", vec2i(1660, 410), buttonSize, func3);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("Tower3Anim.xml");
+    shared_ptr<Button> tower3Button = make_shared<Button>("Tower3Anim.xml", vec2i(1660, 410), buttonSize, func3);
     m_AllGameObjects.push_back(tower3Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("SellButton.png");
-    shared_ptr<Button> TrashCanButton = make_shared<Button>("SellButton.png", vec2i(1660, 925), buttonSize, func4);
-    m_AllGameObjects.push_back(TrashCanButton);
+    shared_ptr<Button> sellButton = make_shared<Button>("SellButton.png", vec2i(1660, 925), buttonSize, func4);
+    m_AllGameObjects.push_back(sellButton);
 
     shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
     backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);

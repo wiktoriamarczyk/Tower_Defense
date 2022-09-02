@@ -33,6 +33,9 @@ bool Engine::Initialize()
     // zaladowanie definicji
     LoadDefinition("Dragon.xml");
     LoadDefinition("Basilisk.xml");
+    LoadDefinition("Tower1.xml");
+    LoadDefinition("Tower2.xml");
+    LoadDefinition("Tower3.xml");
 
     // zaladowanie animacji obiektow
     LoadAnimation("DragonAnim.xml");
@@ -178,7 +181,8 @@ vec2i Engine::GetTextureSize(const string& FileName)const
     {
         return pTexture->GetSize();
     }
-    else vec2i(0,0);
+    else 
+        vec2i(0,0);
 }
 
 vec2i Engine::GetMousePos() const
@@ -229,22 +233,4 @@ bool Engine::LoadAnimation(const string& FileName)
     m_LoadedTextures.push_back(unitAnimationTexture);
 
    return true;
-}
-
-void Engine::LoadAnimations()
-{
-    vector<shared_ptr<Texture>> towerAnimationFrames;
-    towerAnimationFrames.push_back(GetTexture("AVSschm0B0.png"));
-    towerAnimationFrames.push_back(GetTexture("AVSschm1B0.png"));
-    towerAnimationFrames.push_back(GetTexture("AVSschm2B0.png"));
-    towerAnimationFrames.push_back(GetTexture("AVSschm3B0.png"));
-    towerAnimationFrames.push_back(GetTexture("AVSschm4B0.png"));
-    towerAnimationFrames.push_back(GetTexture("AVSschm5B0.png"));
-    towerAnimationFrames.push_back(GetTexture("AVSschm6B0.png"));
-    towerAnimationFrames.push_back(GetTexture("AVSschm7B0.png"));
-
-    shared_ptr<AnimatedTexture> towerAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
-    towerAnimationTexture->Load(towerAnimationFrames, "Tower3.png");
-    m_LoadedTextures.push_back(towerAnimationTexture);
-
 }

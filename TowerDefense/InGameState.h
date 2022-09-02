@@ -15,7 +15,7 @@ public:
     void Render(sf::RenderWindow& Renderer)override;
     void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
-    void BuildTower(vec2 Cell, const string& TowerName, int Cost);
+    void BuildTower(vec2 Cell, const string& TowerName);
     void CreateUnit(vec2 Position, const string& UnitName);
     void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
     bool ReadGrid();
@@ -33,8 +33,7 @@ private:
     //eTowerID                     m_PickedTowerID = eTowerID::NONE;
     bool                           m_HoldTower = false;
     bool                           m_MoveTower = false;
-    string                         m_ObjectName;
-    int                            m_TowerCost = 0;
+    string                         m_TowerDef;
     int                            m_Money = 1000;
     AStar                          m_PathFinder;
 

@@ -24,14 +24,12 @@ bool Texture::Load(const string& FileName)
 
 void Texture::Display(vec2 Position, DisplayParameters Param)const
 {
-    vec2 finalSize = vec2(GetSize()) * Param.DrawScale;
-    vec2 finalPos = Position - finalSize * Param.Pivot;
-
     sf::Sprite sprite;
     sprite.setTexture(m_Texture);
-    sprite.setPosition(finalPos);
+    sprite.setPosition(Position);
     sprite.setScale(Param.DrawScale);
     sprite.setColor(Param.DrawColor);
+    sprite.setOrigin(Param.Pivot*GetSize());
     sprite.setRotation(Param.Rotation);
 
     sf::RenderStates states;
@@ -65,6 +63,7 @@ void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& Ani
     m_Frames = Frames;
     m_FileName = AnimatedTxtName;
 
+    // ustaw rozmiar animowanej tekstury jako rozmiar z 1 klatki
     if(m_Frames.size())
         SetSize(m_Frames[0]->GetSize());
 }

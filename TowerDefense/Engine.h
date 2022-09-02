@@ -31,7 +31,6 @@ public:
     void SetFramesPerSecond(float Value);
 
 private:
-    void LoadAnimations(); 
     bool LoadDefinition(const string& FileName);
     bool LoadAnimation(const string& FileName);
 

@@ -20,6 +20,7 @@ public:
 
 private:
     InGameState&    m_Game;
+    string          m_TextureName;
     int             m_Cost = 0;
     int             m_Lvl = 1;
     float           m_Damage = 0;

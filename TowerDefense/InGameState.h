@@ -40,6 +40,8 @@ private:
     AStar                          m_PathFinder;
 
     float                          m_SpawningTimer = 0;
+    float                          m_UnitPhaseTimer = 40.f;
+    string                         m_PhaseUnitName;
 
     // debug
     bool _gridDebug = false;

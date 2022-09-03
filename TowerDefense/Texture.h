@@ -14,6 +14,7 @@ public:
 
     vec2i GetSize()const;
     string GetName()const;
+    const sf::Texture& GetSFMLTexture()const;
 
     void SetSize(vec2i Size);
 

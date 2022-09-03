@@ -14,16 +14,30 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
         std::cout << "File could not be loaded!" << std::endl;
         return;
     }
+    
+    // inicjalizacja kursorow
+    auto cursorDefault = Engine::GetSingleton()->GetTexture("CursorDefault.png");
+    auto cursorBuild = Engine::GetSingleton()->GetTexture("CursorBuild.png");
 
-    m_CursorHand.loadFromSystem(sf::Cursor::Hand);
-    m_CursorArrow.loadFromSystem(sf::Cursor::Arrow);
+    if (cursorDefault && cursorBuild)
+    {
+        m_CursorArrow.loadFromPixels(cursorDefault->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorDefault->GetSize()), sf::Vector2u(0,0));
+        m_CursorHand.loadFromPixels(cursorBuild->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorBuild->GetSize()), sf::Vector2u(0,0));
+    }
+    else
+    {
+        m_CursorArrow.loadFromSystem(sf::Cursor::Arrow);
+        m_CursorHand.loadFromSystem(sf::Cursor::Hand);
+    }
 
+    // zainicjalizowanie szukania sciezki dla jednostek
     if (!m_PathFinder.InitFinder(m_Grid))
         std::cout << "Path could not be found!" << std::endl;
 
+
+    // stworzenie obiektow gry
     CreateGameObjects();
 }
-
 
 InGameState::~InGameState() {}
 
@@ -106,40 +120,32 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
     {
         _gridDebug = !_gridDebug;
     }
-
-    // przyspieszanie/zwalnianie czasu gry
-    if (KeyCode == sf::Keyboard::Key::Add)
-    {
-        float currentFramesPerSec = Engine::GetSingleton()->GetFramesPerSecondValue();
-
-        if (currentFramesPerSec > 10)
-            Engine::GetSingleton()->SetFramesPerSecond(currentFramesPerSec - 10.f);
-        
-        std::cout << Engine::GetSingleton()->GetFramesPerSecondValue() << std::endl;
-    }
-
-    if (KeyCode == sf::Keyboard::Key::Subtract)
-    {
-        float currentFramesPerSec = Engine::GetSingleton()->GetFramesPerSecondValue();
-        Engine::GetSingleton()->SetFramesPerSecond(currentFramesPerSec + 10.f);
-
-        std::cout << Engine::GetSingleton()->GetFramesPerSecondValue() << std::endl;
-    }
-
 }
 
 void InGameState::Update(float DeltaTime)
 {
+    // inicjalizacja tool tipow
     m_ToolTip->InitializeToolTipText({});
 
+    // ustalanie aktualnej fazy spawnowania jednostki
     m_SpawningTimer -= DeltaTime;
+    m_UnitPhaseTimer -= DeltaTime;
 
     if (m_SpawningTimer <= 0)
     {
-        vector<const char*> Units = { "Dragon.xml" , "Basilisk.xml" };
-        auto SelectedUnit = rand() % (Units.size());
+        //vector<const char*> Units = { "Dragon.xml" , "Basilisk.xml" };
+        //auto SelectedUnit = rand() % (Units.size());
 
-        CreateUnit(vec2i(60, -100), Units[SelectedUnit] );
+        if (m_UnitPhaseTimer <= 0)
+            m_UnitPhaseTimer = 20.f;
+
+        else if (m_UnitPhaseTimer >= 20.f)
+            m_PhaseUnitName = "Dragon";
+        
+        else 
+            m_PhaseUnitName = "Basilisk";
+            
+       CreateUnit(vec2i(60, -100), string(m_PhaseUnitName + ".xml"));
         m_SpawningTimer = 3.f;
     }
 
@@ -205,6 +211,7 @@ void InGameState::Render(sf::RenderWindow& Renderer)
         m_AllGameObjects[i]->Render(Renderer);
     }
 
+    // render siatki
     int mouseX = Engine::GetSingleton()->GetMousePos().x;
     int mouseY = Engine::GetSingleton()->GetMousePos().y;
     int cellX = (mouseX / CELL_SIZE);
@@ -218,11 +225,12 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     else
        gridColor = sf::Color::Red;
 
+    // render trzymanej wiezy
     if (m_HoldTower)
     {
         if (m_pTowerDef)
         {
-            Tower::DrawTowerOverlay(m_pTowerDef->GetStringValue("Name"), Renderer, gridState != eGridValue::FREE);
+            Tower::DrawTowerOverlay(m_pTowerDef->GetStringValue("FileName"), Renderer, gridState != eGridValue::FREE);
         }
     }
 
@@ -378,6 +386,26 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
             }
     };
 
+    auto func5 = [this]()
+    {
+        float currentFramesPerSec = Engine::GetSingleton()->GetFramesPerSecondValue();
+
+        if (currentFramesPerSec > 10)
+            Engine::GetSingleton()->SetFramesPerSecond(currentFramesPerSec - 10.f);
+        
+        std::cout << Engine::GetSingleton()->GetFramesPerSecondValue() << std::endl;
+    };
+
+    auto func6 = [this]()
+    {
+        float currentFramesPerSec = Engine::GetSingleton()->GetFramesPerSecondValue();
+
+        if (currentFramesPerSec < 100)
+        Engine::GetSingleton()->SetFramesPerSecond(currentFramesPerSec + 10.f);
+
+        std::cout << Engine::GetSingleton()->GetFramesPerSecondValue() << std::endl;
+    };
+    //------------------------------
 
     vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("Tower1.png");
     shared_ptr<TowerButton> tower1Button = make_shared<TowerButton>("Tower1.png", vec2i(1660, 290), buttonSize, func);
@@ -385,19 +413,31 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     m_AllGameObjects.push_back(tower1Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("Tower2.png");
-    shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("Tower2.png", vec2i(1820, 280), buttonSize, func2);
+    shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("Tower2.png", vec2i(1820, 285), buttonSize, func2);
     tower2Button->SetDefinition(pTower2Def);
     m_AllGameObjects.push_back(tower2Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("Tower3Anim.xml");
-    shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("Tower3Anim.xml", vec2i(1660, 410), buttonSize, func3);
+    shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("Tower3Anim.xml", vec2i(1675, 410), buttonSize, func3);
     tower3Button->SetDefinition(pTower3Def);
     m_AllGameObjects.push_back(tower3Button);
 
+    //------------------------------
+
     buttonSize = Engine::GetSingleton()->GetTextureSize("SellButton.png");
-    shared_ptr<Button> sellButton = make_shared<Button>("SellButton.png", vec2i(1660, 925), buttonSize, func4);
+    shared_ptr<Button> sellButton = make_shared<Button>("SellButton.png", vec2i(1660, 935), buttonSize, func4);
     sellButton->SetToolTipText({"sell tower", "for half prize"});
     m_AllGameObjects.push_back(sellButton);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("ButtonUp.png");
+    shared_ptr<Button> buttonUp = make_shared<Button>("ButtonUp.png", vec2i(1660, 975), buttonSize, func5);
+    m_AllGameObjects.push_back(buttonUp);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("ButtonDown.png");
+    shared_ptr<Button> buttonDown = make_shared<Button>("ButtonDown.png", vec2i(1660, 1005), buttonSize, func6);
+    m_AllGameObjects.push_back(buttonDown);
+
+    //------------------------------
 
     shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
     backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
@@ -411,6 +451,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     overlayImage->SetGraphicLayer(eGraphicLayer::OVERLAY);
     m_AllGameObjects.push_back(overlayImage);
 
+    //------------------------------
 
     shared_ptr<ToolTip> myToolTip = make_shared<ToolTip>(m_Font);
     m_ToolTip = myToolTip;

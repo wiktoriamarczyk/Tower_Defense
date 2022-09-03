@@ -51,9 +51,9 @@ void Tower::Update(float DeltaTime)
 void Tower::Render(sf::RenderWindow& Renderer)
 {
     if (IsPicked())
-        Engine::GetSingleton()->DisplayTexture((m_Name).c_str(), GetPosition(), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture((m_TextureName).c_str(), GetPosition(), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else
-        Engine::GetSingleton()->DisplayTexture((m_Name).c_str(), GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture((m_TextureName).c_str(), GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
 
     //-------debug-----------
     if (IsCursorOverObject())
@@ -97,12 +97,13 @@ bool Tower::IsCursorOverObject()const
 void Tower::Initialize(const Definition& Def)
 {
     m_Name = Def.GetStringValue("Name");
+    m_TextureName = Def.GetStringValue("FileName");
     m_Cost = Def.GetIntValue("Cost");
     m_Damage = Def.GetFloatValue("Damage");
     m_DetectionRadius = Def.GetIntValue("DetectionRadius");
     m_ShootInterval = Def.GetFloatValue("ShootInterval");
 
-    m_TextureSize = Engine::GetSingleton()->GetTextureSize((m_Name).c_str());
+    m_TextureSize = Engine::GetSingleton()->GetTextureSize((m_TextureName).c_str());
     m_DetectionArea.setRadius(m_DetectionRadius);
 }
 

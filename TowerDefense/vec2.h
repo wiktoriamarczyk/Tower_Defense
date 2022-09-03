@@ -48,6 +48,7 @@ public:
 
     operator vec2()const;
     operator sf::Vector2i()const;
+    explicit operator sf::Vector2u()const;
 
     vec2i operator+(const vec2i& other)const;
     vec2i operator-(const vec2i& other)const;

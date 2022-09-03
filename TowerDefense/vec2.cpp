@@ -260,3 +260,11 @@ vec2i::operator sf::Vector2i() const
     vector.y = y;
     return vector;
 }
+
+vec2i::operator sf::Vector2u()const
+{
+    sf::Vector2u vector;
+    vector.x = unsigned int(x);
+    vector.y = unsigned int(y);
+    return vector;
+}

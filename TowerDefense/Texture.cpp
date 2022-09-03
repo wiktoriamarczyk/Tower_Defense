@@ -78,6 +78,11 @@ string Texture::GetName()const
     return m_FileName;
 }
 
+const sf::Texture& Texture::GetSFMLTexture()const
+{
+    return m_Texture;
+}
+
 void Texture::SetSize(vec2i Size)
 {
     m_Size = Size;

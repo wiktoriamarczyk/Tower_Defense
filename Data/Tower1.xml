@@ -1,5 +1,6 @@
 <Data>
-	<Name>Tower1.png</Name>
+	<FileName>Tower1.png</FileName>
+	<Name>Tower1</Name>
 	<Cost>100</Cost>
 	<Damage>1</Damage>
 	<DetectionRadius>170</DetectionRadius>

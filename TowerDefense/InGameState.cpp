@@ -85,8 +85,8 @@ void InGameState::OnMouseButtonDown(int Button)
     {
         if (gridState == eGridValue::FREE)
         {
-            BuildTower(cell, m_TowerDef);
-            m_Money -= Engine::GetSingleton()->FindDefinition(m_TowerDef)->GetFloatValue("Cost");
+            BuildTower(cell, m_pTowerDef);
+            m_Money -= m_pTowerDef->GetFloatValue("Cost");
             m_HoldTower = false;
         }
     }
@@ -130,6 +130,8 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
 
 void InGameState::Update(float DeltaTime)
 {
+    m_ToolTip->SetToolTip({});
+
     m_SpawningTimer -= DeltaTime;
 
     if (m_SpawningTimer <= 0)
@@ -139,6 +141,21 @@ void InGameState::Update(float DeltaTime)
 
         CreateUnit(vec2i(60, -100), Units[SelectedUnit] );
         m_SpawningTimer = 3.f;
+    }
+
+    // sprawdz czy wyswietlic tooltip obiektu
+    for (int i = 0; i < m_AllGameObjects.size(); ++i)
+    {
+        if (m_AllGameObjects[i]->IsCursorOnButton())
+        {
+            auto TooltipData = m_AllGameObjects[i]->GetToolTip();
+
+            if(!TooltipData.empty())
+            {
+                m_ToolTip->SetToolTip(TooltipData);
+                break;
+            }
+        }
     }
 
    // zmiana kursora
@@ -203,11 +220,9 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 
     if (m_HoldTower)
     {
-        auto pDef = Engine::GetSingleton()->FindDefinition(m_TowerDef);
-
-        if (pDef)
+        if (m_pTowerDef)
         {
-            Tower::DrawTowerOverlay(pDef->GetStringValue("Name"), Renderer, gridState != eGridValue::FREE);
+            Tower::DrawTowerOverlay(m_pTowerDef->GetStringValue("Name"), Renderer, gridState != eGridValue::FREE);
         }
     }
 
@@ -270,10 +285,9 @@ void InGameState::OnEnter()
     GameState::OnEnter();
 }
 
-void InGameState::BuildTower(vec2 Cell, const string& DefName)
+void InGameState::BuildTower(vec2 Cell, const Definition* pDef)
 {
     auto pTower = make_shared<Tower>(*this, Engine::GetSingleton()->GetMousePos());
-    auto pDef = Engine::GetSingleton()->FindDefinition(DefName);
 
     if (!pDef)
         return;
@@ -326,43 +340,38 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 
  void InGameState::CreateGameObjects()
  {
-    auto func = [this]()
+    const Definition* pTower1Def = Engine::GetSingleton()->FindDefinition("Tower1.xml");
+    const Definition* pTower2Def = Engine::GetSingleton()->FindDefinition("Tower2.xml");
+    const Definition* pTower3Def = Engine::GetSingleton()->FindDefinition("Tower3.xml");
+
+    auto func = [this, pTower1Def]()
     {
-        if (!m_HoldTower)
-        {
-            m_HoldTower = true;
-            m_TowerDef = "Tower1.xml";
-        }
-        else if (m_HoldTower)
-        {
-            m_HoldTower = false;
-        }
+        m_HoldTower = !m_HoldTower;
+
+        if (m_HoldTower)
+            m_pTowerDef = pTower1Def;
+        else
+            m_pTowerDef = nullptr;
     };
 
-    auto func2 = [this]()
+    auto func2 = [this, pTower2Def]()
     {
-        if (!m_HoldTower)
-        {
-            m_HoldTower = true;
-            m_TowerDef = "Tower2.xml";
-        }
-        else if (m_HoldTower)
-        {
-            m_HoldTower = false;
-        }
+        m_HoldTower = !m_HoldTower;
+
+        if (m_HoldTower)
+            m_pTowerDef = pTower2Def;
+        else
+            m_pTowerDef = nullptr;
     };
 
-    auto func3 = [this]()
+    auto func3 = [this, pTower3Def]()
     {
-        if (!m_HoldTower)
-        {
-            m_HoldTower = true;
-            m_TowerDef = "Tower3.xml";
-        }
-        else if (m_HoldTower)
-        {
-            m_HoldTower = false;
-        }
+        m_HoldTower = !m_HoldTower;
+
+        if (m_HoldTower)
+            m_pTowerDef = pTower3Def;
+        else
+            m_pTowerDef = nullptr;
     };
 
     auto func4 = [this]()
@@ -384,15 +393,18 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 
 
     vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("Tower1.png");
-    shared_ptr<Button> tower1Button = make_shared<Button>("Tower1.png", vec2i(1660, 290), buttonSize, func);
+    shared_ptr<TowerButton> tower1Button = make_shared<TowerButton>("Tower1.png", vec2i(1660, 290), buttonSize, func);
+    tower1Button->SetDefinition(pTower1Def);
     m_AllGameObjects.push_back(tower1Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("Tower2.png");
-    shared_ptr<Button> tower2Button = make_shared<Button>("Tower2.png", vec2i(1820, 280), buttonSize, func2);
+    shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("Tower2.png", vec2i(1820, 280), buttonSize, func2);
+    tower2Button->SetDefinition(pTower2Def);
     m_AllGameObjects.push_back(tower2Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("Tower3Anim.xml");
-    shared_ptr<Button> tower3Button = make_shared<Button>("Tower3Anim.xml", vec2i(1660, 410), buttonSize, func3);
+    shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("Tower3Anim.xml", vec2i(1660, 410), buttonSize, func3);
+    tower3Button->SetDefinition(pTower3Def);
     m_AllGameObjects.push_back(tower3Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("SellButton.png");
@@ -406,4 +418,10 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     shared_ptr<Image> overlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
     overlayImage->SetGraphicLayer(eGraphicLayer::FOREGROUND);
     m_AllGameObjects.push_back(overlayImage);
+
+
+    shared_ptr<ToolTip> myToolTip = make_shared<ToolTip>(m_Font);
+    m_ToolTip = myToolTip;
+    myToolTip->SetGraphicLayer(eGraphicLayer::UI);
+    m_AllGameObjects.push_back(myToolTip);
  }

@@ -21,7 +21,7 @@ void Font::DrawText(sf::RenderWindow& Renderer, int PixelSize, int PosX, int Pos
 
     for (int i = 0; Text[i] != 0; ++i)
     {
-        const CharacterData* pData = FindCharacter(Text[i]);
+        const CharacterData* pData = FindCharacter(std::toupper(Text[i]));
         if (pData == nullptr)
             continue;
         DrawLines(Renderer, PixelSize, PosX + i * CharacterSpacing, PosY, pData->m_ImageData, DrawColor);
@@ -114,12 +114,4 @@ void DrawLines(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, co
     {
         DrawLine(Renderer, PixelSize, PosX, PosY + i * PixelSize, Lines[i], DrawColor);
     }
-}
-//==========================================================================================================
-string ToString(int value)
-{
-    char buffer[16];
-    _itoa_s(value, buffer, 10);
-
-    return buffer;
 }

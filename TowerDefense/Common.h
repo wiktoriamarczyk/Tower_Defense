@@ -96,3 +96,10 @@ struct DisplayParameters
     sf::Color DrawColor = sf::Color::White;
     float Rotation = 0.0f;
 };
+
+template <typename T>
+string ToString(const T& value)
+{
+    return std::to_string(value);
+}
+string ToString(float value, int precision=1);

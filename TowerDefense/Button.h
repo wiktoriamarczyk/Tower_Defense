@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-
+#include "Definition.h"
 
 class Button : public GameObject
 {
@@ -14,4 +14,16 @@ public:
 private:
     string m_TextureName;
     function<void()> m_Function;
+};
+
+class TowerButton : public Button
+{
+public:
+    using Button::Button;
+
+    vector<string> GetToolTip()const override;
+    void SetDefinition(const Definition* pDef);
+    
+private:
+    const Definition* m_pDef = nullptr;
 };

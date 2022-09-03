@@ -23,4 +23,3 @@ bool LoadSingleCharacter(fstream& FileStream, CharacterData& DataOut);
 vector<CharacterData> FillFontVector(const string& FileName);
 void DrawLine(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const string& Pixels, sf::Color DrawColor);
 void DrawLines(sf::RenderWindow& Renderer, int PixelSize, int PosX, int PosY, const vector<string>& Lines, sf::Color DrawColor);
-string ToString(int value);

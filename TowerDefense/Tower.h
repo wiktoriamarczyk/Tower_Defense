@@ -11,7 +11,7 @@ public:
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
-    bool IsCursorOnButton()const;
+    bool IsCursorOnButton()const override;
     void Initialize(const Definition& Def);
     void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
 

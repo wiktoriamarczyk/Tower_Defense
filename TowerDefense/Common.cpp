@@ -12,3 +12,11 @@ vector<int> ConvertCharVecToInt(vector<char>& CharsToConvert)
 
     return ConvertedVec;
 }
+
+
+string ToString(float value, int Precision)
+{
+    char Buffer[64];
+    sprintf(Buffer, "%.*f" , Precision , value);
+    return Buffer;
+}

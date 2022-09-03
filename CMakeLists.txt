@@ -48,6 +48,8 @@ SET(APP_SRC_FILES_LIST
     TowerDefense/Shot.h
 	TowerDefense/Definition.cpp
 	TowerDefense/Definition.h
+	TowerDefense/ToolTip.h
+	TowerDefense/ToolTip.cpp
     TowerDefense/lib/pugiconfig.hpp
     TowerDefense/lib/pugixml.cpp
     TowerDefense/lib/pugixml.hpp

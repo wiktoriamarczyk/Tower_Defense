@@ -29,7 +29,7 @@ void Texture::Display(vec2 Position, DisplayParameters Param)const
     sprite.setPosition(Position);
     sprite.setScale(Param.DrawScale);
     sprite.setColor(Param.DrawColor);
-    sprite.setOrigin(Param.Pivot*GetSize());
+    sprite.setOrigin(Param.Pivot * GetSize());
     sprite.setRotation(Param.Rotation);
 
     sf::RenderStates states;

@@ -47,3 +47,23 @@ bool Button::IsCursorOnButton()const
 
     return false;
 }
+
+vector<string> TowerButton::GetToolTip()const
+{
+    if (!IsCursorOnButton())
+        return {};
+
+    vector<string> tmp;
+
+    tmp.push_back(m_pDef->GetStringValue("Name"));
+    tmp.push_back(ToString(m_pDef->GetIntValue("Cost")));
+    tmp.push_back(ToString(m_pDef->GetFloatValue("Damage")));
+    tmp.push_back(ToString(m_pDef->GetFloatValue("ShootInterval")));
+
+    return tmp;
+}
+
+void TowerButton::SetDefinition(const Definition* pDef)
+{
+    m_pDef = pDef;
+}

@@ -34,6 +34,10 @@ enum : int
 {
     SCREEN_WIDTH = 1920,
     SCREEN_HEIGHT = 1080,
+    MAP_WIDTH = 200,
+    MAP_HEIGHT = 200,
+    MAP_X = 1681,
+    MAP_Y = 38,
     GRID_ROWS = 17,
     GRID_COLS = 30,
     CELL_SIZE = 64,

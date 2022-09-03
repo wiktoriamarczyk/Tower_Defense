@@ -2,5 +2,6 @@
 	<Name>Tower1.png</Name>
 	<Cost>100</Cost>
 	<Damage>1</Damage>
+	<DetectionRadius>170</DetectionRadius>
 	<ShootInterval>0.5</ShootInterval>
 </Data>

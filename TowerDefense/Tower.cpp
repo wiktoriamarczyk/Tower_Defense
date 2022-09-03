@@ -4,7 +4,6 @@
 
 Tower::Tower(InGameState& Game, vec2 Position) : m_Game(Game)
 {
-    m_DetectionArea.setRadius(m_DetectionRadius);
     SetSize(vec2i(CELL_SIZE,CELL_SIZE));
     SetPosition(vec2(((int(Position.x)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2), (int(Position.y)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2));
 }
@@ -38,12 +37,12 @@ void Tower::Update(float DeltaTime)
 
         if (checkIfInCircle <= pow(m_DetectionRadius, 2))
         {
-            m_DetectionArea.setOutlineColor(sf::Color::Red);
+            m_DetectionArea.setOutlineColor(sf::Color::Red * sf::Color(255,255,255,192));
             Shoot(GetPosition(), units[i]);
         }
         else 
         {
-            m_DetectionArea.setOutlineColor(sf::Color::Cyan);
+            m_DetectionArea.setOutlineColor(sf::Color::Black * sf::Color(255,255,255,192));
         }
 
     }
@@ -56,16 +55,19 @@ void Tower::Render(sf::RenderWindow& Renderer)
     else
         Engine::GetSingleton()->DisplayTexture((m_Name).c_str(), GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
 
-    // -------debug-----------
-    // m_DetectionArea.setFillColor(sf::Color::Transparent);
-    // m_DetectionArea.setOutlineThickness(3.f);
-    // m_DetectionArea.setPosition(m_Position - vec2(m_DetectionRadius, m_DetectionRadius));
-    // Renderer.draw(m_DetectionArea);
+    //-------debug-----------
+    if (IsCursorOverObject())
+    {
+        m_DetectionArea.setFillColor(sf::Color::Black * sf::Color(255,255,255,128));
+        m_DetectionArea.setOutlineThickness(3.f);
+        m_DetectionArea.setPosition(m_Position - vec2(m_DetectionRadius, m_DetectionRadius));
+        Renderer.draw(m_DetectionArea);
+    }
 }
 
 bool Tower::OnMouseButtonDown(int Button)
 {
-    if (IsCursorOnButton())
+    if (IsCursorOverObject())
     {
         m_Picked = !m_Picked;
         return true;
@@ -74,7 +76,7 @@ bool Tower::OnMouseButtonDown(int Button)
     return false;
 }
 
-bool Tower::IsCursorOnButton()const
+bool Tower::IsCursorOverObject()const
 {
     vec2i mousePos = Engine::GetSingleton()->GetMousePos();
 
@@ -97,10 +99,11 @@ void Tower::Initialize(const Definition& Def)
     m_Name = Def.GetStringValue("Name");
     m_Cost = Def.GetIntValue("Cost");
     m_Damage = Def.GetFloatValue("Damage");
+    m_DetectionRadius = Def.GetIntValue("DetectionRadius");
     m_ShootInterval = Def.GetFloatValue("ShootInterval");
 
-
     m_TextureSize = Engine::GetSingleton()->GetTextureSize((m_Name).c_str());
+    m_DetectionArea.setRadius(m_DetectionRadius);
 }
 
 void Tower::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)

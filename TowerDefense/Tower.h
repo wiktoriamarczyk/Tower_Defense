@@ -11,7 +11,7 @@ public:
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
-    bool IsCursorOnButton()const override;
+    bool IsCursorOverObject()const override;
     void Initialize(const Definition& Def);
     void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
 
@@ -25,7 +25,7 @@ private:
     float           m_Damage = 0;
     float           m_ShootInterval = 0;
     vec2i           m_TextureSize;
-    float           m_DetectionRadius = 170.f;
+    float           m_DetectionRadius = 0;
     sf::CircleShape m_DetectionArea;
     bool            m_Picked = false;
 

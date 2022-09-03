@@ -50,24 +50,24 @@ void Unit::Update(float DeltaTime)
 
 void Unit::Render(sf::RenderWindow& Renderer)
 {
-    // debug 
-    // vector<sf::Vertex> vertices;
-    // for (auto el : m_TargetPositions)
-    // {
-    //     vertices.push_back(sf::Vertex((sf::Vector2f)el, sf::Color::Cyan));
-    // }
+    // wyliczamy mnoznik, ktory przeskalowuje pozycje z ekranu na mini mape o rozmiarze (200,200)
+    vec2 worldToMapRatio = vec2(MAP_WIDTH, MAP_HEIGHT) / vec2(SCREEN_WIDTH, SCREEN_HEIGHT);
+    // wyliczamy pozycje na mini mapie, dodajac do pozycji mapy, przeskalowana pozycje jednostki 
+    vec2 mapPosition = vec2(MAP_X, MAP_Y) + (GetPosition() * worldToMapRatio);
 
-    // przekazujemy .data(), gdy� funkcja draw() przyjmuje wska�nik na pierwszy element i liczb� element�w w CPojemniku
-    // Renderer.draw(vertices.data(), vertices.size(), sf::LineStrip);
+    // renderowanie pozycji jednostki na mini mapie
+    sf::RectangleShape unitOnMap(vec2(4.f, 4.f));
+    unitOnMap.setFillColor(sf::Color::Red);
+    unitOnMap.setPosition(mapPosition - vec2(2.f, 2.f));
+    Renderer.draw(unitOnMap);
 
-    // TEKSTURA
+    // tekstura
     if (m_HurtTimer >= 0)
         Engine::GetSingleton()->DisplayTexture(m_Name, GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else 
         Engine::GetSingleton()->DisplayTexture(m_Name, GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
 
-
-    // POZIOM HP
+    // poziom HP
     sf::RectangleShape lifeBar(vec2(50.f, 15.f));
     lifeBar.setFillColor(sf::Color::Transparent);
     lifeBar.setOutlineColor(sf::Color::White);

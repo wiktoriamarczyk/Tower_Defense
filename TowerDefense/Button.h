@@ -9,10 +9,13 @@ public:
     void Update(float DeltaTime)override {};
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
-    bool IsCursorOnButton()const override;
+    bool IsCursorOverObject()const override;
+    vector<string> GetToolTip()const override;
+    void SetToolTipText(vector<string> ToolTip);
 
 private:
-    string m_TextureName;
+    string           m_TextureName;
+    vector<string>   m_ToolTip;
     function<void()> m_Function;
 };
 

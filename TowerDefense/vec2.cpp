@@ -125,6 +125,16 @@ vec2 vec2::operator/(float scalar)const
     return result;
 }
 
+vec2 vec2::operator / (const vec2& other)const
+{
+    vec2 result;
+
+    result.x = x / other.x;
+    result.y = y / other.y;
+
+    return result;
+}
+
 //============================================
 #include "vec2.h"
 

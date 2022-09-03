@@ -8,7 +8,7 @@ public:
     virtual void Update(float DeltaTime) = 0;
     virtual void Render(sf::RenderWindow& Renderer) = 0;
     virtual bool OnMouseButtonDown(int Button) { return false; };
-    virtual bool IsCursorOnButton()const { return false; };
+    virtual bool IsCursorOverObject()const { return false; };
     virtual vector<string> GetToolTip()const { return {}; };
 
     vec2 GetPosition()const;

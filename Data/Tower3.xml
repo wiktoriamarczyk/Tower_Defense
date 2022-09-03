@@ -4,5 +4,6 @@
 	<Damage>3</Damage>
 	<!-- shooting_speed = 1 / shooting_interval -->
 	<!-- tower shoots 3 shots in 1 sec -->
+	<DetectionRadius>190</DetectionRadius>
 	<ShootInterval>0.3333</ShootInterval>
 </Data>

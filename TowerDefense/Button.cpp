@@ -12,7 +12,7 @@ Button::Button(string TextureName, vec2i Position, vec2i Size, function<void()> 
 
 void Button::Render(sf::RenderWindow& Renderer)
 {
-    if (IsCursorOnButton())
+    if (IsCursorOverObject())
     {
         Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x - 5, GetPosition().y + 5));
     }
@@ -21,7 +21,7 @@ void Button::Render(sf::RenderWindow& Renderer)
 
 bool Button::OnMouseButtonDown(int Button)
 {
-    if (IsCursorOnButton())
+    if (IsCursorOverObject())
     {
         m_Function();
         return true;
@@ -29,7 +29,7 @@ bool Button::OnMouseButtonDown(int Button)
     return false;
 }
 
-bool Button::IsCursorOnButton()const
+bool Button::IsCursorOverObject()const
 {
     vec2i mousePos = Engine::GetSingleton()->GetMousePos();
 
@@ -48,9 +48,19 @@ bool Button::IsCursorOnButton()const
     return false;
 }
 
+vector<string> Button::GetToolTip()const
+{
+    return m_ToolTip;
+}
+
+void Button::SetToolTipText(vector<string> ToolTip)
+{
+    m_ToolTip = ToolTip;
+}
+
 vector<string> TowerButton::GetToolTip()const
 {
-    if (!IsCursorOnButton())
+    if (!IsCursorOverObject())
         return {};
 
     vector<string> tmp;
@@ -58,6 +68,7 @@ vector<string> TowerButton::GetToolTip()const
     tmp.push_back(m_pDef->GetStringValue("Name"));
     tmp.push_back(ToString(m_pDef->GetIntValue("Cost")));
     tmp.push_back(ToString(m_pDef->GetFloatValue("Damage")));
+    tmp.push_back(ToString(m_pDef->GetIntValue("DetectionRadius")));
     tmp.push_back(ToString(m_pDef->GetFloatValue("ShootInterval")));
 
     return tmp;

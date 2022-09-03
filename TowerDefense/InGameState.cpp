@@ -130,7 +130,7 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
 
 void InGameState::Update(float DeltaTime)
 {
-    m_ToolTip->SetToolTip({});
+    m_ToolTip->InitializeToolTipText({});
 
     m_SpawningTimer -= DeltaTime;
 
@@ -146,13 +146,13 @@ void InGameState::Update(float DeltaTime)
     // sprawdz czy wyswietlic tooltip obiektu
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
-        if (m_AllGameObjects[i]->IsCursorOnButton())
+        if (m_AllGameObjects[i]->IsCursorOverObject())
         {
-            auto TooltipData = m_AllGameObjects[i]->GetToolTip();
+            vector<string> TooltipData = m_AllGameObjects[i]->GetToolTip();
 
             if(!TooltipData.empty())
             {
-                m_ToolTip->SetToolTip(TooltipData);
+                m_ToolTip->InitializeToolTipText(TooltipData);
                 break;
             }
         }
@@ -163,7 +163,7 @@ void InGameState::Update(float DeltaTime)
     {
         none_of(m_AllGameObjects.begin(), m_AllGameObjects.end(), [this](shared_ptr<GameObject> o)
         {
-            if (o->IsCursorOnButton())
+            if (o->IsCursorOverObject())
             {
                 Engine::GetSingleton()->GetWindow().setMouseCursor(m_CursorHand);
                 return true;
@@ -262,19 +262,6 @@ void InGameState::Render(sf::RenderWindow& Renderer)
 
     // rysowanie czcionki
     m_Font->DrawText(Renderer, 1, 60, 1058, ToString(m_Money).c_str());
-
-    if (m_Money < (int)eTowerPrice::Tower1)
-    {
-        m_Font->DrawText(Renderer, 1, 1700, 388, ToString((int)eTowerPrice::Tower1).c_str(), sf::Color::Red);
-    }
-    else m_Font->DrawText(Renderer, 1, 1700, 388, ToString((int)eTowerPrice::Tower1).c_str());
-
-
-    if (m_Money < (int)eTowerPrice::Tower2)
-    {
-        m_Font->DrawText(Renderer, 1, 1835, 388, ToString((int)eTowerPrice::Tower2).c_str(), sf::Color::Red);
-    }
-    else m_Font->DrawText(Renderer, 1, 1835, 388, ToString((int)eTowerPrice::Tower2).c_str());
 
     Renderer.display();
 }
@@ -387,7 +374,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
                     int cellY = (towers[i]->GetPosition().y / CELL_SIZE);
                     m_Grid[cellY % GRID_ROWS][cellX % GRID_COLS] = eGridValue::FREE;
                     towers[i]->SetLifeStatus(false);
-            }   
+                }   
             }
     };
 
@@ -409,14 +396,19 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("SellButton.png");
     shared_ptr<Button> sellButton = make_shared<Button>("SellButton.png", vec2i(1660, 925), buttonSize, func4);
+    sellButton->SetToolTipText({"sell tower", "for half prize"});
     m_AllGameObjects.push_back(sellButton);
 
     shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
     backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
     m_AllGameObjects.push_back(backgroundImage);
 
+    shared_ptr<Image> overlayImageMap = make_shared<Image>("OverlayMap", vec2(MAP_X, MAP_Y), vec2(0, 0)); 
+    overlayImageMap->SetGraphicLayer(eGraphicLayer::FOREGROUND);
+    m_AllGameObjects.push_back(overlayImageMap);
+
     shared_ptr<Image> overlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
-    overlayImage->SetGraphicLayer(eGraphicLayer::FOREGROUND);
+    overlayImage->SetGraphicLayer(eGraphicLayer::OVERLAY);
     m_AllGameObjects.push_back(overlayImage);
 
 

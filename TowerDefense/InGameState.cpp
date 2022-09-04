@@ -140,12 +140,11 @@ void InGameState::Update(float DeltaTime)
             m_UnitPhaseTimer = 20.f;
 
         else if (m_UnitPhaseTimer >= 20.f)
-            m_PhaseUnitName = "Dragon";
+            ChangeUnitPhase("Dragon");
         
         else 
-            m_PhaseUnitName = "Basilisk";
+           ChangeUnitPhase("Basilisk");
             
-       CreateUnit(vec2i(60, -100), string(m_PhaseUnitName + ".xml"));
         m_SpawningTimer = 3.f;
     }
 
@@ -408,53 +407,69 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     //------------------------------
 
     vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("Tower1.png");
-    shared_ptr<TowerButton> tower1Button = make_shared<TowerButton>("Tower1.png", vec2i(1660, 290), buttonSize, func);
+    shared_ptr<TowerButton> tower1Button = make_shared<TowerButton>("Tower1.png", vec2(1660, 290), buttonSize, func);
     tower1Button->SetDefinition(pTower1Def);
     m_AllGameObjects.push_back(tower1Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("Tower2.png");
-    shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("Tower2.png", vec2i(1820, 285), buttonSize, func2);
+    shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("Tower2.png", vec2(1820, 285), buttonSize, func2);
     tower2Button->SetDefinition(pTower2Def);
     m_AllGameObjects.push_back(tower2Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("Tower3Anim.xml");
-    shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("Tower3Anim.xml", vec2i(1675, 410), buttonSize, func3);
+    shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("Tower3Anim.xml", vec2(1675, 410), buttonSize, func3);
     tower3Button->SetDefinition(pTower3Def);
     m_AllGameObjects.push_back(tower3Button);
 
     //------------------------------
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("SellButton.png");
-    shared_ptr<Button> sellButton = make_shared<Button>("SellButton.png", vec2i(1660, 935), buttonSize, func4);
+    shared_ptr<Button> sellButton = make_shared<Button>("SellButton.png", vec2(1660, 935), buttonSize, func4);
     sellButton->SetToolTipText({"sell tower", "for half prize"});
     m_AllGameObjects.push_back(sellButton);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("ButtonUp.png");
-    shared_ptr<Button> buttonUp = make_shared<Button>("ButtonUp.png", vec2i(1660, 975), buttonSize, func5);
+    shared_ptr<Button> buttonUp = make_shared<Button>("ButtonUp.png", vec2(1660, 975), buttonSize, func5);
     m_AllGameObjects.push_back(buttonUp);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("ButtonDown.png");
-    shared_ptr<Button> buttonDown = make_shared<Button>("ButtonDown.png", vec2i(1660, 1005), buttonSize, func6);
+    shared_ptr<Button> buttonDown = make_shared<Button>("ButtonDown.png", vec2(1660, 1005), buttonSize, func6);
     m_AllGameObjects.push_back(buttonDown);
 
     //------------------------------
 
-    shared_ptr<Image> backgroundImage = make_shared<Image>("Background", vec2(0, 0), vec2(0, 0)); 
+    shared_ptr<Image> backgroundImage = make_shared<Image>("Background.png", vec2(0, 0), vec2(0, 0)); 
     backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
     m_AllGameObjects.push_back(backgroundImage);
 
-    shared_ptr<Image> overlayImageMap = make_shared<Image>("OverlayMap", vec2(MAP_X, MAP_Y), vec2(0, 0)); 
+    shared_ptr<Image> overlayImageMap = make_shared<Image>("OverlayMap.png", vec2(MAP_X, MAP_Y), vec2(0, 0)); 
     overlayImageMap->SetGraphicLayer(eGraphicLayer::FOREGROUND);
     m_AllGameObjects.push_back(overlayImageMap);
 
-    shared_ptr<Image> overlayImage = make_shared<Image>("Overlay", vec2(0, 0), vec2(0, 0)); 
+    shared_ptr<Image> overlayImage = make_shared<Image>("Overlay.png", vec2(0, 0), vec2(0, 0)); 
     overlayImage->SetGraphicLayer(eGraphicLayer::OVERLAY);
     m_AllGameObjects.push_back(overlayImage);
+
+
+    shared_ptr<Image> unitPhaseIcon = make_shared<Image>("", vec2(140, 1044), vec2(0, 0));
+    unitPhaseIcon->SetGraphicLayer(eGraphicLayer::UI);
+    m_UnitPhaseIcon = unitPhaseIcon;
+    m_AllGameObjects.push_back(unitPhaseIcon);
+
+    shared_ptr<Image> unitIconFrame = make_shared<Image>("UnitIconFrame.png", vec2(140, 1044), vec2(0, 0));
+    unitIconFrame->SetGraphicLayer(eGraphicLayer::UI);
+    m_AllGameObjects.push_back(unitIconFrame);
 
     //------------------------------
 
     shared_ptr<ToolTip> myToolTip = make_shared<ToolTip>(m_Font);
-    m_ToolTip = myToolTip;
     myToolTip->SetGraphicLayer(eGraphicLayer::UI);
+    m_ToolTip = myToolTip;
     m_AllGameObjects.push_back(myToolTip);
+ }
+
+ void InGameState::ChangeUnitPhase(const string& Name)
+ {
+    m_UnitPhaseIcon->Initialize(Name);
+    CreateUnit(vec2i(60, -100), string(Name + ".xml"));
  }

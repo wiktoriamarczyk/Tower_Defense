@@ -1,7 +1,7 @@
 #include "Button.h"
 #include "Engine.h"
 
-Button::Button(string TextureName, vec2i Position, vec2i Size, function<void()> Function)
+Button::Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function)
 {
     m_TextureName = TextureName;
     SetPosition(Position);

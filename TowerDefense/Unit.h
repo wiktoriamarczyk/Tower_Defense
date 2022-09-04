@@ -20,6 +20,7 @@ public:
     void SetHP(int Value);
 
 private:
+    string       m_TextureName;
     vector<vec2> m_TargetPositions;
     float        m_Speed = 10.f;
     float        m_HP = 100.f;

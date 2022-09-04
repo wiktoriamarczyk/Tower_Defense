@@ -63,9 +63,9 @@ void Unit::Render(sf::RenderWindow& Renderer)
 
     // tekstura
     if (m_HurtTimer >= 0)
-        Engine::GetSingleton()->DisplayTexture(m_Name, GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else 
-        Engine::GetSingleton()->DisplayTexture(m_Name, GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
 
     // poziom HP
     sf::RectangleShape lifeBar(vec2(50.f, 15.f));
@@ -100,7 +100,8 @@ void Unit::MoveTo(vector<vec2> TargetPositions)
 
 void Unit::Initialize(const Definition& Def)
 {
-    m_Name = Def.GetStringValue("Name", "MissingTexture");
+    m_Name = Def.GetStringValue("Name");
+    m_TextureName = Def.GetStringValue("FileName", "MissingTexture");
     m_Speed = Def.GetFloatValue("Speed", 200.f);
     m_MaxHP = Def.GetFloatValue("HP", 2);
     m_HP = m_MaxHP;

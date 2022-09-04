@@ -1,5 +1,7 @@
 <Data>
-	<Name>DragonAnim.xml</Name>
+	<FileName>DragonAnim.xml</FileName>
+	<Name>Dragon</Name>
 	<Speed>200</Speed>
-	<LifeCount>2</LifeCount>
+	<HP>2</HP>
+	<Ability>Fire resistance</Ability>
 </Data>

@@ -3,6 +3,7 @@
 #include "AStar.h"
 #include "Unit.h"
 #include "ToolTip.h"
+#include "Image.h"
 
 class InGameState : public GameState
 {
@@ -21,6 +22,7 @@ public:
     void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
     bool ReadGrid();
     void CreateGameObjects();
+    void ChangeUnitPhase(const string& Name);
 
     template<typename T>
     vector<shared_ptr<T>> GetObjects();
@@ -41,7 +43,7 @@ private:
 
     float                          m_SpawningTimer = 0;
     float                          m_UnitPhaseTimer = 40.f;
-    string                         m_PhaseUnitName;
+    shared_ptr<Image>              m_UnitPhaseIcon;
 
     // debug
     bool _gridDebug = false;

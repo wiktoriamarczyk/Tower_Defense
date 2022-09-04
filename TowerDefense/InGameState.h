@@ -43,6 +43,7 @@ private:
 
     float                          m_SpawningTimer = 0;
     float                          m_UnitPhaseTimer = 40.f;
+    float                          m_TimeToNextUnitPhase = 22.f;
     shared_ptr<Image>              m_UnitPhaseIcon;
 
     // debug

@@ -1,18 +1,19 @@
 #include "Button.h"
 #include "Engine.h"
 
-Button::Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function)
+Button::Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function, bool Move)
 {
     m_TextureName = TextureName;
     SetPosition(Position);
     SetSize(Size);
     m_Function = Function;
     m_Layer = eGraphicLayer::UI;
+    m_Move = Move;
 }
 
 void Button::Render(sf::RenderWindow& Renderer)
 {
-    if (IsCursorOverObject())
+    if (IsCursorOverObject() && m_Move) 
     {
         Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x - 5, GetPosition().y + 5));
     }

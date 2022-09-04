@@ -12,11 +12,15 @@ public:
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
     bool IsCursorOverObject()const override;
+    vector<string> GetToolTip()const override;
     void Initialize(const Definition& Def);
     void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
 
     bool IsPicked()const;
     int GetPrize()const;
+    int GetLvl()const;
+
+    void SetLvl(int Lvl);
 
 private:
     InGameState&    m_Game;

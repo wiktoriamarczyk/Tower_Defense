@@ -94,6 +94,18 @@ bool Tower::IsCursorOverObject()const
     return false;
 }
 
+vector<string> Tower::GetToolTip()const
+{
+    vector<string> tmp;
+
+    tmp.push_back("Lvl: " + ToString(m_Lvl));
+    tmp.push_back("Dmg: "+ ToString(m_Damage));
+    tmp.push_back("Radius: " + ToString(m_DetectionRadius));
+    tmp.push_back("Speed: " + ToString(m_ShootInterval));
+
+    return tmp;
+}
+
 void Tower::Initialize(const Definition& Def)
 {
     m_Name = Def.GetStringValue("Name");
@@ -125,3 +137,13 @@ bool Tower::IsPicked()const
  {
     return m_Cost;
  }
+
+ int Tower::GetLvl()const
+ {
+    return m_Lvl;
+ }
+
+void Tower::SetLvl(int Lvl)
+{
+    m_Lvl = Lvl;
+}

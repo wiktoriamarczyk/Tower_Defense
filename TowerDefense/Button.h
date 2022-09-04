@@ -5,7 +5,7 @@
 class Button : public GameObject
 {
 public:
-    Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function);
+    Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function, bool Move = false);
     void Update(float DeltaTime)override {};
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
@@ -17,6 +17,7 @@ private:
     string           m_TextureName;
     vector<string>   m_ToolTip;
     function<void()> m_Function;
+    bool             m_Move = false;
 };
 
 class TowerButton : public Button

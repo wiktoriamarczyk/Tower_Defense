@@ -501,7 +501,7 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     m_AllGameObjects.push_back(buttonDown);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("LvlUpButton.png");
-    shared_ptr<Button> lvlUpButton = make_shared<Button>("LvlUpButton.png", vec2(1845, 860), buttonSize, func8);
+    shared_ptr<Button> lvlUpButton = make_shared<Button>("LvlUpButton.png", vec2(1840, 860), buttonSize, func8);
     lvlUpButton->SetToolTipText({"Upgrade the tower!"});
     m_AllGameObjects.push_back(lvlUpButton);
 

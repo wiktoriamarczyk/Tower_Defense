@@ -16,8 +16,8 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
     }
     
     // inicjalizacja kursorow
-    auto cursorDefault = Engine::GetSingleton()->GetTexture("CursorDefault.png");
-    auto cursorBuild = Engine::GetSingleton()->GetTexture("CursorBuild.png");
+    auto cursorDefault = Engine::GetSingleton()->GetTexture("/Cursors/CursorDefault.png");
+    auto cursorBuild = Engine::GetSingleton()->GetTexture("/Cursors/CursorBuild.png");
 
     if (cursorDefault && cursorBuild)
     {
@@ -91,7 +91,7 @@ void InGameState::OnMouseButtonDown(int Button)
 
     for (int i = 0; i < m_AllGameObjects.size(); ++i) 
     {
-        if (m_AllGameObjects[i]->OnMouseButtonDown(Button))
+        if (m_AllGameObjects[i]->IsActive() && m_AllGameObjects[i]->OnMouseButtonDown(Button))
             return;
     }
 
@@ -154,7 +154,7 @@ void InGameState::Update(float DeltaTime)
     // sprawdz czy wyswietlic tooltip obiektu
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
-        if (m_AllGameObjects[i]->IsCursorOverObject())
+        if (m_AllGameObjects[i]->IsActive() && m_AllGameObjects[i]->IsCursorOverObject())
         {
             vector<string> TooltipData = m_AllGameObjects[i]->GetToolTip();
 
@@ -171,7 +171,7 @@ void InGameState::Update(float DeltaTime)
     {
         none_of(m_AllGameObjects.begin(), m_AllGameObjects.end(), [this](shared_ptr<GameObject> o)
         {
-            if (o->IsCursorOverObject())
+            if (o->IsActive() && o->IsCursorOverObject())
             {
                 Engine::GetSingleton()->GetWindow().setMouseCursor(m_CursorHand);
                 return true;
@@ -187,16 +187,14 @@ void InGameState::Update(float DeltaTime)
     // update obiektow gry
     for (int i = 0; i < m_AllGameObjects.size();)
     {
-        m_AllGameObjects[i]->Update(DeltaTime);
+        if (m_AllGameObjects[i]->IsActive())
+            m_AllGameObjects[i]->Update(DeltaTime);
     
         if (m_AllGameObjects[i]->GetLifeStatus() == false)
-        {
             m_AllGameObjects.erase(m_AllGameObjects.begin() + i);
-        }
+
         else
-        {
             ++i;
-        }
     }
 }
 
@@ -210,7 +208,8 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     // render obiektow gry
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
-        m_AllGameObjects[i]->Render(Renderer);
+        if (m_AllGameObjects[i]->IsActive())
+            m_AllGameObjects[i]->Render(Renderer);
     }
 
     // render siatki
@@ -338,7 +337,7 @@ void InGameState::CreateUnit(vec2 Position, const string& UnitName)
     //pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
     vector<vec2> unitPath;
 
-    if(!m_PathFinder.FindPath(vec2i(50, 50), vec2i(1480, 910), unitPath))
+    if (!m_PathFinder.FindPath(vec2i(50, 50), vec2i(1480, 910), unitPath))
         std::cout << "Path could not be founded!" << std::endl;
 
     pUnit->MoveTo(unitPath);
@@ -360,11 +359,29 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     m_AllGameObjects.push_back(pShot);
 }
 
+void InGameState::EnableGroup(eUIGroup Group)
+{
+    for (int i = 0; i < m_AllGameObjects.size(); ++i)
+    {
+        if (m_AllGameObjects[i]->GetUIGroup() == Group)
+            m_AllGameObjects[i]->SetActive(true);
+    }
+}
+
+void InGameState::DisableGroup(eUIGroup Group)
+{
+    for (int i = 0; i < m_AllGameObjects.size(); ++i)
+    {
+        if (m_AllGameObjects[i]->GetUIGroup() == Group)
+            m_AllGameObjects[i]->SetActive(false);
+    }
+}
+
  void InGameState::CreateGameObjects()
  {
-    const Definition* pTower1Def = Engine::GetSingleton()->FindDefinition("Tower1.xml");
-    const Definition* pTower2Def = Engine::GetSingleton()->FindDefinition("Tower2.xml");
-    const Definition* pTower3Def = Engine::GetSingleton()->FindDefinition("Tower3.xml");
+    const Definition* pTower1Def = Engine::GetSingleton()->FindDefinition("/Definitions/Tower1.xml");
+    const Definition* pTower2Def = Engine::GetSingleton()->FindDefinition("/Definitions/Tower2.xml");
+    const Definition* pTower3Def = Engine::GetSingleton()->FindDefinition("/Definitions/Tower3.xml");
 
     auto func = [this, pTower1Def]()
     {
@@ -448,74 +465,111 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
             }
     };
 
-    //------------------------------
+    auto func9 = [this]()
+    {
+        DisableGroup(eUIGroup::SPELLS);
+        EnableGroup(eUIGroup::TOWERS);
+    };
 
-    vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("Tower1.png");
-    shared_ptr<TowerButton> tower1Button = make_shared<TowerButton>("Tower1.png", vec2(1650, 290), buttonSize, func, true);
+     auto func10 = [this]()
+    {
+        DisableGroup(eUIGroup::TOWERS);
+        EnableGroup(eUIGroup::SPELLS);
+    };
+
+    //----------wieze--------------------
+
+    vec2i buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/Tower1.png");
+    shared_ptr<TowerButton> tower1Button = make_shared<TowerButton>("/Buttons/Tower1.png", vec2(1650, 290), buttonSize, func, true);
     tower1Button->SetDefinition(pTower1Def);
+    tower1Button->SetUIGroup(eUIGroup::TOWERS);
     m_AllGameObjects.push_back(tower1Button);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("Tower2.png");
-    shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("Tower2.png", vec2(1820, 285), buttonSize, func2, true);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/Tower2.png");
+    shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("/Buttons/Tower2.png", vec2(1820, 285), buttonSize, func2, true);
     tower2Button->SetDefinition(pTower2Def);
+    tower2Button->SetUIGroup(eUIGroup::TOWERS);
     m_AllGameObjects.push_back(tower2Button);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("Tower3Anim.xml");
-    shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("Tower3Anim.xml", vec2(1675, 410), buttonSize, func3, true);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Textures/Tower3Anim.xml");
+    shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("/Textures/Tower3Anim.xml", vec2(1675, 410), buttonSize, func3, true);
     tower3Button->SetDefinition(pTower3Def);
+    tower3Button->SetUIGroup(eUIGroup::TOWERS);
     m_AllGameObjects.push_back(tower3Button);
 
-    //------------------------------
+    //-----------inne buttony-------------------
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("TowerList.png");
-    shared_ptr<Button> towerListButton = make_shared<Button>("TowerList.png", vec2(1660, 800), buttonSize, func7);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/TowerList.png");
+    shared_ptr<Button> towerListButton = make_shared<Button>("/Buttons/TowerList.png", vec2(1660, 800), buttonSize, func9);
     m_AllGameObjects.push_back(towerListButton);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("SpellsBook.png");
-    shared_ptr<Button> spellsBookButton = make_shared<Button>("SpellsBook.png", vec2(1750, 800), buttonSize, func7);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/SpellsBook.png");
+    shared_ptr<Button> spellsBookButton = make_shared<Button>("/Buttons/SpellsBook.png", vec2(1750, 800), buttonSize, func10);
     m_AllGameObjects.push_back(spellsBookButton);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("PrevButton.png");
-    shared_ptr<Button> prevButton = make_shared<Button>("PrevButton.png", vec2(1845, 800), buttonSize, func7);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/PrevButton.png");
+    shared_ptr<Button> prevButton = make_shared<Button>("/Buttons/PrevButton.png", vec2(1845, 800), buttonSize, func7);
     m_AllGameObjects.push_back(prevButton);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("NextButton.png");
-    shared_ptr<Button> nextButton = make_shared<Button>("NextButton.png", vec2(1875, 800), buttonSize, func7);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/NextButton.png");
+    shared_ptr<Button> nextButton = make_shared<Button>("/Buttons/NextButton.png", vec2(1875, 800), buttonSize, func7);
     m_AllGameObjects.push_back(nextButton);
 
-
-
-    buttonSize = Engine::GetSingleton()->GetTextureSize("SellButton.png");
-    shared_ptr<Button> sellButton = make_shared<Button>("SellButton.png", vec2(1750, 930), buttonSize, func4);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/SellButton.png");
+    shared_ptr<Button> sellButton = make_shared<Button>("/Buttons/SellButton.png", vec2(1750, 930), buttonSize, func4);
     sellButton->SetToolTipText({"sell tower", "for half prize"});
     m_AllGameObjects.push_back(sellButton);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("ButtonUp.png");
-    shared_ptr<Button> buttonUp = make_shared<Button>("ButtonUp.png", vec2(1750, 970), buttonSize, func5);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/ButtonUp.png");
+    shared_ptr<Button> buttonUp = make_shared<Button>("/Buttons/ButtonUp.png", vec2(1750, 970), buttonSize, func5);
     buttonUp->SetToolTipText({"Speed up time"});
     m_AllGameObjects.push_back(buttonUp);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("ButtonDown.png");
-    shared_ptr<Button> buttonDown = make_shared<Button>("ButtonDown.png", vec2(1750, 1000), buttonSize, func6);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/ButtonDown.png");
+    shared_ptr<Button> buttonDown = make_shared<Button>("/Buttons/ButtonDown.png", vec2(1750, 1000), buttonSize, func6);
     buttonDown->SetToolTipText({"Slow down time"});
     m_AllGameObjects.push_back(buttonDown);
 
-    buttonSize = Engine::GetSingleton()->GetTextureSize("LvlUpButton.png");
-    shared_ptr<Button> lvlUpButton = make_shared<Button>("LvlUpButton.png", vec2(1840, 860), buttonSize, func8);
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/LvlUpButton.png");
+    shared_ptr<Button> lvlUpButton = make_shared<Button>("/Buttons/LvlUpButton.png", vec2(1840, 860), buttonSize, func8);
     lvlUpButton->SetToolTipText({"Upgrade the tower!"});
     m_AllGameObjects.push_back(lvlUpButton);
 
+   //----------spelle--------------------
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/AddMoneySpell.png");
+    shared_ptr<Button> moneySpell = make_shared<Button>("/Spells/AddMoneySpell.png", vec2(1680, 310), buttonSize, func7);
+    moneySpell->SetUIGroup(eUIGroup::SPELLS);
+    m_AllGameObjects.push_back(moneySpell);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/SpeedSpell.png");
+    shared_ptr<Button> speedSpell = make_shared<Button>("/Spells/SpeedSpell.png", vec2(1820, 310), buttonSize, func7);
+    speedSpell->SetUIGroup(eUIGroup::SPELLS);
+    m_AllGameObjects.push_back(speedSpell);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/FireSpell.png");
+    shared_ptr<Button> fireSpell = make_shared<Button>("/Spells/FireSpell.png", vec2(1680, 440), buttonSize, func7);
+    fireSpell->SetUIGroup(eUIGroup::SPELLS);
+    m_AllGameObjects.push_back(fireSpell);
+
+    buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/CriticalShotSpell.png");
+    shared_ptr<Button> criticalSpell = make_shared<Button>("/Spells/CriticalShotSpell.png", vec2(1820, 440), buttonSize, func7);
+    criticalSpell->SetUIGroup(eUIGroup::SPELLS);
+    m_AllGameObjects.push_back(criticalSpell);
+
+    DisableGroup(eUIGroup::SPELLS);
+
     //------------------------------
 
-    shared_ptr<Image> backgroundImage = make_shared<Image>("Background.png", vec2(0, 0), vec2(0, 0)); 
+    shared_ptr<Image> backgroundImage = make_shared<Image>("/Images/Background.png", vec2(0, 0), vec2(0, 0)); 
     backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
     m_AllGameObjects.push_back(backgroundImage);
 
-    shared_ptr<Image> overlayImageMap = make_shared<Image>("OverlayMap.png", vec2(MAP_X, MAP_Y), vec2(0, 0)); 
+    shared_ptr<Image> overlayImageMap = make_shared<Image>("/Images/OverlayMap.png", vec2(MAP_X, MAP_Y), vec2(0, 0)); 
     overlayImageMap->SetGraphicLayer(eGraphicLayer::FOREGROUND);
     m_AllGameObjects.push_back(overlayImageMap);
 
-    shared_ptr<Image> overlayImage = make_shared<Image>("Overlay.png", vec2(0, 0), vec2(0, 0)); 
+    shared_ptr<Image> overlayImage = make_shared<Image>("/Images/Overlay.png", vec2(0, 0), vec2(0, 0)); 
     overlayImage->SetGraphicLayer(eGraphicLayer::OVERLAY);
     m_AllGameObjects.push_back(overlayImage);
 
@@ -525,11 +579,11 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
     m_UnitPhaseIcon = unitPhaseIcon;
     m_AllGameObjects.push_back(unitPhaseIcon);
 
-    shared_ptr<Image> unitIconFrame = make_shared<Image>("UnitIconFrame.png", vec2(1850, 930), vec2(0, 0));
+    shared_ptr<Image> unitIconFrame = make_shared<Image>("/Images/UnitIconFrame.png", vec2(1850, 930), vec2(0, 0));
     unitIconFrame->SetGraphicLayer(eGraphicLayer::UI);
     m_AllGameObjects.push_back(unitIconFrame);
 
-    shared_ptr<Image> moneyImage = make_shared<Image>("Money.png", vec2(1660, 930), vec2(0, 0));
+    shared_ptr<Image> moneyImage = make_shared<Image>("/Images/Money.png", vec2(1660, 930), vec2(0, 0));
     moneyImage->SetGraphicLayer(eGraphicLayer::UI);
     m_AllGameObjects.push_back(moneyImage);
 
@@ -544,5 +598,5 @@ void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
  void InGameState::ChangeUnitPhase(const string& Name)
  {
     m_UnitPhaseIcon->Initialize(Name);
-    CreateUnit(vec2i(60, -100), string(Name + ".xml"));
+    CreateUnit(vec2i(60, -100), string("/Definitions/" + Name + ".xml"));
  }

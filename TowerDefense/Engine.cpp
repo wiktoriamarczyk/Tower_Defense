@@ -31,16 +31,16 @@ bool Engine::Initialize()
     myFont->LoadFont("../Data/FontData.txt");
 
     // zaladowanie definicji
-    LoadDefinition("Dragon.xml");
-    LoadDefinition("Basilisk.xml");
-    LoadDefinition("Tower1.xml");
-    LoadDefinition("Tower2.xml");
-    LoadDefinition("Tower3.xml");
+    LoadDefinition("/Definitions/Dragon.xml");
+    LoadDefinition("/Definitions/Basilisk.xml");
+    LoadDefinition("/Definitions/Tower1.xml");
+    LoadDefinition("/Definitions/Tower2.xml");
+    LoadDefinition("/Definitions/Tower3.xml");
 
     // zaladowanie animacji obiektow
-    LoadAnimation("DragonAnim.xml");
-    LoadAnimation("BasiliskAnim.xml");
-    LoadAnimation("Tower3Anim.xml");
+    LoadAnimation("/Textures/DragonAnim.xml");
+    LoadAnimation("/Textures/BasiliskAnim.xml");
+    LoadAnimation("/Textures/Tower3Anim.xml");
 
     // dodanie wszystkich stanow gry do wektora
     m_AllStates.push_back(make_unique<InGameState>(myFont));

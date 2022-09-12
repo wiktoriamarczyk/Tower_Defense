@@ -1,0 +1,7 @@
+<Data>
+	<FileName>/Textures/BasiliskAnim.xml</FileName>
+	<Name>Basilisk</Name>
+	<Speed>350</Speed>
+	<HP>4</HP>
+	<Ability>Very fast unit</Ability>
+</Data>

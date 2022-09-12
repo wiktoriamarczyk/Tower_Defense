@@ -15,16 +15,22 @@ public:
     vec2i GetSize()const;
     bool GetLifeStatus()const;
     eGraphicLayer GetGraphicLayer()const;
+    bool IsActive()const;
+    eUIGroup GetUIGroup()const;
 
     void SetPosition(vec2 Position);
     void SetSize(vec2i Size);
     void SetLifeStatus(bool Status);
     void SetGraphicLayer(eGraphicLayer Layer);
+    void SetActive(bool Status);
+    void SetUIGroup(eUIGroup Group);
 
 protected:
     string        m_Name;
     vec2          m_Position;
     vec2i         m_Size;
-    bool          m_IsAlive = true;
+    bool          m_Alive = true;
     eGraphicLayer m_Layer = eGraphicLayer::FOREGROUND;
+    bool          m_Active = true;
+    eUIGroup      m_UIGroup = eUIGroup::UNKNOWN;
 };

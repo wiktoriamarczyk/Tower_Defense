@@ -89,6 +89,13 @@ enum class eGraphicLayer
     UI,
 };
 
+enum class eUIGroup
+{
+    UNKNOWN,
+    TOWERS,
+    SPELLS,
+};
+
 struct DisplayParameters
 {
     //optional<vec2i> DisplaySize;

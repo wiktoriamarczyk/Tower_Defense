@@ -27,7 +27,7 @@ void Shot::Update(float DeltaTime)
         {
             m_Target->SetDamageStatus(true);
             m_Target->SetHP(m_Target->GetHP() - 1);
-            m_IsAlive = false;
+            SetLifeStatus(false);
         }
 
     if (objectTopLeft.x < 0 || objectBottomRight.x >= SCREEN_WIDTH || objectBottomRight.y < 0 || objectTopLeft.y >= SCREEN_HEIGHT)
@@ -42,7 +42,7 @@ void Shot::Render(sf::RenderWindow& Renderer)
     //shot.setFillColor(sf::Color::Green);
     //shot.setPosition(GetPosition()-vec2(5.f, 5.f));
 
-    Engine::GetSingleton()->DisplayTexture("Shot.png", GetPosition(), DisplayParameters{.DrawScale{0.2f, 0.2f}, .Pivot{0.5, 0.5}, .Rotation{m_NormalizedDir.GetAngleFromVec()}});
+    Engine::GetSingleton()->DisplayTexture("/Textures/Shot.png", GetPosition(), DisplayParameters{.DrawScale{0.1f, 0.1f}, .Pivot{0.5, 0.5}, .Rotation{m_NormalizedDir.GetAngleFromVec()}});
 
     //Renderer.draw(shot);
 

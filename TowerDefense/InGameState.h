@@ -23,6 +23,8 @@ public:
     bool ReadGrid();
     void CreateGameObjects();
     void ChangeUnitPhase(const string& Name);
+    void EnableGroup(eUIGroup Group);
+    void DisableGroup(eUIGroup Group);
 
     template<typename T>
     vector<shared_ptr<T>> GetObjects();

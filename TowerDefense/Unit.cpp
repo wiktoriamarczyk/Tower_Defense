@@ -34,7 +34,7 @@ void Unit::Update(float DeltaTime)
         // wektor kierunkowy v = [x2 - x1, y2 - y1]
         vec2 dir(m_TargetPositions[0] - GetPosition());
         vec2 normalizedDir = dir.GetNormalized();
-        vec2 shiftPerFrame = normalizedDir * m_Speed * DeltaTime; 
+        vec2 shiftPerFrame = normalizedDir * m_Speed * DeltaTime;
 
         // jesli odleglosc do naszego punktu docelowego jest mniejsza niz odleglosc jaka przebedziemy w jednej klatce, to od razu wyladuj u celu
         if (shiftPerFrame.GetLength() > dir.GetLength())
@@ -52,7 +52,7 @@ void Unit::Render(sf::RenderWindow& Renderer)
 {
     // wyliczamy mnoznik, ktory przeskalowuje pozycje z ekranu na mini mape o rozmiarze (200,200)
     vec2 worldToMapRatio = vec2(MAP_WIDTH, MAP_HEIGHT) / vec2(SCREEN_WIDTH, SCREEN_HEIGHT);
-    // wyliczamy pozycje na mini mapie, dodajac do pozycji mapy, przeskalowana pozycje jednostki 
+    // wyliczamy pozycje na mini mapie, dodajac do pozycji mapy, przeskalowana pozycje jednostki
     vec2 mapPosition = vec2(MAP_X, MAP_Y) + (GetPosition() * worldToMapRatio);
 
     // renderowanie pozycji jednostki na mini mapie
@@ -64,7 +64,7 @@ void Unit::Render(sf::RenderWindow& Renderer)
     // tekstura
     if (m_HurtTimer >= 0)
         Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
-    else 
+    else
         Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
 
     // poziom HP
@@ -107,11 +107,20 @@ void Unit::Initialize(const Definition& Def)
     m_HP = m_MaxHP;
 }
 
+void Unit::OnHit(Damage DamageValue)
+{
+    float fireDamage = DamageValue.FireValue -  DamageValue.FireValue * m_Resistances.FireValue;
+    float lightningDamage = DamageValue.LightningValue - DamageValue.LightningValue * m_Resistances.LightningValue;
+    float iceDamage = DamageValue.IceValue - DamageValue.IceValue * m_Resistances.IceValue;
+
+    m_HP -= fireDamage + lightningDamage + iceDamage;
+}
+
  bool Unit::GetDamageStatus()const
  {
     return m_IsHurt;
  }
- 
+
 int Unit::GetHP()const
 {
     return m_HP;

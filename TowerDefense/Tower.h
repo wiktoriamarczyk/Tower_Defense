@@ -27,12 +27,12 @@ private:
     string          m_TextureName;
     int             m_Cost = 0;
     int             m_Lvl = 1;
-    float           m_Damage = 0;
     float           m_ShootInterval = 0;
     vec2i           m_TextureSize;
     float           m_DetectionRadius = 0;
     sf::CircleShape m_DetectionArea;
     bool            m_Picked = false;
+    Damage          m_Damage;
 
     float           m_ShootingTimer = 0;
 

@@ -11,7 +11,7 @@ Tower::Tower(InGameState& Game, vec2 Position) : m_Game(Game)
 void Tower::DrawTowerOverlay(string TextureName, sf::RenderWindow& Renderer, bool IsBlocked)
 {
     auto mousePos = (Engine::GetSingleton()->GetMousePos() / CELL_SIZE) * CELL_SIZE;
-    
+
     if (IsBlocked)
         Engine::GetSingleton()->DisplayTexture((TextureName).c_str(), mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5), .DrawColor = sf::Color::Red});
     else
@@ -40,7 +40,7 @@ void Tower::Update(float DeltaTime)
             m_DetectionArea.setOutlineColor(sf::Color::Red * sf::Color(255,255,255,192));
             Shoot(GetPosition(), units[i]);
         }
-        else 
+        else
         {
             m_DetectionArea.setOutlineColor(sf::Color::Black * sf::Color(255,255,255,192));
         }
@@ -99,7 +99,14 @@ vector<string> Tower::GetToolTip()const
     vector<string> tmp;
 
     tmp.push_back("Lvl: " + ToString(m_Lvl));
-    tmp.push_back("Dmg: "+ ToString(m_Damage));
+
+    if (m_Damage.FireValue > 0)
+        tmp.push_back("Fire Dmg: "+ ToString(m_Damage.FireValue));
+    if (m_Damage.LightningValue > 0)
+        tmp.push_back("Fire Dmg: "+ ToString(m_Damage.LightningValue));
+    if (m_Damage.IceValue > 0)
+        tmp.push_back("Fire Dmg: "+ ToString(m_Damage.IceValue));
+
     tmp.push_back("Radius: " + ToString(m_DetectionRadius));
     tmp.push_back("Speed: " + ToString(m_ShootInterval));
 
@@ -111,7 +118,9 @@ void Tower::Initialize(const Definition& Def)
     m_Name = Def.GetStringValue("Name");
     m_TextureName = Def.GetStringValue("FileName");
     m_Cost = Def.GetIntValue("Cost");
-    m_Damage = Def.GetFloatValue("Damage");
+    m_Damage.FireValue = Def.GetFloatValue("DamageFire");
+    m_Damage.LightningValue = Def.GetFloatValue("DamageLightning");
+    m_Damage.IceValue = Def.GetFloatValue("IceLightning");
     m_DetectionRadius = Def.GetIntValue("DetectionRadius");
     m_ShootInterval = Def.GetFloatValue("ShootInterval");
 
@@ -123,7 +132,7 @@ void Tower::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
 {
     if (m_ShootingTimer <= 0)
     {
-        m_Game.Shoot(StartingPosition, Target);
+        m_Game.Shoot(StartingPosition, Target, m_Damage);
         m_ShootingTimer = m_ShootInterval;
     }
 }

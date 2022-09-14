@@ -14,7 +14,7 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
         std::cout << "File could not be loaded!" << std::endl;
         return;
     }
-    
+
     // inicjalizacja kursorow
     auto cursorDefault = Engine::GetSingleton()->GetTexture("/Cursors/CursorDefault.png");
     auto cursorBuild = Engine::GetSingleton()->GetTexture("/Cursors/CursorBuild.png");
@@ -84,12 +84,12 @@ void InGameState::OnMouseButtonDown(int Button)
 {
     int x = Engine::GetSingleton()->GetMousePos().x;
     int y = Engine::GetSingleton()->GetMousePos().y;
-    // numer w rzedzie i w kolumnie 
+    // numer w rzedzie i w kolumnie
     vec2i cell ((x / CELL_SIZE), (y / CELL_SIZE));
     // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to wieza
     eGridValue gridState = m_Grid[cell.y % GRID_ROWS][cell.x % GRID_COLS];
 
-    for (int i = 0; i < m_AllGameObjects.size(); ++i) 
+    for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
         if (m_AllGameObjects[i]->IsActive() && m_AllGameObjects[i]->OnMouseButtonDown(Button))
             return;
@@ -133,22 +133,22 @@ void InGameState::Update(float DeltaTime)
     m_TimeToNextUnitPhase -= DeltaTime;
 
     if (m_TimeToNextUnitPhase <= 0)
-        m_TimeToNextUnitPhase = 20.f;
+        m_TimeToNextUnitPhase += 20.f;
 
-    if (m_SpawningTimer <= 0)
+    if (m_UnitPhaseTimer <= 0)
+        m_UnitPhaseTimer += 40.f;
+
+    if (m_SpawningTimer <= 0) 
     {
         //vector<const char*> Units = { "Dragon.xml" , "Basilisk.xml" };
         //auto SelectedUnit = rand() % (Units.size());
 
-        if (m_UnitPhaseTimer <= 0)
-            m_UnitPhaseTimer = 40.f;
-
-        else if (m_UnitPhaseTimer >= 22.f)
+        if (m_UnitPhaseTimer >= 20.f)
             ChangeUnitPhase("Dragon");
-        else 
+        else
             ChangeUnitPhase("Basilisk");
 
-        m_SpawningTimer = 3.f;
+        m_SpawningTimer += 2.5f;
     }
 
     // sprawdz czy wyswietlic tooltip obiektu
@@ -166,19 +166,21 @@ void InGameState::Update(float DeltaTime)
         }
     }
 
+    auto &getWindow = Engine::GetSingleton()->GetWindow();
+
    // zmiana kursora
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
-        none_of(m_AllGameObjects.begin(), m_AllGameObjects.end(), [this](shared_ptr<GameObject> o)
+        none_of(m_AllGameObjects.begin(), m_AllGameObjects.end(), [this, &getWindow](const shared_ptr<GameObject>& o)
         {
             if (o->IsActive() && o->IsCursorOverObject())
             {
-                Engine::GetSingleton()->GetWindow().setMouseCursor(m_CursorHand);
+                getWindow.setMouseCursor(m_CursorHand);
                 return true;
             }
             else
             {
-                Engine::GetSingleton()->GetWindow().setMouseCursor(m_CursorArrow);
+                getWindow.setMouseCursor(m_CursorArrow);
                 return false;
             }
         });
@@ -189,7 +191,7 @@ void InGameState::Update(float DeltaTime)
     {
         if (m_AllGameObjects[i]->IsActive())
             m_AllGameObjects[i]->Update(DeltaTime);
-    
+
         if (m_AllGameObjects[i]->GetLifeStatus() == false)
             m_AllGameObjects.erase(m_AllGameObjects.begin() + i);
 
@@ -247,7 +249,7 @@ void InGameState::Render(sf::RenderWindow& Renderer)
                 int _CellY = (_y / 64);
 
                 eGridValue _grid_state = m_Grid[_CellY % GRID_ROWS][_CellX % GRID_COLS];
-                
+
                 sf::Color _GridColor;
                 if (_grid_state == eGridValue::FREE)
                 _GridColor = sf::Color::White;
@@ -329,11 +331,11 @@ void InGameState::CreateUnit(vec2 Position, const string& UnitName)
 
     if (!pDef)
         return;
-     
+
     auto pUnit = make_shared<Unit>(Position);
     pUnit->Initialize(*pDef);
     m_AllGameObjects.push_back(pUnit);
-    
+
     //pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
     vector<vec2> unitPath;
 
@@ -353,9 +355,9 @@ void InGameState::DisplayTexture(const string& FileName, vec2i Position, Display
     Engine::GetSingleton()->DisplayTexture(FileName, Position, Param);
 }
 
-void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
+void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target, Damage DamageValue)
 {
-    shared_ptr<Shot> pShot = make_shared<Shot>(StartingPosition, Target);
+    shared_ptr<Shot> pShot = make_shared<Shot>(StartingPosition, Target, DamageValue);
     m_AllGameObjects.push_back(pShot);
 }
 
@@ -426,7 +428,7 @@ void InGameState::DisableGroup(eUIGroup Group)
                     int cellY = (towers[i]->GetPosition().y / CELL_SIZE);
                     m_Grid[cellY % GRID_ROWS][cellX % GRID_COLS] = eGridValue::FREE;
                     towers[i]->SetLifeStatus(false);
-                }   
+                }
             }
     };
 
@@ -461,7 +463,7 @@ void InGameState::DisableGroup(eUIGroup Group)
                 {
                     m_Money -= towers[i]->GetPrize() * 1.5f;
                     towers[i]->SetLvl(towers[i]->GetLvl() + 1);
-                }   
+                }
             }
     };
 
@@ -561,15 +563,15 @@ void InGameState::DisableGroup(eUIGroup Group)
 
     //------------------------------
 
-    shared_ptr<Image> backgroundImage = make_shared<Image>("/Images/Background.png", vec2(0, 0), vec2(0, 0)); 
+    shared_ptr<Image> backgroundImage = make_shared<Image>("/Images/Background.png", vec2(0, 0), vec2(0, 0));
     backgroundImage->SetGraphicLayer(eGraphicLayer::BACKGROUND);
     m_AllGameObjects.push_back(backgroundImage);
 
-    shared_ptr<Image> overlayImageMap = make_shared<Image>("/Images/OverlayMap.png", vec2(MAP_X, MAP_Y), vec2(0, 0)); 
+    shared_ptr<Image> overlayImageMap = make_shared<Image>("/Images/OverlayMap.png", vec2(MAP_X, MAP_Y), vec2(0, 0));
     overlayImageMap->SetGraphicLayer(eGraphicLayer::FOREGROUND);
     m_AllGameObjects.push_back(overlayImageMap);
 
-    shared_ptr<Image> overlayImage = make_shared<Image>("/Images/Overlay.png", vec2(0, 0), vec2(0, 0)); 
+    shared_ptr<Image> overlayImage = make_shared<Image>("/Images/Overlay.png", vec2(0, 0), vec2(0, 0));
     overlayImage->SetGraphicLayer(eGraphicLayer::OVERLAY);
     m_AllGameObjects.push_back(overlayImage);
 

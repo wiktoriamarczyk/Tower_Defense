@@ -56,6 +56,8 @@ void Engine::Loop()
 {
     while (m_Renderer.isOpen())
     {
+        sf::Clock clock;
+
         sf::Event event;
         while (m_Renderer.pollEvent(event))
         {
@@ -72,8 +74,6 @@ void Engine::Loop()
                 m_pCurrentState->OnMouseButtonDown(event.mouseButton.button);
             }
         }
-        
-        sf::sleep(sf::milliseconds(1000 / 60));
 
         for (int i = 0; i < m_LoadedTextures.size(); ++i)
         {
@@ -82,6 +82,10 @@ void Engine::Loop()
 
         m_pCurrentState->Update(1.0f / m_FramesPerSec);
         m_pCurrentState->Render(m_Renderer);
+
+        auto timePassed = clock.getElapsedTime();
+
+        sf::sleep(sf::milliseconds(1000 / 60) - timePassed);
 
         // domyslnie nastepny stan jest UNKNOWN, gdy nie chcemy przechodzic do nowego stanu, zatem jesli jest tam cos innego, tzn. ze bylo zazadanie zmiany stanu
         if (m_pCurrentState->GetNextStateID() != eStateID::UNKNOWN)
@@ -181,7 +185,7 @@ vec2i Engine::GetTextureSize(const string& FileName)const
     {
         return pTexture->GetSize();
     }
-    else 
+    else
         vec2i(0,0);
 }
 

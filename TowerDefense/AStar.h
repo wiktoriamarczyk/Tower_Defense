@@ -6,7 +6,7 @@ struct AStarMapCell
     vec2i               CellPosition;
     const AStarMapCell* pPrevCell = nullptr;
     bool                IsVisited = false;
-    bool                IsBlocked = false;          
+    bool                IsBlocked = false;
 };
 
 class AStar
@@ -26,8 +26,8 @@ private:
     // dodanie komórki do listy sprawdzanych komórek
     void AddToSearchList(const AStarMapCell* pPrevCell, vec2i CellPos);
 
-    AStarMapCell          m_MapData[GRID_ROWS][GRID_COLS];  //< dwuwymiarowa mapa komórek
-    vector<AStarMapCell*> m_WorkList;                       //< lista wskaźników na komórki do sprawdzenia
+    AStarMapCell         m_MapData[GRID_ROWS][GRID_COLS];  //< dwuwymiarowa mapa komórek
+    deque<AStarMapCell*> m_WorkList;                       //< lista wskaźników na komórki do sprawdzenia
 
     bool m_Initialize = false;
 

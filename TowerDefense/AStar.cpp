@@ -18,7 +18,7 @@ bool AStar::FindPath( vec2i MapCellStart , vec2i MapCellEnd , vector<vec2>& Foun
 {
     // czyszczenie stanu komorek
     ResetSearchData();
-    
+
     if (!m_Initialize)
         return false;
 
@@ -27,7 +27,7 @@ bool AStar::FindPath( vec2i MapCellStart , vec2i MapCellEnd , vector<vec2>& Foun
 
     if (MapCellStart == MapCellEnd)
         return true;
-    
+
     // dodanie komorki startowej do listy sprawdzanych komorek
     AddToSearchList(nullptr, MapCellStart);
 
@@ -40,7 +40,7 @@ bool AStar::FindPath( vec2i MapCellStart , vec2i MapCellEnd , vector<vec2>& Foun
             // stworzenie sciezki (listy komorek), ktora doprowadzila nas do komorki docelowej, wykorzystujac wskaznik na poprzednika kazdej komorki
             for (const AStarMapCell* Current = m_WorkList[0]; Current != nullptr; Current = Current->pPrevCell)
             {
-                FoundPath.insert(FoundPath.begin(), Current->CellPosition * CELL_SIZE);  
+                FoundPath.insert(FoundPath.begin(), Current->CellPosition * CELL_SIZE);
             }
             // odnaleziono sciezke do komorki docelowej
             return true;
@@ -51,9 +51,10 @@ bool AStar::FindPath( vec2i MapCellStart , vec2i MapCellEnd , vector<vec2>& Foun
         AddToSearchList(m_WorkList[0], vec2i(m_WorkList[0]->CellPosition.x + 1, m_WorkList[0]->CellPosition.y));
         AddToSearchList(m_WorkList[0], vec2i(m_WorkList[0]->CellPosition.x, m_WorkList[0]->CellPosition.y - 1));
         AddToSearchList(m_WorkList[0], vec2i(m_WorkList[0]->CellPosition.x, m_WorkList[0]->CellPosition.y + 1));
-    
+
         // usuniecie z listy sprawdzanych komorek aktualnie sprawdzanej komorki
-        m_WorkList.erase(m_WorkList.begin());
+        m_WorkList.pop_front();
+        //m_WorkList.erase(m_WorkList.begin());
     }
 
     return false;
@@ -75,7 +76,7 @@ void AStar::ResetSearchData()
 
 AStarMapCell* AStar::GetCell( vec2i CellPos )
 {
-    // ta funkcja powinna zwrócić wskaźnik na komórkę: &( m_MapData[ Y ][ X ] ), JEŚLI pozycja jest poprawna,    
+    // ta funkcja powinna zwrócić wskaźnik na komórkę: &( m_MapData[ Y ][ X ] ), JEŚLI pozycja jest poprawna,
     // jeśli pozycja jest poza mapą, to powinnismy zwrócić nullptr
 
     if (CellPos.x < 0 || CellPos.x >= GRID_COLS || CellPos.y < 0 || CellPos.y >= GRID_ROWS)
@@ -93,10 +94,10 @@ bool AStar::IsValidCell( vec2i CellPos )
 
     if (!GetCell(CellPos))
         return false;
-    
+
     if (m_MapData[CellPos.y][CellPos.x].IsVisited)
         return false;
-    
+
     if (m_MapData[CellPos.y][CellPos.x].IsBlocked)
         return false;
 
@@ -107,7 +108,7 @@ void AStar::AddToSearchList( const AStarMapCell* pPrevCell , vec2i CellPos )
 {
     if (!IsValidCell(CellPos))
         return;
-    
+
     AStarMapCell* tmp = GetCell(CellPos);
 
     tmp->pPrevCell = pPrevCell;

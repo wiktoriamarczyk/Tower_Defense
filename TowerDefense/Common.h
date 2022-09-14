@@ -1,6 +1,7 @@
 #pragma once
 #include<iostream>
 #include<vector>
+#include<deque>
 #include<string>
 #include<fstream>
 #include<memory>
@@ -15,6 +16,7 @@
 #include<SFML/Audio.hpp>
 
 using std::vector;
+using std::deque;
 using std::unique_ptr;
 using std::make_unique;
 using std::shared_ptr;
@@ -107,6 +109,15 @@ struct DisplayParameters
     sf::Color DrawColor = sf::Color::White;
     float Rotation = 0.0f;
 };
+
+struct Damage
+{
+    float FireValue = 0;
+    float LightningValue = 0;
+    float IceValue = 0;
+};
+
+using Resistances = Damage;
 
 template <typename T>
 string ToString(const T& value)

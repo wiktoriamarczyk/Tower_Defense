@@ -19,7 +19,7 @@ public:
     void DestroyTextures();
     void BuildTower(vec2 Cell, const Definition* pDef);
     void CreateUnit(vec2 Position, const string& UnitName);
-    void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target);
+    void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target, Damage DamageValue);
     bool ReadGrid();
     void CreateGameObjects();
     void ChangeUnitPhase(const string& Name);
@@ -45,7 +45,7 @@ private:
 
     float                          m_SpawningTimer = 0;
     float                          m_UnitPhaseTimer = 40.f;
-    float                          m_TimeToNextUnitPhase = 22.f;
+    float                          m_TimeToNextUnitPhase = 20.f;
     shared_ptr<Image>              m_UnitPhaseIcon;
 
     // debug

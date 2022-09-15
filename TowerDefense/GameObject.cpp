@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "Engine.h"
 
 vec2 GameObject::GetPosition()const
 {
@@ -30,6 +31,11 @@ eUIGroup GameObject::GetUIGroup()const
     return m_UIGroup;
 }
 
+eCursorType GameObject::GetCursor()const
+{
+    return m_Cursor;
+}
+
 void GameObject::SetPosition(vec2 Position)
 {
     m_Position = Position;
@@ -59,3 +65,8 @@ void GameObject::SetActive(bool Status)
  {
     m_UIGroup = Group;
  }
+
+void GameObject::SetCursor(eCursorType Cursor)
+{
+    m_Cursor = Cursor;
+}

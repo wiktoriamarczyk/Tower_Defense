@@ -29,19 +29,20 @@ public:
     template<typename T>
     vector<shared_ptr<T>> GetObjects();
 
-private:
-    sf::Cursor                     m_CursorHand;
-    sf::Cursor                     m_CursorArrow;
+    void SetCursor(eCursorType Cursor);
 
-    vector<shared_ptr<GameObject>> m_AllGameObjects;
-    shared_ptr<ToolTip>            m_ToolTip; 
-    eGridValue                     m_Grid[GRID_ROWS][GRID_COLS] = {};
-    //eTowerID                     m_PickedTowerID = eTowerID::NONE;
-    bool                           m_HoldTower = false;
-    bool                           m_MoveTower = false;
-    const Definition*              m_pTowerDef = nullptr;
-    int                            m_Money = 1000;
-    AStar                          m_PathFinder;
+private:
+    eCursorType                                       m_CurrentCursor;
+    vector<unique_ptr<pair<eCursorType, sf::Cursor>>> m_AllCursors;
+    vector<shared_ptr<GameObject>>                    m_AllGameObjects;
+    shared_ptr<ToolTip>                               m_ToolTip; 
+    eGridValue                                        m_Grid[GRID_ROWS][GRID_COLS] = {};
+    //eTowerID                                        m_PickedTowerID = eTowerID::NONE;
+    bool                                              m_HoldTower = false;
+    bool                                              m_MoveTower = false;
+    const Definition*                                 m_pTowerDef = nullptr;
+    int                                               m_Money = 1000;
+    AStar                                             m_PathFinder;
 
     float                          m_SpawningTimer = 0;
     float                          m_UnitPhaseTimer = 40.f;

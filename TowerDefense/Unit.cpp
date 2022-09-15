@@ -93,6 +93,24 @@ bool Unit::OnMouseButtonDown(int Button)
     return false;
 }
 
+bool Unit::IsCursorOverObject()const
+{
+    vec2i mousePos = Engine::GetSingleton()->GetMousePos();
+
+    vec2 objectTopLeft = GetPosition() - GetSize() / 2;
+    vec2 objectBottomRight = GetPosition() + GetSize() / 2;
+
+    if (mousePos.x >= objectTopLeft.x &&  mousePos.x <= objectBottomRight.x)
+    {
+        if (mousePos.y >= objectTopLeft.y && mousePos.y <= objectBottomRight.y)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Unit::MoveTo(vector<vec2> TargetPositions)
 {
     m_TargetPositions = TargetPositions;

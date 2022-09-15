@@ -17,6 +17,8 @@
 
 using std::vector;
 using std::deque;
+using std::pair;
+using std::make_pair;
 using std::unique_ptr;
 using std::make_unique;
 using std::shared_ptr;
@@ -96,6 +98,15 @@ enum class eUIGroup
     UNKNOWN,
     TOWERS,
     SPELLS,
+};
+
+enum class eCursorType
+{
+    DEFAULT,
+    BUILD,
+    SWORD,
+    HOURGLASS,
+    SPELL,
 };
 
 struct DisplayParameters

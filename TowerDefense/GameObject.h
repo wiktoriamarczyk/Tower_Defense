@@ -17,6 +17,7 @@ public:
     eGraphicLayer GetGraphicLayer()const;
     bool IsActive()const;
     eUIGroup GetUIGroup()const;
+    eCursorType GetCursor()const;
 
     void SetPosition(vec2 Position);
     void SetSize(vec2i Size);
@@ -24,6 +25,7 @@ public:
     void SetGraphicLayer(eGraphicLayer Layer);
     void SetActive(bool Status);
     void SetUIGroup(eUIGroup Group);
+    void SetCursor(eCursorType Cursor);
 
 protected:
     string        m_Name;
@@ -33,4 +35,5 @@ protected:
     eGraphicLayer m_Layer = eGraphicLayer::FOREGROUND;
     bool          m_Active = true;
     eUIGroup      m_UIGroup = eUIGroup::UNKNOWN;
+    eCursorType   m_Cursor = eCursorType::DEFAULT;
 };

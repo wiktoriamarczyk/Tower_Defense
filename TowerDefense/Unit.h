@@ -9,6 +9,7 @@ public:
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
+    bool IsCursorOverObject()const override;
     void MoveTo(vector<vec2> TargetPosition);
     void Initialize(const Definition& Def);
     void OnHit(Damage DamageValue);

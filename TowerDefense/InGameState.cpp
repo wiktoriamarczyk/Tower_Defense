@@ -15,25 +15,45 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
         return;
     }
 
-    // inicjalizacja kursorow
-    auto cursorDefault = Engine::GetSingleton()->GetTexture("/Cursors/CursorDefault.png");
-    auto cursorBuild = Engine::GetSingleton()->GetTexture("/Cursors/CursorBuild.png");
 
-    if (cursorDefault && cursorBuild)
-    {
-        m_CursorArrow.loadFromPixels(cursorDefault->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorDefault->GetSize()), sf::Vector2u(0,0));
-        m_CursorHand.loadFromPixels(cursorBuild->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorBuild->GetSize()), sf::Vector2u(0,0));
-    }
-    else
-    {
-        m_CursorArrow.loadFromSystem(sf::Cursor::Arrow);
-        m_CursorHand.loadFromSystem(sf::Cursor::Hand);
-    }
+    // inicjalizacja kursorow
+    SetCursor(eCursorType::DEFAULT);
+
+    auto cursorBuild = Engine::GetSingleton()->GetTexture("/Cursors/CursorBuild.png");
+    auto pBuildCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
+    pBuildCursor->first = eCursorType::BUILD;
+    pBuildCursor->second.loadFromPixels(cursorBuild->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorBuild->GetSize()), sf::Vector2u(0, 0));
+    m_AllCursors.push_back(std::move(pBuildCursor));
+
+    auto cursorSword = Engine::GetSingleton()->GetTexture("/Cursors/CursorSword.png");
+    auto pSwordCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
+    pSwordCursor->first = eCursorType::SWORD;
+    pSwordCursor->second.loadFromPixels(cursorSword->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorSword->GetSize()), sf::Vector2u(0, 0));
+    m_AllCursors.push_back(std::move(pSwordCursor));
+
+    auto cursorHourglass = Engine::GetSingleton()->GetTexture("/Cursors/CursorHourglass.png");
+    auto pHourglassCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
+    pHourglassCursor->first = eCursorType::HOURGLASS;
+    pHourglassCursor->second.loadFromPixels(cursorHourglass->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorHourglass->GetSize()), sf::Vector2u(0, 0));
+    m_AllCursors.push_back(std::move(pHourglassCursor));
+
+    auto cursorSpell= Engine::GetSingleton()->GetTexture("/Cursors/CursorSpell.png");
+    auto pSpellCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
+    pSpellCursor->first = eCursorType::SPELL;
+    pSpellCursor->second.loadFromPixels(cursorSpell->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorSpell->GetSize()), sf::Vector2u(0, 0));
+    m_AllCursors.push_back(std::move(pSpellCursor));
+
+    auto cursorDefault = Engine::GetSingleton()->GetTexture("/Cursors/CursorDefault.png");
+    auto pDefaultCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
+    pDefaultCursor->first = eCursorType::DEFAULT;
+    pDefaultCursor->second.loadFromPixels(cursorDefault->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorDefault->GetSize()), sf::Vector2u(0, 0));
+    m_AllCursors.push_back(std::move(pDefaultCursor));
+
+
 
     // zainicjalizowanie szukania sciezki dla jednostek
     if (!m_PathFinder.InitFinder(m_Grid))
         std::cout << "Path could not be found!" << std::endl;
-
 
     // stworzenie obiektow gry
     CreateGameObjects();
@@ -166,25 +186,29 @@ void InGameState::Update(float DeltaTime)
         }
     }
 
-    auto &getWindow = Engine::GetSingleton()->GetWindow();
+    // zmiana kursora
+    shared_ptr<GameObject> object;
 
-   // zmiana kursora
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
     {
-        none_of(m_AllGameObjects.begin(), m_AllGameObjects.end(), [this, &getWindow](const shared_ptr<GameObject>& o)
+        if (m_AllGameObjects[i]->IsActive() && m_AllGameObjects[i]->IsCursorOverObject())
         {
-            if (o->IsActive() && o->IsCursorOverObject())
-            {
-                getWindow.setMouseCursor(m_CursorHand);
-                return true;
-            }
-            else
-            {
-                getWindow.setMouseCursor(m_CursorArrow);
-                return false;
-            }
-        });
+            object = m_AllGameObjects[i];
+            break;
+        }
     }
+
+    if (object)
+    {
+        SetCursor(object->GetCursor());
+        object = nullptr;
+    }
+
+    else
+    {
+        SetCursor(eCursorType::DEFAULT);
+    }
+
 
     // update obiektow gry
     for (int i = 0; i < m_AllGameObjects.size();)
@@ -316,7 +340,7 @@ void InGameState::BuildTower(vec2 Cell, const Definition* pDef)
         return;
 
     pTower->Initialize(*pDef);
-
+    pTower->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(pTower);
 
     // sortowanie wiezy po pozycji y, aby wieze znajdujace sie "blizej" gracza, byly widoczne na 1 planie
@@ -334,6 +358,7 @@ void InGameState::CreateUnit(vec2 Position, const string& UnitName)
 
     auto pUnit = make_shared<Unit>(Position);
     pUnit->Initialize(*pDef);
+    pUnit->SetCursor(eCursorType::SWORD);
     m_AllGameObjects.push_back(pUnit);
 
     //pUnit->MoveTo(vector<vec2>{{60, 580}, {570, 580}, {570, 310}, {970, 310}, {970, 580}, {1480,580}, {1480, 1200}});
@@ -485,28 +510,33 @@ void InGameState::DisableGroup(eUIGroup Group)
     shared_ptr<TowerButton> tower1Button = make_shared<TowerButton>("/Buttons/Tower1.png", vec2(1650, 290), buttonSize, func, true);
     tower1Button->SetDefinition(pTower1Def);
     tower1Button->SetUIGroup(eUIGroup::TOWERS);
+    tower1Button->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(tower1Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/Tower2.png");
     shared_ptr<TowerButton> tower2Button = make_shared<TowerButton>("/Buttons/Tower2.png", vec2(1820, 285), buttonSize, func2, true);
     tower2Button->SetDefinition(pTower2Def);
     tower2Button->SetUIGroup(eUIGroup::TOWERS);
+    tower2Button->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(tower2Button);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Textures/Tower3Anim.xml");
     shared_ptr<TowerButton> tower3Button = make_shared<TowerButton>("/Textures/Tower3Anim.xml", vec2(1675, 410), buttonSize, func3, true);
     tower3Button->SetDefinition(pTower3Def);
     tower3Button->SetUIGroup(eUIGroup::TOWERS);
+    tower3Button->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(tower3Button);
 
     //-----------inne buttony-------------------
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/TowerList.png");
     shared_ptr<Button> towerListButton = make_shared<Button>("/Buttons/TowerList.png", vec2(1660, 800), buttonSize, func9);
+    towerListButton->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(towerListButton);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/SpellsBook.png");
     shared_ptr<Button> spellsBookButton = make_shared<Button>("/Buttons/SpellsBook.png", vec2(1750, 800), buttonSize, func10);
+    spellsBookButton->SetCursor(eCursorType::SPELL);
     m_AllGameObjects.push_back(spellsBookButton);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/PrevButton.png");
@@ -520,21 +550,25 @@ void InGameState::DisableGroup(eUIGroup Group)
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/SellButton.png");
     shared_ptr<Button> sellButton = make_shared<Button>("/Buttons/SellButton.png", vec2(1750, 930), buttonSize, func4);
     sellButton->SetToolTipText({"sell tower", "for half prize"});
+    sellButton->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(sellButton);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/ButtonUp.png");
     shared_ptr<Button> buttonUp = make_shared<Button>("/Buttons/ButtonUp.png", vec2(1750, 970), buttonSize, func5);
     buttonUp->SetToolTipText({"Speed up time"});
+    buttonUp->SetCursor(eCursorType::HOURGLASS);
     m_AllGameObjects.push_back(buttonUp);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/ButtonDown.png");
     shared_ptr<Button> buttonDown = make_shared<Button>("/Buttons/ButtonDown.png", vec2(1750, 1000), buttonSize, func6);
     buttonDown->SetToolTipText({"Slow down time"});
+    buttonDown->SetCursor(eCursorType::HOURGLASS);
     m_AllGameObjects.push_back(buttonDown);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/LvlUpButton.png");
     shared_ptr<Button> lvlUpButton = make_shared<Button>("/Buttons/LvlUpButton.png", vec2(1840, 860), buttonSize, func8);
     lvlUpButton->SetToolTipText({"Upgrade the tower!"});
+    lvlUpButton->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(lvlUpButton);
 
    //----------spelle--------------------
@@ -542,23 +576,28 @@ void InGameState::DisableGroup(eUIGroup Group)
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/AddMoneySpell.png");
     shared_ptr<Button> moneySpell = make_shared<Button>("/Spells/AddMoneySpell.png", vec2(1680, 310), buttonSize, func7);
     moneySpell->SetUIGroup(eUIGroup::SPELLS);
+    moneySpell->SetCursor(eCursorType::SPELL);
     m_AllGameObjects.push_back(moneySpell);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/SpeedSpell.png");
     shared_ptr<Button> speedSpell = make_shared<Button>("/Spells/SpeedSpell.png", vec2(1820, 310), buttonSize, func7);
     speedSpell->SetUIGroup(eUIGroup::SPELLS);
+    speedSpell->SetCursor(eCursorType::SPELL);
     m_AllGameObjects.push_back(speedSpell);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/FireSpell.png");
     shared_ptr<Button> fireSpell = make_shared<Button>("/Spells/FireSpell.png", vec2(1680, 440), buttonSize, func7);
     fireSpell->SetUIGroup(eUIGroup::SPELLS);
+    fireSpell->SetCursor(eCursorType::SPELL);
     m_AllGameObjects.push_back(fireSpell);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Spells/CriticalShotSpell.png");
     shared_ptr<Button> criticalSpell = make_shared<Button>("/Spells/CriticalShotSpell.png", vec2(1820, 440), buttonSize, func7);
     criticalSpell->SetUIGroup(eUIGroup::SPELLS);
+    criticalSpell->SetCursor(eCursorType::SPELL);
     m_AllGameObjects.push_back(criticalSpell);
 
+    // wylaczenie renderowania i update'owania spelli na starcie    
     DisableGroup(eUIGroup::SPELLS);
 
     //------------------------------
@@ -601,4 +640,22 @@ void InGameState::DisableGroup(eUIGroup Group)
  {
     m_UnitPhaseIcon->Initialize(Name);
     CreateUnit(vec2i(60, -100), string("/Definitions/" + Name + ".xml"));
+ }
+
+ void InGameState::SetCursor(eCursorType Cursor)
+ {
+    if (m_CurrentCursor == Cursor)
+    {
+        return;
+    }
+
+    for (int i = 0; i < m_AllCursors.size(); ++i)
+    {
+        if (m_AllCursors[i]->first == Cursor)
+        {
+            Engine::GetSingleton()->GetWindow().setMouseCursor(m_AllCursors[i]->second);
+            m_CurrentCursor = Cursor;
+            break;
+        }
+    }
  }

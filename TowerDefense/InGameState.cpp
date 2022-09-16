@@ -13,41 +13,15 @@ InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
         return;
     }
 
-
-    // inicjalizacja kursorow
+    // ustawienie startowego kursora
     SetCursor(eCursorType::DEFAULT);
 
-    auto cursorBuild = Engine::GetSingleton()->GetTexture("/Cursors/CursorBuild.png");
-    auto pBuildCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
-    pBuildCursor->first = eCursorType::BUILD;
-    pBuildCursor->second.loadFromPixels(cursorBuild->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorBuild->GetSize()), sf::Vector2u(0, 0));
-    m_AllCursors.push_back(std::move(pBuildCursor));
-
-    auto cursorSword = Engine::GetSingleton()->GetTexture("/Cursors/CursorSword.png");
-    auto pSwordCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
-    pSwordCursor->first = eCursorType::SWORD;
-    pSwordCursor->second.loadFromPixels(cursorSword->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorSword->GetSize()), sf::Vector2u(0, 0));
-    m_AllCursors.push_back(std::move(pSwordCursor));
-
-    auto cursorHourglass = Engine::GetSingleton()->GetTexture("/Cursors/CursorHourglass.png");
-    auto pHourglassCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
-    pHourglassCursor->first = eCursorType::HOURGLASS;
-    pHourglassCursor->second.loadFromPixels(cursorHourglass->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorHourglass->GetSize()), sf::Vector2u(0, 0));
-    m_AllCursors.push_back(std::move(pHourglassCursor));
-
-    auto cursorSpell= Engine::GetSingleton()->GetTexture("/Cursors/CursorSpell.png");
-    auto pSpellCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
-    pSpellCursor->first = eCursorType::SPELL;
-    pSpellCursor->second.loadFromPixels(cursorSpell->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorSpell->GetSize()), sf::Vector2u(0, 0));
-    m_AllCursors.push_back(std::move(pSpellCursor));
-
-    auto cursorDefault = Engine::GetSingleton()->GetTexture("/Cursors/CursorDefault.png");
-    auto pDefaultCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
-    pDefaultCursor->first = eCursorType::DEFAULT;
-    pDefaultCursor->second.loadFromPixels(cursorDefault->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorDefault->GetSize()), sf::Vector2u(0, 0));
-    m_AllCursors.push_back(std::move(pDefaultCursor));
-
-
+    // inicjalizacja kursorow
+    InitializeCursor(eCursorType::BUILD, "CursorBuild.png");
+    InitializeCursor(eCursorType::SWORD, "CursorSword.png");
+    InitializeCursor(eCursorType::HOURGLASS, "CursorHourglass.png");
+    InitializeCursor(eCursorType::SPELL, "CursorSpell.png");
+    InitializeCursor(eCursorType::DEFAULT, "CursorDefault.png");
 
     // zainicjalizowanie szukania sciezki dla jednostek
     if (!m_PathFinder.InitFinder(m_Grid))
@@ -156,7 +130,7 @@ void InGameState::Update(float DeltaTime)
     if (m_UnitPhaseTimer <= 0)
         m_UnitPhaseTimer += 40.f;
 
-    if (m_SpawningTimer <= 0) 
+    if (m_SpawningTimer <= 0)
     {
         //vector<const char*> Units = { "Dragon.xml" , "Basilisk.xml" };
         //auto SelectedUnit = rand() % (Units.size());
@@ -329,11 +303,9 @@ bool ObjectSort(shared_ptr<GameObject> A, shared_ptr<GameObject> B)
         return A->GetGraphicLayer() < B->GetGraphicLayer();
 
 }
-
 void InGameState::BuildTower(vec2 Cell, const Definition* pDef)
 {
     auto pTower = make_shared<Tower>(*this, Engine::GetSingleton()->GetMousePos());
-
     if (!pDef)
         return;
 
@@ -400,6 +372,15 @@ void InGameState::DisableGroup(eUIGroup Group)
         if (m_AllGameObjects[i]->GetUIGroup() == Group)
             m_AllGameObjects[i]->SetActive(false);
     }
+}
+
+void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
+{
+    auto cursorTexture = Engine::GetSingleton()->GetTexture("/Cursors/" + FilePath);
+    auto pCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
+    pCursor->first = CursorType;
+    pCursor->second.loadFromPixels(cursorTexture->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorTexture->GetSize()), sf::Vector2u(0, 0));
+    m_AllCursors.push_back(std::move(pCursor));
 }
 
  void InGameState::CreateGameObjects()
@@ -595,7 +576,7 @@ void InGameState::DisableGroup(eUIGroup Group)
     criticalSpell->SetCursor(eCursorType::SPELL);
     m_AllGameObjects.push_back(criticalSpell);
 
-    // wylaczenie renderowania i update'owania spelli na starcie    
+    // wylaczenie renderowania i update'owania spelli na starcie
     DisableGroup(eUIGroup::SPELLS);
 
     //------------------------------

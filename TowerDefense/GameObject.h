@@ -2,7 +2,7 @@
 #include "Common.h"
 #include "vec2.h"
 
-class GameObject : std::enable_shared_from_this<GameObject>
+class GameObject : public std::enable_shared_from_this<GameObject>
 {
 public:
     shared_ptr<GameObject> GetSelf() {return shared_from_this(); };

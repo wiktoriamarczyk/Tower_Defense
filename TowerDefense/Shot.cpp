@@ -14,7 +14,7 @@ void Shot::Update(float DeltaTime)
     // wektor kierunkowy v = [x2 - x1, y2 - y1]
     vec2 dirVector = m_Target->GetPosition() - GetPosition();
     m_NormalizedDir = dirVector.GetNormalized();
-    vec2 shiftPerFrame = m_NormalizedDir * m_Speed * DeltaTime; 
+    vec2 shiftPerFrame = m_NormalizedDir * m_Speed * DeltaTime;
 
     SetPosition(GetPosition() + shiftPerFrame);
 
@@ -31,7 +31,7 @@ void Shot::Update(float DeltaTime)
             m_Target->OnHit(m_Damage);
 
             if (m_Target->GetHP() <= 0)
-                
+                m_Source->SetKills( m_Source->GetKills()+1 );
 
             SetLifeStatus(false);
         }

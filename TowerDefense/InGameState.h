@@ -27,6 +27,7 @@ public:
     void ChangeUnitPhase(const string& Name);
     void EnableGroup(eUIGroup Group);
     void DisableGroup(eUIGroup Group);
+    void InitializeCursor(eCursorType CursorType, string FilePath);
 
     template<typename T>
     vector<shared_ptr<T>> GetObjects();

@@ -4,7 +4,7 @@
 Unit::Unit(vec2 Position)
 {
     SetPosition(Position);
-    SetSize(vec2i(CELL_SIZE, CELL_SIZE));
+    //SetSize(vec2i(CELL_SIZE, CELL_SIZE));
 }
 
 void Unit::Update(float DeltaTime)
@@ -14,7 +14,7 @@ void Unit::Update(float DeltaTime)
     if (GetHP() <= 0)
     {
         m_DyingTimer -= DeltaTime;
-        
+
         if (m_DyingTimer <= 0)
             SetLifeStatus(false);
 
@@ -68,16 +68,16 @@ void Unit::Render(sf::RenderWindow& Renderer)
 
     // tekstura
     if (m_HurtTimer >= 0)
-        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() + GetSize() / 2, DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() , DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else
-        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() + GetSize() / 2, DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() , DisplayParameters{.Pivot{0.5, 0.5}});
 
     // poziom HP
     sf::RectangleShape lifeBar(vec2(50.f, 15.f));
     lifeBar.setFillColor(sf::Color::Transparent);
     lifeBar.setOutlineColor(sf::Color::White);
     lifeBar.setOutlineThickness(1.f);
-    lifeBar.setPosition(vec2(GetPosition().x, GetPosition().y - 30.f));
+    lifeBar.setPosition(vec2(GetPosition().x, GetPosition().y - 70.f));
 
     sf::RectangleShape lifeBarFilling;
 
@@ -87,10 +87,10 @@ void Unit::Render(sf::RenderWindow& Renderer)
     lifeBarFilling.setFillColor(sf::Color::Red);
     lifeBarFilling.setOutlineColor(sf::Color::Red);
     lifeBarFilling.setOutlineThickness(1.f);
-    lifeBarFilling.setPosition(vec2(GetPosition().x + 3.f, GetPosition().y - 28.f));
+    lifeBarFilling.setPosition(vec2(GetPosition().x + 3.f, GetPosition().y - 68.f));
 
     Renderer.draw(lifeBar);
-    
+
     if (GetHP() > 0)
         Renderer.draw(lifeBarFilling);
 }
@@ -150,6 +150,8 @@ void Unit::Initialize(const Definition& Def)
 
     m_MaxHP = Def.GetIntValue("HP");
     m_HP = m_MaxHP;
+
+    SetSize(Engine::GetSingleton()->GetTextureSize(m_TextureName));
 }
 
 void Unit::OnHit(Damage DamageValue)

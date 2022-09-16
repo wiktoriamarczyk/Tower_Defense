@@ -2,6 +2,9 @@
 	<FileName>/Textures/DragonAnim.xml</FileName>
 	<Name>Dragon</Name>
 	<Speed>200</Speed>
-	<HP>2</HP>
-	<Ability>Fire resistance</Ability>
+	<HP>100</HP>
+	<FireResistance>0.7</FireResistance>
+	<LightningResistance>0</LightningResistance>
+	<IceResistance>0.2</IceResistance>
+	<Ability>High fire resistance</Ability>
 </Data>

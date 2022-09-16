@@ -2,7 +2,9 @@
 	<FileName>/Textures/Tower2.png</FileName>
 	<Name>Tower2</Name>
 	<Cost>250</Cost>
-	<Damage>2</Damage>
+	<FireDamage>15</FireDamage>
+	<LightningDamage>40</LightningDamage>
+	<IceDamage>15</IceDamage>
 	<DetectionRadius>200</DetectionRadius>
 	<ShootInterval>0.4</ShootInterval>
 </Data>

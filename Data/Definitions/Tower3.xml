@@ -2,7 +2,9 @@
 	<FileName>/Textures/Tower3Anim.xml</FileName>
 	<Name>Tower3</Name>
 	<Cost>300</Cost>
-	<Damage>3</Damage>
+	<FireDamage>40</FireDamage>
+	<LightningDamage>40</LightningDamage>
+	<IceDamage>40</IceDamage>
 	<!-- shooting_speed = 1 / shooting_interval -->
 	<!-- tower shoots 3 shots in 1 sec -->
 	<DetectionRadius>250</DetectionRadius>

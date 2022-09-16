@@ -10,6 +10,7 @@ public:
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
     bool IsCursorOverObject()const override;
+    vector<string> GetToolTip()const override;
     void MoveTo(vector<vec2> TargetPosition);
     void Initialize(const Definition& Def);
     void OnHit(Damage DamageValue);
@@ -28,6 +29,7 @@ private:
     float        m_HP = 100.f;
     float        m_MaxHP = 100.f;
     bool         m_IsHurt = false;
-    float        m_HurtTimer = 0;
     Resistances  m_Resistances;
+
+    float        m_HurtTimer = 0;
 };

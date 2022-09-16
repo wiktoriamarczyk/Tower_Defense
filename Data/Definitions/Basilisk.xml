@@ -2,6 +2,9 @@
 	<FileName>/Textures/BasiliskAnim.xml</FileName>
 	<Name>Basilisk</Name>
 	<Speed>350</Speed>
-	<HP>4</HP>
+	<HP>150</HP>
+	<FireResistance>0.2</FireResistance>
+	<LightningResistance>0.5</LightningResistance>
+	<IceResistance>0.2</IceResistance>
 	<Ability>Very fast unit</Ability>
 </Data>

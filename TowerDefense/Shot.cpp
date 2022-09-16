@@ -39,12 +39,5 @@ void Shot::Update(float DeltaTime)
 
 void Shot::Render(sf::RenderWindow& Renderer)
 {
-    //sf::RectangleShape shot(vec2(10.f, 10.f));
-    //shot.setFillColor(sf::Color::Green);
-    //shot.setPosition(GetPosition()-vec2(5.f, 5.f));
-
     Engine::GetSingleton()->DisplayTexture("/Textures/Shot.png", GetPosition(), DisplayParameters{.DrawScale{0.1f, 0.1f}, .Pivot{0.5, 0.5}, .Rotation{m_NormalizedDir.GetAngleFromVec()}});
-
-    //Renderer.draw(shot);
-
 }

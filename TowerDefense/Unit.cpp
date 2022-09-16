@@ -111,6 +111,22 @@ bool Unit::IsCursorOverObject()const
     return false;
 }
 
+vector<string> Unit::GetToolTip()const
+{
+     vector<string> tmp;
+
+    tmp.push_back("Speed: " + ToString(m_Speed));
+
+    if (m_Resistances.FireValue > 0)
+        tmp.push_back("Fire Resist: "+ ToString(m_Resistances.FireValue));
+    if (m_Resistances.LightningValue > 0)
+        tmp.push_back("Lightning Resist: "+ ToString(m_Resistances.LightningValue));
+    if (m_Resistances.IceValue > 0)
+        tmp.push_back("Ice Resist: "+ ToString(m_Resistances.IceValue));
+
+    return tmp;
+}
+
 void Unit::MoveTo(vector<vec2> TargetPositions)
 {
     m_TargetPositions = TargetPositions;
@@ -121,15 +137,22 @@ void Unit::Initialize(const Definition& Def)
     m_Name = Def.GetStringValue("Name");
     m_TextureName = Def.GetStringValue("FileName", "MissingTexture");
     m_Speed = Def.GetFloatValue("Speed", 200.f);
-    m_MaxHP = Def.GetFloatValue("HP", 2);
+    m_Resistances.FireValue = Def.GetFloatValue("FireResistance");
+    m_Resistances.LightningValue = Def.GetFloatValue("LightningResistance");
+    m_Resistances.IceValue = Def.GetFloatValue("IceResistance");
+
+    m_MaxHP = Def.GetIntValue("HP");
     m_HP = m_MaxHP;
 }
 
 void Unit::OnHit(Damage DamageValue)
 {
     float fireDamage = DamageValue.FireValue -  DamageValue.FireValue * m_Resistances.FireValue;
+    fireDamage = std::max(fireDamage, 0.f);
     float lightningDamage = DamageValue.LightningValue - DamageValue.LightningValue * m_Resistances.LightningValue;
+    lightningDamage = std::max(lightningDamage, 0.f);
     float iceDamage = DamageValue.IceValue - DamageValue.IceValue * m_Resistances.IceValue;
+    iceDamage = std::max(iceDamage, 0.f);
 
     m_HP -= fireDamage + lightningDamage + iceDamage;
 }

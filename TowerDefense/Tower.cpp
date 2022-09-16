@@ -103,9 +103,9 @@ vector<string> Tower::GetToolTip()const
     if (m_Damage.FireValue > 0)
         tmp.push_back("Fire Dmg: "+ ToString(m_Damage.FireValue));
     if (m_Damage.LightningValue > 0)
-        tmp.push_back("Fire Dmg: "+ ToString(m_Damage.LightningValue));
+        tmp.push_back("Lightning Dmg: "+ ToString(m_Damage.LightningValue));
     if (m_Damage.IceValue > 0)
-        tmp.push_back("Fire Dmg: "+ ToString(m_Damage.IceValue));
+        tmp.push_back("Ice Dmg: "+ ToString(m_Damage.IceValue));
 
     tmp.push_back("Radius: " + ToString(m_DetectionRadius));
     tmp.push_back("Speed: " + ToString(m_ShootInterval));
@@ -118,9 +118,9 @@ void Tower::Initialize(const Definition& Def)
     m_Name = Def.GetStringValue("Name");
     m_TextureName = Def.GetStringValue("FileName");
     m_Cost = Def.GetIntValue("Cost");
-    m_Damage.FireValue = Def.GetFloatValue("DamageFire");
-    m_Damage.LightningValue = Def.GetFloatValue("DamageLightning");
-    m_Damage.IceValue = Def.GetFloatValue("IceLightning");
+    m_Damage.FireValue = Def.GetFloatValue("FireDamage");
+    m_Damage.LightningValue = Def.GetFloatValue("LightningDamage");
+    m_Damage.IceValue = Def.GetFloatValue("IceDamage");
     m_DetectionRadius = Def.GetIntValue("DetectionRadius");
     m_ShootInterval = Def.GetFloatValue("ShootInterval");
 

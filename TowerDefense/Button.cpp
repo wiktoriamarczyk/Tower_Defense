@@ -68,7 +68,9 @@ vector<string> TowerButton::GetToolTip()const
 
     tmp.push_back(m_pDef->GetStringValue("Name"));
     tmp.push_back(ToString(m_pDef->GetIntValue("Cost")));
-    tmp.push_back(ToString(m_pDef->GetFloatValue("Damage")));
+    tmp.push_back(ToString(m_pDef->GetFloatValue("FireDamage")));
+    tmp.push_back(ToString(m_pDef->GetFloatValue("LightningDamae")));
+    tmp.push_back(ToString(m_pDef->GetFloatValue("IceDamage")));
     tmp.push_back(ToString(m_pDef->GetIntValue("DetectionRadius")));
     tmp.push_back(ToString(m_pDef->GetFloatValue("ShootInterval")));
 

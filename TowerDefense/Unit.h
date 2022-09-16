@@ -32,4 +32,5 @@ private:
     Resistances  m_Resistances;
 
     float        m_HurtTimer = 0;
+    float        m_DyingTimer = 0.5f;
 };

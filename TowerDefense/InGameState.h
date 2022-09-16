@@ -5,6 +5,8 @@
 #include "ToolTip.h"
 #include "Image.h"
 
+class Tower;
+
 class InGameState : public GameState
 {
 public:
@@ -19,7 +21,7 @@ public:
     void DestroyTextures();
     void BuildTower(vec2 Cell, const Definition* pDef);
     void CreateUnit(vec2 Position, const string& UnitName);
-    void Shoot(vec2 StartingPosition, shared_ptr<Unit> Target, Damage DamageValue);
+    void Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue);
     bool ReadGrid();
     void CreateGameObjects();
     void ChangeUnitPhase(const string& Name);

@@ -1,17 +1,19 @@
 #pragma once
 #include "GameObject.h"
 #include "Unit.h"
+#include "Tower.h"
 
 class Shot : public GameObject
 {
 public:
-    Shot(vec2 StartingPosition, shared_ptr<Unit> Target, Damage DamageValue);
+    Shot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue);
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
 
 private:
-    shared_ptr<Unit> m_Target;
-    vec2             m_NormalizedDir;
-    float            m_Speed = 1200.f;
-    Damage           m_Damage;
+    shared_ptr<Unit>  m_Target;
+    shared_ptr<Tower> m_Source;
+    vec2              m_NormalizedDir;
+    float             m_Speed = 1200.f;
+    Damage            m_Damage;
 };

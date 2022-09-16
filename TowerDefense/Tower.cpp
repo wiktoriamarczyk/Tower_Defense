@@ -37,14 +37,19 @@ void Tower::Update(float DeltaTime)
 
         if (checkIfInCircle <= pow(m_DetectionRadius, 2))
         {
+            if (units[i]->GetHP() <= 0)
+                continue;
+
             m_DetectionArea.setOutlineColor(sf::Color::Red * sf::Color(255,255,255,192));
-            Shoot(GetPosition(), units[i]);
+            Shoot(units[i]);
+
+            if (units[i]->GetHP() <= 0)
+                m_UnitsKilled++;
         }
         else
         {
             m_DetectionArea.setOutlineColor(sf::Color::Black * sf::Color(255,255,255,192));
         }
-
     }
 }
 
@@ -109,6 +114,7 @@ vector<string> Tower::GetToolTip()const
 
     tmp.push_back("Radius: " + ToString(m_DetectionRadius));
     tmp.push_back("Speed: " + ToString(m_ShootInterval));
+    tmp.push_back("Units killed: " + ToString(m_UnitsKilled));
 
     return tmp;
 }
@@ -128,11 +134,11 @@ void Tower::Initialize(const Definition& Def)
     m_DetectionArea.setRadius(m_DetectionRadius);
 }
 
-void Tower::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target)
+void Tower::Shoot(shared_ptr<Unit> Target)
 {
     if (m_ShootingTimer <= 0)
     {
-        m_Game.Shoot(StartingPosition, Target, m_Damage);
+        m_Game.Shoot(GetSelf(), Target, m_Damage);
         m_ShootingTimer = m_ShootInterval;
     }
 }
@@ -152,7 +158,17 @@ bool Tower::IsPicked()const
     return m_Lvl;
  }
 
+int Tower::GetKills()const
+{
+    return m_UnitsKilled;
+}
+
 void Tower::SetLvl(int Lvl)
 {
     m_Lvl = Lvl;
+}
+
+void Tower::SetKills(int Value)
+{
+    m_UnitsKilled = Value;
 }

@@ -1,8 +1,6 @@
 #include "InGameState.h"
 #include "Engine.h"
-#include "Tower.h"
 #include "Button.h"
-#include "Image.h"
 #include "Shot.h"
 
 InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
@@ -380,9 +378,9 @@ void InGameState::DisplayTexture(const string& FileName, vec2i Position, Display
     Engine::GetSingleton()->DisplayTexture(FileName, Position, Param);
 }
 
-void InGameState::Shoot(vec2 StartingPosition, shared_ptr<Unit> Target, Damage DamageValue)
+void InGameState::Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue)
 {
-    shared_ptr<Shot> pShot = make_shared<Shot>(StartingPosition, Target, DamageValue);
+    shared_ptr<Shot> pShot = make_shared<Shot>(Source, Target, DamageValue);
     m_AllGameObjects.push_back(pShot);
 }
 

@@ -13,7 +13,12 @@ void Unit::Update(float DeltaTime)
 
     if (GetHP() <= 0)
     {
-        SetLifeStatus(false);
+        m_DyingTimer -= DeltaTime;
+        
+        if (m_DyingTimer <= 0)
+            SetLifeStatus(false);
+
+        return;
     }
 
     if (GetDamageStatus())
@@ -85,7 +90,9 @@ void Unit::Render(sf::RenderWindow& Renderer)
     lifeBarFilling.setPosition(vec2(GetPosition().x + 3.f, GetPosition().y - 28.f));
 
     Renderer.draw(lifeBar);
-    Renderer.draw(lifeBarFilling);
+    
+    if (GetHP() > 0)
+        Renderer.draw(lifeBarFilling);
 }
 
 bool Unit::OnMouseButtonDown(int Button)
@@ -148,11 +155,11 @@ void Unit::Initialize(const Definition& Def)
 void Unit::OnHit(Damage DamageValue)
 {
     float fireDamage = DamageValue.FireValue -  DamageValue.FireValue * m_Resistances.FireValue;
-    fireDamage = std::max(fireDamage, 0.f);
+    fireDamage = max(fireDamage, 0.f);
     float lightningDamage = DamageValue.LightningValue - DamageValue.LightningValue * m_Resistances.LightningValue;
-    lightningDamage = std::max(lightningDamage, 0.f);
+    lightningDamage = max(lightningDamage, 0.f);
     float iceDamage = DamageValue.IceValue - DamageValue.IceValue * m_Resistances.IceValue;
-    iceDamage = std::max(iceDamage, 0.f);
+    iceDamage = max(iceDamage, 0.f);
 
     m_HP -= fireDamage + lightningDamage + iceDamage;
 }

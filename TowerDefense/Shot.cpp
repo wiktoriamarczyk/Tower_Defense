@@ -1,10 +1,11 @@
 #include "Shot.h"
 #include "Engine.h"
 
-Shot::Shot(vec2 StartingPosition, shared_ptr<Unit> Target, Damage DamageValue)
+Shot::Shot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue)
 {
     m_Target = Target;
-    SetPosition(StartingPosition);
+    m_Source = Source;
+    SetPosition(m_Source->GetPosition());
     m_Damage = DamageValue;
 }
 
@@ -28,6 +29,10 @@ void Shot::Update(float DeltaTime)
         {
             m_Target->SetDamageStatus(true);
             m_Target->OnHit(m_Damage);
+
+            if (m_Target->GetHP() <= 0)
+                
+
             SetLifeStatus(false);
         }
 

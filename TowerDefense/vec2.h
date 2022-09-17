@@ -2,6 +2,8 @@
 #include<cmath>
 #include<SFML/System/Vector2.hpp>
 
+class vec2i;
+
 class vec2
 {
 public:
@@ -18,6 +20,7 @@ public:
     float GetAngleFromVec()const;
 
     operator sf::Vector2f()const;
+    operator vec2i()const;
 
     vec2 operator+(const vec2& other)const;
     vec2 operator-(const vec2& other)const;

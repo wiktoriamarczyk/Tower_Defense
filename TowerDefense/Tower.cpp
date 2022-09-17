@@ -1,6 +1,7 @@
 #include "Tower.h"
 #include "Engine.h"
 #include "Unit.h"
+#include "ToolTip.h"
 
 Tower::Tower(InGameState& Game, vec2 Position) : m_Game(Game)
 {
@@ -99,24 +100,22 @@ bool Tower::IsCursorOverObject()const
     return false;
 }
 
-vector<string> Tower::GetToolTip()const
+bool Tower::FillToolTip(ToolTip& MyToolTip)const
 {
-    vector<string> tmp;
-
-    tmp.push_back("Lvl: " + ToString(m_Lvl));
+   MyToolTip.AddToolTipLine("Lvl: " + ToString(m_Lvl));
 
     if (m_Damage.FireValue > 0)
-        tmp.push_back("Fire Dmg: "+ ToString(m_Damage.FireValue));
+        MyToolTip.AddToolTipLine("Fire Dmg: "+ ToString(m_Damage.FireValue));
     if (m_Damage.LightningValue > 0)
-        tmp.push_back("Lightning Dmg: "+ ToString(m_Damage.LightningValue));
+       MyToolTip.AddToolTipLine("Lightning Dmg: "+ ToString(m_Damage.LightningValue));
     if (m_Damage.IceValue > 0)
-        tmp.push_back("Ice Dmg: "+ ToString(m_Damage.IceValue));
+        MyToolTip.AddToolTipLine("Ice Dmg: "+ ToString(m_Damage.IceValue));
 
-    tmp.push_back("Radius: " + ToString(m_DetectionRadius));
-    tmp.push_back("Speed: " + ToString(m_ShootInterval));
-    tmp.push_back("Units killed: " + ToString(m_UnitsKilled));
+    MyToolTip.AddToolTipLine("Radius: " + ToString(m_DetectionRadius));
+    MyToolTip.AddToolTipLine("Speed: " + ToString(m_ShootInterval));
+    MyToolTip.AddToolTipLine("Units killed: " + ToString(m_UnitsKilled));
 
-    return tmp;
+    return true;
 }
 
 void Tower::Initialize(const Definition& Def)

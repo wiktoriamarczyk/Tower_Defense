@@ -10,7 +10,7 @@ class Tower;
 class InGameState : public GameState
 {
 public:
-    InGameState(shared_ptr<Font> MyFont);
+    InGameState();
     ~InGameState();
     void OnEnter()override;
     void OnMouseButtonDown(int Button)override;
@@ -38,7 +38,7 @@ private:
     eCursorType                                       m_CurrentCursor;
     vector<unique_ptr<pair<eCursorType, sf::Cursor>>> m_AllCursors;
     vector<shared_ptr<GameObject>>                    m_AllGameObjects;
-    shared_ptr<ToolTip>                               m_ToolTip; 
+    shared_ptr<ToolTip>                               m_ToolTip;
     eGridValue                                        m_Grid[GRID_ROWS][GRID_COLS] = {};
     //eTowerID                                        m_PickedTowerID = eTowerID::NONE;
     bool                                              m_HoldTower = false;

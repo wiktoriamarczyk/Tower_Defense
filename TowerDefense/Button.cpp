@@ -1,5 +1,6 @@
 #include "Button.h"
 #include "Engine.h"
+#include "ToolTip.h"
 
 Button::Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function, bool Move)
 {
@@ -13,7 +14,7 @@ Button::Button(string TextureName, vec2 Position, vec2i Size, function<void()> F
 
 void Button::Render(sf::RenderWindow& Renderer)
 {
-    if (IsCursorOverObject() && m_Move) 
+    if (IsCursorOverObject() && m_Move)
     {
         Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x - 5, GetPosition().y + 5));
     }
@@ -49,32 +50,49 @@ bool Button::IsCursorOverObject()const
     return false;
 }
 
-vector<string> Button::GetToolTip()const
+bool Button::FillToolTip(ToolTip& MyToolTip)const
 {
-    return m_ToolTip;
+    if (m_ToolTip.empty())
+        return false;
+
+    for (size_t i = 0; i < m_ToolTip.size(); ++i)
+    {
+        MyToolTip.AddToolTipLine(m_ToolTip[i].Text, m_ToolTip[i].Size, m_ToolTip[i].Parameters);
+    }
+
+    return true;
 }
 
-void Button::SetToolTipText(vector<string> ToolTip)
+void Button::SetToolTipText(vector<TextLineData> ToolTip)
 {
     m_ToolTip = ToolTip;
 }
 
-vector<string> TowerButton::GetToolTip()const
+bool TowerButton::FillToolTip(ToolTip& MyToolTip)const
 {
-    if (!IsCursorOverObject())
-        return {};
+    if (!m_pDef)
+        return false;
 
-    vector<string> tmp;
+    MyToolTip.AddToolTipLine(m_pDef->GetStringValue("Name"));
 
-    tmp.push_back(m_pDef->GetStringValue("Name"));
-    tmp.push_back(ToString(m_pDef->GetIntValue("Cost")));
-    tmp.push_back(ToString(m_pDef->GetFloatValue("FireDamage")));
-    tmp.push_back(ToString(m_pDef->GetFloatValue("LightningDamae")));
-    tmp.push_back(ToString(m_pDef->GetFloatValue("IceDamage")));
-    tmp.push_back(ToString(m_pDef->GetIntValue("DetectionRadius")));
-    tmp.push_back(ToString(m_pDef->GetFloatValue("ShootInterval")));
+    MyToolTip.AddToolTipLine(ToString(m_pDef->GetIntValue("Cost"))+" ");
+    MyToolTip.AddToolTipLine("💰", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Yellow, .ContinueLastLine = true});
 
-    return tmp;
+    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("FireDamage"))+" ");
+    MyToolTip.AddToolTipLine("🔥", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(204, 85, 0), .ContinueLastLine = true});
+
+    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("LightningDamae"))+" ");
+    MyToolTip.AddToolTipLine("⚡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Yellow, .ContinueLastLine = true});
+
+    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("IceDamage"))+" ");
+    MyToolTip.AddToolTipLine("❄", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Cyan, .ContinueLastLine = true});
+
+    MyToolTip.AddToolTipLine(ToString(m_pDef->GetIntValue("DetectionRadius"))+" ");
+    MyToolTip.AddToolTipLine("📡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(96, 96, 96), .ContinueLastLine = true});
+
+    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("ShootInterval")));
+
+    return true;
 }
 
 void TowerButton::SetDefinition(const Definition* pDef)

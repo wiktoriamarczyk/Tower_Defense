@@ -1,5 +1,6 @@
 #include "Unit.h"
 #include "Engine.h"
+#include "ToolTip.h"
 
 Unit::Unit(vec2 Position)
 {
@@ -118,20 +119,18 @@ bool Unit::IsCursorOverObject()const
     return false;
 }
 
-vector<string> Unit::GetToolTip()const
+bool Unit::FillToolTip(ToolTip& MyToolTip)const
 {
-     vector<string> tmp;
-
-    tmp.push_back("Speed: " + ToString(m_Speed));
+    MyToolTip.AddToolTipLine("Speed: " + ToString(m_Speed));
 
     if (m_Resistances.FireValue > 0)
-        tmp.push_back("Fire Resist: "+ ToString(m_Resistances.FireValue));
+        MyToolTip.AddToolTipLine("Fire Resist: "+ ToString(m_Resistances.FireValue));
     if (m_Resistances.LightningValue > 0)
-        tmp.push_back("Lightning Resist: "+ ToString(m_Resistances.LightningValue));
+        MyToolTip.AddToolTipLine("Lightning Resist: "+ ToString(m_Resistances.LightningValue));
     if (m_Resistances.IceValue > 0)
-        tmp.push_back("Ice Resist: "+ ToString(m_Resistances.IceValue));
+        MyToolTip.AddToolTipLine("Ice Resist: "+ ToString(m_Resistances.IceValue));
 
-    return tmp;
+    return true;
 }
 
 void Unit::MoveTo(vector<vec2> TargetPositions)

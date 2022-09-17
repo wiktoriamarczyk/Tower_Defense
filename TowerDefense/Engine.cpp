@@ -1,5 +1,4 @@
 #include "Engine.h"
-#include "Font.h"
 #include "InGameState.h"
 #include "MainMenuState.h"
 
@@ -24,11 +23,15 @@ bool Engine::Initialize()
     pSingleton = this;
 
     // stworzenie okna
-    m_Renderer.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Tower Defense");
+    m_Renderer.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Tower Defense" , sf::Style::None );
 
-    // stworzenie czcionki
-    shared_ptr<Font> myFont = make_shared<Font>();
-    myFont->LoadFont("../Data/FontData.txt");
+    // inicjalizacja czcionek
+    sf::Font font;
+    font.loadFromFile("../Data/Fonts/Graph-35-pix.ttf");
+    m_Fonts.push_back(make_pair(string("Graph-35-pix"), font));
+
+    font.loadFromFile("../Data/Fonts/NotoEmoji-Regular.ttf");
+    m_Fonts.push_back(make_pair(string("NotoEmoji-Regular"), font));
 
     // zaladowanie definicji
     LoadDefinition("/Definitions/Dragon.xml");
@@ -43,11 +46,13 @@ bool Engine::Initialize()
     LoadAnimation("/Textures/Tower3Anim.xml");
 
     // dodanie wszystkich stanow gry do wektora
-    m_AllStates.push_back(make_unique<InGameState>(myFont));
-    m_AllStates.push_back(make_unique<MainMenuState>(myFont));
+    m_AllStates.push_back(make_unique<InGameState>());
+    m_AllStates.push_back(make_unique<MainMenuState>());
 
     // pierwszym stanem jest Menu gry
     ChangeState(eStateID::INGAME);
+
+
 
     return true;
 }
@@ -160,6 +165,70 @@ void Engine::DisplayTexture(const string& FileName, vec2 Position, DisplayParame
     }
 }
 
+vec2i Engine::DrawText(string TextUtf8, int PixelSize, vec2 InputPosition, DrawTextParameters Param)
+{
+    sf::Font* pFont = nullptr;
+
+    static vec2 LastLineEnd  = vec2{0,0};
+    static vec2 lastLineSize = vec2{0,0};
+
+    vec2i Position = vec2i(InputPosition);
+
+    for (size_t i = 0; i < m_Fonts.size(); ++i)
+    {
+        if (m_Fonts[i].first == Param.FontName)
+            pFont = &m_Fonts[i].second;
+    }
+
+    if (!pFont)
+        return vec2i(0, 0);
+
+    sf::Text text;
+    text.setFont(*pFont);
+    text.setString( sf::String::fromUtf8( TextUtf8.begin() , TextUtf8.end() ) );
+    text.setCharacterSize(PixelSize);
+    text.setStyle(static_cast<sf::Text::Style>(Param.FontStyle));
+
+    auto bounds = text.getLocalBounds();
+    bounds.height += pFont->getLineSpacing(text.getCharacterSize());
+
+    if (!Param.DisableDraw)
+    {
+        int horizontalShift = 0;
+        text.setColor(Param.FontColor);
+
+        switch (Param.HAlign)
+        {
+        case eTextHorizontalAlign::LEFT: horizontalShift = 0;
+            break;
+        case eTextHorizontalAlign::CENTER: horizontalShift = -bounds.width / 2;
+            break;
+        case eTextHorizontalAlign::RIGHT: horizontalShift = -bounds.width;
+        }
+
+        text.setPosition(vec2(Position) + vec2(horizontalShift, 0));
+
+        // work in progress... / 4 to cheat
+        if( Param.ContinueLastLine )
+        {
+            text.setPosition(LastLineEnd - vec2(0,(bounds.height-lastLineSize.y)/4));
+            //if( bounds.height > lastLineHeight )
+            //    bounds.height = bounds.height - lastLineHeight;
+            //else
+
+            bounds.height = 0;
+        }
+
+        m_Renderer.draw(text);
+
+        LastLineEnd  = vec2(text.getPosition()) + vec2(bounds.width,0);
+        lastLineSize = vec2{bounds.width, bounds.height};
+    }
+
+
+    return vec2i(bounds.width, bounds.height);
+}
+
 void Engine::DestroyTextures()
 {
     for (int i = 0; i < m_LoadedTextures.size(); ++i)
@@ -186,7 +255,7 @@ vec2i Engine::GetTextureSize(const string& FileName)const
         return pTexture->GetSize();
     }
     else
-        vec2i(0,0);
+        return vec2i(0,0);
 }
 
 vec2i Engine::GetMousePos() const

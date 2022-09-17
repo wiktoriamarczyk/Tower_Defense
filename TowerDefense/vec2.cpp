@@ -49,6 +49,14 @@ vec2::operator sf::Vector2f() const
     return vector;
 }
 
+vec2::operator vec2i()const
+{
+    vec2i vector;
+    vector.x = int(x);
+    vector.y = int(y);
+    return vector;
+}
+
 vec2 vec2::operator+(const vec2& other)const
 {
     vec2 result;

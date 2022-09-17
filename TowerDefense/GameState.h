@@ -1,7 +1,6 @@
 #pragma once
 #include "Common.h"
 #include "GameObject.h"
-#include "Font.h"
 
 class Engine;
 
@@ -19,7 +18,6 @@ public:
 
 protected:
     eStateID            m_NextStateID = eStateID::UNKNOWN;
-    shared_ptr<Font>    m_Font;
     static bool         m_GameOver;
 
 private:

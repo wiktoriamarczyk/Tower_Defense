@@ -19,8 +19,6 @@ SET(APP_SRC_FILES_LIST
     TowerDefense/Common.h
     TowerDefense/Engine.cpp
     TowerDefense/Engine.h
-    TowerDefense/Font.cpp
-    TowerDefense/Font.h
     TowerDefense/GameObject.cpp
     TowerDefense/GameObject.h
     TowerDefense/GameState.cpp

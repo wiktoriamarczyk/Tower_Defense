@@ -13,7 +13,7 @@ public:
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
     bool IsCursorOverObject()const override;
-    vector<string> GetToolTip()const override;
+    bool FillToolTip(ToolTip& MyToolTip)const override;
     void Initialize(const Definition& Def);
     void Shoot(shared_ptr<Unit> Target);
 

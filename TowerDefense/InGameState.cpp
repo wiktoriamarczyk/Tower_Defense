@@ -3,15 +3,14 @@
 #include "Button.h"
 #include "Shot.h"
 
-InGameState::InGameState(shared_ptr<Font> MyFont) : GameState(eStateID::INGAME)
+InGameState::InGameState() : GameState(eStateID::INGAME)
 {
-    m_Font = MyFont;
-
     if (!ReadGrid())
     {
         std::cout << "File could not be loaded!" << std::endl;
         return;
     }
+
 
     // ustawienie startowego kursora
     SetCursor(eCursorType::DEFAULT);
@@ -117,7 +116,7 @@ void InGameState::OnKeyDown(sf::Keyboard::Key KeyCode)
 void InGameState::Update(float DeltaTime)
 {
     // inicjalizacja tool tipow
-    m_ToolTip->InitializeToolTipText({});
+    m_ToolTip->ClearToolTip();
 
     // ustalanie aktualnej fazy spawnowania jednostki
     m_SpawningTimer -= DeltaTime;
@@ -148,13 +147,8 @@ void InGameState::Update(float DeltaTime)
     {
         if (m_AllGameObjects[i]->IsActive() && m_AllGameObjects[i]->IsCursorOverObject())
         {
-            vector<string> TooltipData = m_AllGameObjects[i]->GetToolTip();
-
-            if(!TooltipData.empty())
-            {
-                m_ToolTip->InitializeToolTipText(TooltipData);
+            if(m_AllGameObjects[i]->FillToolTip(*m_ToolTip))
                 break;
-            }
         }
     }
 
@@ -264,17 +258,17 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     // -----------------------------------------------------------
 
     // wyswietlanie pozycji myszki na ekranie
-    m_Font->DrawText(Renderer, 1, 1860, 1050, ToString(mouseX).c_str());
-    m_Font->DrawText(Renderer, 1, 1860, 1060, ToString(mouseY).c_str());
+    Engine::GetSingleton()->DrawText(ToString(mouseX), 8, vec2(1860, 1050));
+    Engine::GetSingleton()->DrawText(ToString(mouseY), 8, vec2(1860, 1060));
 
     // rysowanie czcionki
-    m_Font->DrawText(Renderer, 1, 1680, 1028, ToString(m_Money).c_str());
-    m_Font->DrawText(Renderer, 1, 1852, 970, ToString(m_TimeToNextUnitPhase).c_str());
+    Engine::GetSingleton()->DrawText(ToString(m_Money), 8, vec2(1680, 1028));
+    Engine::GetSingleton()->DrawText(ToString(m_TimeToNextUnitPhase), 8, vec2(1852, 970));
 
     if (Engine::GetSingleton()->GetFramesPerSecondValue() != 60.f)
     {
-        m_Font->DrawText(Renderer, 1, 1760, 1028, "x");
-        m_Font->DrawText(Renderer, 1, 1775, 1028, ToString(60.f / Engine::GetSingleton()->GetFramesPerSecondValue()).c_str());
+        Engine::GetSingleton()->DrawText("x", 8, vec2(1760, 1025));
+        Engine::GetSingleton()->DrawText(ToString(60.f / Engine::GetSingleton()->GetFramesPerSecondValue()), 8, vec2(1775, 1025));
     }
 
     Renderer.display();
@@ -528,25 +522,25 @@ void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/SellButton.png");
     shared_ptr<Button> sellButton = make_shared<Button>("/Buttons/SellButton.png", vec2(1750, 930), buttonSize, func4);
-    sellButton->SetToolTipText({"sell tower", "for half prize"});
+    sellButton->SetToolTipText({{"sell tower"}, {"for half prize"}});
     sellButton->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(sellButton);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/ButtonUp.png");
     shared_ptr<Button> buttonUp = make_shared<Button>("/Buttons/ButtonUp.png", vec2(1750, 970), buttonSize, func5);
-    buttonUp->SetToolTipText({"Speed up time"});
+    buttonUp->SetToolTipText({{"Speed up time"}});
     buttonUp->SetCursor(eCursorType::HOURGLASS);
     m_AllGameObjects.push_back(buttonUp);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/ButtonDown.png");
     shared_ptr<Button> buttonDown = make_shared<Button>("/Buttons/ButtonDown.png", vec2(1750, 1000), buttonSize, func6);
-    buttonDown->SetToolTipText({"Slow down time"});
+    buttonDown->SetToolTipText({{"Slow down time"}});
     buttonDown->SetCursor(eCursorType::HOURGLASS);
     m_AllGameObjects.push_back(buttonDown);
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/LvlUpButton.png");
     shared_ptr<Button> lvlUpButton = make_shared<Button>("/Buttons/LvlUpButton.png", vec2(1840, 860), buttonSize, func8);
-    lvlUpButton->SetToolTipText({"Upgrade the tower!"});
+    lvlUpButton->SetToolTipText({{"Upgrade the tower!"}});
     lvlUpButton->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(lvlUpButton);
 
@@ -609,7 +603,7 @@ void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
 
     //------------------------------
 
-    shared_ptr<ToolTip> myToolTip = make_shared<ToolTip>(m_Font);
+    shared_ptr<ToolTip> myToolTip = make_shared<ToolTip>();
     myToolTip->SetGraphicLayer(eGraphicLayer::UI);
     m_ToolTip = myToolTip;
     m_AllGameObjects.push_back(myToolTip);

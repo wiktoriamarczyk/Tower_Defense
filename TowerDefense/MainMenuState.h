@@ -4,7 +4,7 @@
 class MainMenuState : public GameState
 {
 public:
-    MainMenuState(shared_ptr<Font> MyFont);
+    MainMenuState();
     ~MainMenuState();
     void InitializeMainMenuStateTextures();
     void Update(float DeltaTime)override;

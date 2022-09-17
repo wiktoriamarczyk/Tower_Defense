@@ -109,6 +109,25 @@ enum class eCursorType
     SPELL,
 };
 
+namespace eFontStyle
+{
+    enum Type
+    {
+        REGULAR       = 0,      // 00000000
+        BOLD          = 1 << 0, // 00000001
+        ITALIC        = 1 << 1, // 00000010
+        UNDERLINED    = 1 << 2, // 00000100
+        STRIKE        = 1 << 3  // 00001000
+    };
+}
+
+enum class eTextHorizontalAlign
+{
+    LEFT,
+    CENTER,
+    RIGHT,
+};
+
 struct DisplayParameters
 {
     //optional<vec2i> DisplaySize;
@@ -121,6 +140,16 @@ struct DisplayParameters
     float Rotation = 0.0f;
 };
 
+struct DrawTextParameters
+{
+    string FontName = "Graph-35-pix";
+    eFontStyle::Type FontStyle = eFontStyle::REGULAR;
+    eTextHorizontalAlign HAlign = eTextHorizontalAlign::LEFT;
+    sf::Color FontColor = sf::Color::White;
+    bool ContinueLastLine = false;
+    bool DisableDraw = false;
+};
+
 struct Damage
 {
     float FireValue = 0;
@@ -129,6 +158,17 @@ struct Damage
 };
 
 using Resistances = Damage;
+
+struct TextLineData
+{
+    TextLineData()=default;
+    TextLineData(string _Text, int _Size = 8, DrawTextParameters _Param = {})
+        : Text(_Text), Size(_Size), Parameters(_Param) {}
+
+    string Text;
+    int    Size = 10;
+    DrawTextParameters Parameters;
+};
 
 template <typename T>
 string ToString(const T& value)

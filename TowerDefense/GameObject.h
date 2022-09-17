@@ -2,6 +2,8 @@
 #include "Common.h"
 #include "vec2.h"
 
+class ToolTip;
+
 class GameObject : public std::enable_shared_from_this<GameObject>
 {
 public:
@@ -10,7 +12,7 @@ public:
     virtual void Render(sf::RenderWindow& Renderer) = 0;
     virtual bool OnMouseButtonDown(int Button) { return false; };
     virtual bool IsCursorOverObject()const { return false; };
-    virtual vector<string> GetToolTip()const { return {}; };
+    virtual bool FillToolTip(ToolTip& MyToolTip)const { return false; };
 
     vec2 GetPosition()const;
     vec2i GetSize()const;

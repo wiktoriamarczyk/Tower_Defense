@@ -1,9 +1,8 @@
 #include "MainMenuState.h"
 #include "Engine.h"
 
-MainMenuState::MainMenuState(shared_ptr<Font> MyFont) : GameState(eStateID::MAINMENU)
+MainMenuState::MainMenuState() : GameState(eStateID::MAINMENU)
 {
-    m_Font = MyFont;
 }
 
 MainMenuState::~MainMenuState()

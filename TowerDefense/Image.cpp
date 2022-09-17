@@ -1,5 +1,6 @@
 #include "Image.h"
 #include "Engine.h"
+#include "ToolTip.h"
 
 Image::Image(const string& Name, vec2 Position, vec2 Pivot)
 {
@@ -22,22 +23,17 @@ void Image::Render(sf::RenderWindow& Renderer)
 }
 
 
-vector<string> Image::GetToolTip()const
+ bool Image::FillToolTip(ToolTip& MyToolTip)const
 {
-    if (!IsCursorOverObject())
-        return {};
-
-    const Definition* pDef = Engine::GetSingleton()->FindDefinition(m_ReferenceUnitName); 
+    const Definition* pDef = Engine::GetSingleton()->FindDefinition(m_ReferenceUnitName);
 
     if (!pDef)
-        return {};
+        return false;
 
-    vector<string> tmp;
+    MyToolTip.AddToolTipLine(pDef->GetStringValue("Name"));
+    MyToolTip.AddToolTipLine(pDef->GetStringValue("Ability"));
 
-    tmp.push_back(pDef->GetStringValue("Name"));
-    tmp.push_back(pDef->GetStringValue("Ability"));
-
-    return tmp;
+    return true;
 }
 
 bool Image::IsCursorOverObject()const

@@ -7,7 +7,7 @@ public:
     Image(const string& Name, vec2 Position, vec2 Pivot);
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
-    vector<string> GetToolTip()const override;
+    bool FillToolTip(ToolTip& MyToolTip)const override;
     bool IsCursorOverObject()const override;
     void Initialize(const string& Name);
 

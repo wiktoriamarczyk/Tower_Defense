@@ -1,17 +1,16 @@
 #pragma once
 #include "GameObject.h"
 #include "Common.h"
-#include "Font.h"
 
 class ToolTip : public GameObject
 {
 public:
-    ToolTip(shared_ptr<Font> MyFont);
+    ToolTip()=default;
     void Update(float DeltaTime)override {};
     void Render(sf::RenderWindow& Renderer)override;
-    void InitializeToolTipText(vector<string> Data);
+    void ClearToolTip();
+    void AddToolTipLine(string Text, int Size = 10, DrawTextParameters Param = {});
 
 private:
-    shared_ptr<Font> m_Font; 
-    vector<string>   m_Data;
+    vector<TextLineData> m_Lines;
 };

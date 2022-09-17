@@ -14,10 +14,10 @@ public:
     void SetToolTipText(vector<TextLineData> ToolTip);
 
 private:
-    string                      m_TextureName;
-    vector<TextLineData>   m_ToolTip;
-    function<void()>            m_Function;
-    bool                        m_Move = false;
+    string               m_TextureName;
+    vector<TextLineData> m_ToolTip;
+    function<void()>     m_Function;
+    bool                 m_Move = false;
 };
 
 class TowerButton : public Button

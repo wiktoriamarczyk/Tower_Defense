@@ -121,14 +121,26 @@ bool Unit::IsCursorOverObject()const
 
 bool Unit::FillToolTip(ToolTip& MyToolTip)const
 {
-    MyToolTip.AddToolTipLine("Speed: " + ToString(m_Speed));
+    MyToolTip.AddToolTipLine("Speed: " + ToString(m_Speed) + " ");
+    MyToolTip.AddToolTipLine("💨", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .ContinueLastLine = true});
 
     if (m_Resistances.FireValue > 0)
-        MyToolTip.AddToolTipLine("Fire Resist: "+ ToString(m_Resistances.FireValue));
+    {
+        MyToolTip.AddToolTipLine("Fire Resist: " + ToString(m_Resistances.FireValue) + " ");
+        MyToolTip.AddToolTipLine("🔥", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(255, 95, 31), .ContinueLastLine = true});
+    }
+
     if (m_Resistances.LightningValue > 0)
-        MyToolTip.AddToolTipLine("Lightning Resist: "+ ToString(m_Resistances.LightningValue));
+    {
+        MyToolTip.AddToolTipLine("Lightning Resist: " + ToString(m_Resistances.LightningValue) + " ");
+        MyToolTip.AddToolTipLine("⚡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Yellow, .ContinueLastLine = true});
+    }
+
     if (m_Resistances.IceValue > 0)
-        MyToolTip.AddToolTipLine("Ice Resist: "+ ToString(m_Resistances.IceValue));
+    {
+        MyToolTip.AddToolTipLine("Ice Resist: " + ToString(m_Resistances.IceValue) + " ");
+        MyToolTip.AddToolTipLine("❄", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(0,191,255), .ContinueLastLine = true});
+    }
 
     return true;
 }

@@ -162,7 +162,7 @@ using Resistances = Damage;
 struct TextLineData
 {
     TextLineData()=default;
-    TextLineData(string _Text, int _Size = 8, DrawTextParameters _Param = {})
+    TextLineData(string _Text, int _Size = 10, DrawTextParameters _Param = {})
         : Text(_Text), Size(_Size), Parameters(_Param) {}
 
     string Text;

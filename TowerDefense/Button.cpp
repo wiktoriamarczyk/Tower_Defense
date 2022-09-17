@@ -73,24 +73,27 @@ bool TowerButton::FillToolTip(ToolTip& MyToolTip)const
     if (!m_pDef)
         return false;
 
-    MyToolTip.AddToolTipLine(m_pDef->GetStringValue("Name"));
+    MyToolTip.AddToolTipLine(m_pDef->GetStringValue("Name") + " ");
+    MyToolTip.AddToolTipLine("🏰", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Yellow, .ContinueLastLine = true});
 
-    MyToolTip.AddToolTipLine(ToString(m_pDef->GetIntValue("Cost"))+" ");
+    MyToolTip.AddToolTipLine("Cost: " + ToString(m_pDef->GetIntValue("Cost")) + " ");
     MyToolTip.AddToolTipLine("💰", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Yellow, .ContinueLastLine = true});
 
-    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("FireDamage"))+" ");
-    MyToolTip.AddToolTipLine("🔥", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(204, 85, 0), .ContinueLastLine = true});
+    MyToolTip.AddToolTipLine("Fire Dmg: " + ToString(m_pDef->GetFloatValue("FireDamage")) + " ");
+    MyToolTip.AddToolTipLine("🔥", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(255, 95, 31), .ContinueLastLine = true});
 
-    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("LightningDamae"))+" ");
+    MyToolTip.AddToolTipLine("Lightning Dmg: " + ToString(m_pDef->GetFloatValue("LightningDamage")) + " ");
     MyToolTip.AddToolTipLine("⚡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Yellow, .ContinueLastLine = true});
 
-    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("IceDamage"))+" ");
-    MyToolTip.AddToolTipLine("❄", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Cyan, .ContinueLastLine = true});
+    MyToolTip.AddToolTipLine("Ice Dmg: " + ToString(m_pDef->GetFloatValue("IceDamage")) + " ");
+    MyToolTip.AddToolTipLine("❄", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(0,191,255), .ContinueLastLine = true});
+    
+    MyToolTip.AddToolTipLine("Detection Radius: " + ToString(m_pDef->GetIntValue("DetectionRadius")) + " ");
+    MyToolTip.AddToolTipLine("📡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(169, 169, 169), .ContinueLastLine = true});
 
-    MyToolTip.AddToolTipLine(ToString(m_pDef->GetIntValue("DetectionRadius"))+" ");
-    MyToolTip.AddToolTipLine("📡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(96, 96, 96), .ContinueLastLine = true});
+    MyToolTip.AddToolTipLine("Shoot Interval:  " + ToString(m_pDef->GetFloatValue("ShootInterval")) + " ");
+    MyToolTip.AddToolTipLine("💨", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .ContinueLastLine = true});
 
-    MyToolTip.AddToolTipLine(ToString(m_pDef->GetFloatValue("ShootInterval")));
 
     return true;
 }

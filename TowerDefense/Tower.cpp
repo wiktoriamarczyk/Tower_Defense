@@ -105,15 +105,31 @@ bool Tower::FillToolTip(ToolTip& MyToolTip)const
    MyToolTip.AddToolTipLine("Lvl: " + ToString(m_Lvl));
 
     if (m_Damage.FireValue > 0)
-        MyToolTip.AddToolTipLine("Fire Dmg: "+ ToString(m_Damage.FireValue));
-    if (m_Damage.LightningValue > 0)
-       MyToolTip.AddToolTipLine("Lightning Dmg: "+ ToString(m_Damage.LightningValue));
-    if (m_Damage.IceValue > 0)
-        MyToolTip.AddToolTipLine("Ice Dmg: "+ ToString(m_Damage.IceValue));
+    {
+        MyToolTip.AddToolTipLine(ToString(m_Damage.FireValue) + " ");
+        MyToolTip.AddToolTipLine("🔥", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(255, 95, 31), .ContinueLastLine = true});
+    }
 
-    MyToolTip.AddToolTipLine("Radius: " + ToString(m_DetectionRadius));
-    MyToolTip.AddToolTipLine("Speed: " + ToString(m_ShootInterval));
-    MyToolTip.AddToolTipLine("Units killed: " + ToString(m_UnitsKilled));
+    if (m_Damage.LightningValue > 0)
+    {
+       MyToolTip.AddToolTipLine(ToString(m_Damage.LightningValue) + " ");
+       MyToolTip.AddToolTipLine("⚡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color::Yellow, .ContinueLastLine = true});
+    }
+
+    if (m_Damage.IceValue > 0)
+    {
+        MyToolTip.AddToolTipLine(ToString(m_Damage.IceValue) + " ");
+        MyToolTip.AddToolTipLine("❄", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(0,191,255), .ContinueLastLine = true});
+    }
+
+    MyToolTip.AddToolTipLine(ToString(m_DetectionRadius) + " ");
+    MyToolTip.AddToolTipLine("📡", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .FontColor = sf::Color(169,169,169), .ContinueLastLine = true});
+
+    MyToolTip.AddToolTipLine(ToString(m_ShootInterval) + " ");
+    MyToolTip.AddToolTipLine("💨", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .ContinueLastLine = true});
+    
+    MyToolTip.AddToolTipLine(ToString(m_UnitsKilled) + " ");
+    MyToolTip.AddToolTipLine("💀", 15, DrawTextParameters{.FontName = "NotoEmoji-Regular", .ContinueLastLine = true});
 
     return true;
 }

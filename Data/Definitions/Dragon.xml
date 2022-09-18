@@ -3,6 +3,7 @@
 	<Name>Dragon</Name>
 	<Speed>200</Speed>
 	<HP>100</HP>
+	<Money>25</Money>
 	<FireResistance>0.7</FireResistance>
 	<LightningResistance>0</LightningResistance>
 	<IceResistance>0.2</IceResistance>

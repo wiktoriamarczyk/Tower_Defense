@@ -18,6 +18,7 @@ public:
     bool GetDamageStatus()const;
     int GetHP()const;
     int GetMaxHP()const;
+    float GetMoneyForKill()const;
 
     void SetDamageStatus(bool Status);
     void SetHP(int Value);
@@ -28,6 +29,7 @@ private:
     float        m_Speed = 10.f;
     float        m_HP = 100.f;
     float        m_MaxHP = 100.f;
+    float        m_MoneyForKill = 0;
     bool         m_IsHurt = false;
     Resistances  m_Resistances;
 

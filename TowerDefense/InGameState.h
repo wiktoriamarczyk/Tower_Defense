@@ -31,8 +31,10 @@ public:
 
     template<typename T>
     vector<shared_ptr<T>> GetObjects();
+    float GetMoneyAmount()const;
 
     void SetCursor(eCursorType Cursor);
+    void SetMoneyAmount(float Value);
 
 private:
     eCursorType                                       m_CurrentCursor;
@@ -44,13 +46,13 @@ private:
     bool                                              m_HoldTower = false;
     bool                                              m_MoveTower = false;
     const Definition*                                 m_pTowerDef = nullptr;
-    int                                               m_Money = 1000;
+    float                                             m_Money = 1000.f;
     AStar                                             m_PathFinder;
 
-    float                          m_SpawningTimer = 0;
-    float                          m_UnitPhaseTimer = 40.f;
-    float                          m_TimeToNextUnitPhase = 20.f;
-    shared_ptr<Image>              m_UnitPhaseIcon;
+    float                                             m_SpawningTimer = 0;
+    float                                             m_UnitPhaseTimer = 40.f;
+    float                                             m_TimeToNextUnitPhase = 20.f;
+    shared_ptr<Image>                                 m_UnitPhaseIcon;
 
     // debug
     bool _gridDebug = false;

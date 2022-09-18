@@ -43,9 +43,6 @@ void Tower::Update(float DeltaTime)
 
             m_DetectionArea.setOutlineColor(sf::Color::Red * sf::Color(255,255,255,192));
             Shoot(units[i]);
-
-            if (units[i]->GetHP() <= 0)
-                m_UnitsKilled++;
         }
         else
         {
@@ -138,15 +135,18 @@ void Tower::Initialize(const Definition& Def)
 {
     m_Name = Def.GetStringValue("Name");
     m_TextureName = Def.GetStringValue("FileName");
-    m_Cost = Def.GetIntValue("Cost");
-    m_Damage.FireValue = Def.GetFloatValue("FireDamage");
-    m_Damage.LightningValue = Def.GetFloatValue("LightningDamage");
-    m_Damage.IceValue = Def.GetFloatValue("IceDamage");
+    m_Cost = Def.GetFloatValue("Cost");
+    m_StartingDamageValues.FireValue = Def.GetFloatValue("FireDamage");
+    m_StartingDamageValues.LightningValue = Def.GetFloatValue("LightningDamage");
+    m_StartingDamageValues.IceValue = Def.GetFloatValue("IceDamage");
     m_DetectionRadius = Def.GetIntValue("DetectionRadius");
     m_ShootInterval = Def.GetFloatValue("ShootInterval");
 
     m_TextureSize = Engine::GetSingleton()->GetTextureSize((m_TextureName).c_str());
     m_DetectionArea.setRadius(m_DetectionRadius);
+
+    m_Damage = m_StartingDamageValues;
+    m_CostForUpgrade = m_Cost * 1.5f;
 }
 
 void Tower::Shoot(shared_ptr<Unit> Target)
@@ -163,7 +163,7 @@ bool Tower::IsPicked()const
     return m_Picked;
 }
 
- int Tower::GetPrize()const
+ float Tower::GetPrize()const
  {
     return m_Cost;
  }
@@ -178,12 +178,35 @@ int Tower::GetKills()const
     return m_UnitsKilled;
 }
 
-void Tower::SetLvl(int Lvl)
+float Tower::GetMoneyEarned()const
 {
-    m_Lvl = Lvl;
+    return m_MoneyEarned;
+}
+
+float Tower::GetPrizeForUpgrade()
+{
+    return m_CostForUpgrade;
+}
+
+ void Tower::LvlUp()
+{
+    // zwiekszenie lvlu
+    m_Lvl++;
+    // zwiekszenie ceny nastepnego lvl upa do 1,5 * poprzednia cena 
+    m_CostForUpgrade *= 1.5f;
+    // zwiekszenie wartosci statystyk zadawanych obrazen
+    m_Damage.FireValue = 0.04 * pow(m_Lvl, 3) + 0.8 * pow(m_Lvl, 2) + 2 * m_Lvl + m_StartingDamageValues.FireValue;
+    m_Damage.LightningValue = 0.04 * pow(m_Lvl, 3) + 0.8 * pow(m_Lvl, 2) + 2 * m_Lvl + m_StartingDamageValues.LightningValue;
+    m_Damage.IceValue = 0.04 * pow(m_Lvl, 3) + 0.8 * pow(m_Lvl, 2) + 2 * m_Lvl + m_StartingDamageValues.IceValue;
 }
 
 void Tower::SetKills(int Value)
 {
     m_UnitsKilled = Value;
+}
+
+void Tower::SetMoneyEarned(float Value)
+{
+    m_MoneyEarned += Value;
+    m_Game.SetMoneyAmount(m_Game.GetMoneyAmount() + Value);
 }

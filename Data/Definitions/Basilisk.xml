@@ -3,6 +3,7 @@
 	<Name>Basilisk</Name>
 	<Speed>350</Speed>
 	<HP>150</HP>
+	<Money>50</Money>
 	<FireResistance>0.2</FireResistance>
 	<LightningResistance>0.5</LightningResistance>
 	<IceResistance>0.2</IceResistance>

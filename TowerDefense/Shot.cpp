@@ -16,14 +16,18 @@ void Shot::Update(float DeltaTime)
     m_NormalizedDir = dirVector.GetNormalized();
     vec2 shiftPerFrame = m_NormalizedDir * m_Speed * DeltaTime;
 
+    // przemieszczanie sie strzalu
     SetPosition(GetPosition() + shiftPerFrame);
 
+    // wymiary strzalu
     vec2 objectTopLeft = GetPosition() - GetSize() / 2;
     vec2 objectBottomRight = GetPosition() + GetSize() / 2;
 
+    // wymiary jednostki
     vec2 unitTopLeft = m_Target->GetPosition() - m_Target->GetSize() / 2;
     vec2 unitBottomRight =  m_Target->GetPosition() + m_Target->GetSize() / 2;
 
+    // trafienie w jendostke przez strzal wiezy 
     if (GetPosition().x >= unitTopLeft.x && GetPosition().x <= unitBottomRight.x
         && GetPosition().y >= unitTopLeft.y && GetPosition().y <= unitBottomRight.y)
         {
@@ -31,11 +35,14 @@ void Shot::Update(float DeltaTime)
             m_Target->OnHit(m_Damage);
 
             if (m_Target->GetHP() <= 0)
-                m_Source->SetKills( m_Source->GetKills()+1 );
-
+            {
+                 m_Source->SetKills(m_Source->GetKills() + 1);
+                 m_Source->SetMoneyEarned(m_Target->GetMoneyForKill());
+            }
             SetLifeStatus(false);
         }
 
+    // jesli jednostka wyjdzie poza ekran, to umiera
     if (objectTopLeft.x < 0 || objectBottomRight.x >= SCREEN_WIDTH || objectBottomRight.y < 0 || objectTopLeft.y >= SCREEN_HEIGHT)
     {
         SetLifeStatus(false);

@@ -154,12 +154,13 @@ void Unit::Initialize(const Definition& Def)
 {
     m_Name = Def.GetStringValue("Name");
     m_TextureName = Def.GetStringValue("FileName", "MissingTexture");
+    m_MaxHP = Def.GetIntValue("HP");
     m_Speed = Def.GetFloatValue("Speed", 200.f);
+    m_MoneyForKill = Def.GetFloatValue("Money");
     m_Resistances.FireValue = Def.GetFloatValue("FireResistance");
     m_Resistances.LightningValue = Def.GetFloatValue("LightningResistance");
     m_Resistances.IceValue = Def.GetFloatValue("IceResistance");
 
-    m_MaxHP = Def.GetIntValue("HP");
     m_HP = m_MaxHP;
 
     SetSize(Engine::GetSingleton()->GetTextureSize(m_TextureName));
@@ -190,6 +191,11 @@ int Unit::GetHP()const
 int Unit::GetMaxHP() const
 {
     return m_MaxHP;
+}
+
+float Unit::GetMoneyForKill()const
+{
+    return m_MoneyForKill;
 }
 
 void Unit::SetDamageStatus(bool Info)

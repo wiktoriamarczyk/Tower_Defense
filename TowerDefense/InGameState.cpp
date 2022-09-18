@@ -262,7 +262,7 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     Engine::GetSingleton()->DrawText(ToString(mouseY), 8, vec2(1860, 1060));
 
     // rysowanie czcionki
-    Engine::GetSingleton()->DrawText(ToString(m_Money), 8, vec2(1680, 1028));
+    Engine::GetSingleton()->DrawText(ToString(GetMoneyAmount()), 8, vec2(1680, 1028));
     Engine::GetSingleton()->DrawText(ToString(m_TimeToNextUnitPhase), 8, vec2(1852, 970));
 
     if (Engine::GetSingleton()->GetFramesPerSecondValue() != 60.f)
@@ -377,6 +377,16 @@ void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
     m_AllCursors.push_back(std::move(pCursor));
 }
 
+float InGameState::GetMoneyAmount()const
+{
+    return m_Money;
+}
+
+void InGameState::SetMoneyAmount(float Value)
+{
+    m_Money = Value;
+}
+
  void InGameState::CreateGameObjects()
  {
     const Definition* pTower1Def = Engine::GetSingleton()->FindDefinition("/Definitions/Tower1.xml");
@@ -421,7 +431,8 @@ void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
             {
                 if(towers[i]->IsPicked())
                 {
-                    m_Money += towers[i]->GetPrize() / 2;
+                    auto res = towers[i]->GetPrizeForUpgrade() / 2;
+                    m_Money += towers[i]->GetPrizeForUpgrade() / 2;
                     int cellX = (towers[i]->GetPosition().x / CELL_SIZE);
                     int cellY = (towers[i]->GetPosition().y / CELL_SIZE);
                     m_Grid[cellY % GRID_ROWS][cellX % GRID_COLS] = eGridValue::FREE;
@@ -459,8 +470,8 @@ void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
             {
                 if(towers[i]->IsPicked())
                 {
-                    m_Money -= towers[i]->GetPrize() * 1.5f;
-                    towers[i]->SetLvl(towers[i]->GetLvl() + 1);
+                    m_Money -= towers[i]->GetPrizeForUpgrade();
+                    towers[i]->LvlUp();
                 }
             }
     };
@@ -522,7 +533,7 @@ void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
 
     buttonSize = Engine::GetSingleton()->GetTextureSize("/Buttons/SellButton.png");
     shared_ptr<Button> sellButton = make_shared<Button>("/Buttons/SellButton.png", vec2(1750, 930), buttonSize, func4);
-    sellButton->SetToolTipText({{"sell tower"}, {"for half prize"}});
+    sellButton->SetToolTipText({{"Sell tower"}, {"for half prize"}});
     sellButton->SetCursor(eCursorType::BUILD);
     m_AllGameObjects.push_back(sellButton);
 

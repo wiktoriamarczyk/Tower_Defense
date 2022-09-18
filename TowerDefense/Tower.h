@@ -18,17 +18,21 @@ public:
     void Shoot(shared_ptr<Unit> Target);
 
     bool IsPicked()const;
-    int GetPrize()const;
+    float GetPrize()const;
     int GetLvl()const;
     int GetKills()const;
+    float GetMoneyEarned()const;
+    float GetPrizeForUpgrade();
 
-    void SetLvl(int Lvl);
+    void LvlUp();
     void SetKills(int Value);
+    void SetMoneyEarned(float Value);
 
 private:
     InGameState&    m_Game;
     string          m_TextureName;
-    int             m_Cost = 0;
+    float           m_Cost = 0;
+    float           m_CostForUpgrade = 0;
     int             m_Lvl = 1;
     float           m_ShootInterval = 0;
     vec2i           m_TextureSize;
@@ -36,7 +40,9 @@ private:
     sf::CircleShape m_DetectionArea;
     bool            m_Picked = false;
     int             m_UnitsKilled = 0;
+    int             m_MoneyEarned = 0;
     Damage          m_Damage;
+    Damage          m_StartingDamageValues;
 
     float           m_ShootingTimer = 0;
 

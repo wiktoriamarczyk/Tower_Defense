@@ -50,9 +50,7 @@ bool Engine::Initialize()
     m_AllStates.push_back(make_unique<MainMenuState>());
 
     // pierwszym stanem jest Menu gry
-    ChangeState(eStateID::INGAME);
-
-
+    ChangeState(eStateID::MAINMENU);
 
     return true;
 }

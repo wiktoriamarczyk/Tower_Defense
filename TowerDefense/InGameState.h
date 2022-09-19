@@ -13,21 +13,21 @@ public:
     InGameState();
     ~InGameState();
     void OnEnter()override;
+    bool ReadGrid();
     void OnMouseButtonDown(int Button)override;
     void OnKeyDown(sf::Keyboard::Key KeyCode)override;
-    void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
-    void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
-    void DestroyTextures();
+    void Update(float DeltaTime)override;
     void BuildTower(vec2 Cell, const Definition* pDef);
     void CreateUnit(vec2 Position, const string& UnitName);
+    void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
+    void DestroyTextures();
     void Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue);
-    bool ReadGrid();
-    void CreateGameObjects();
-    void ChangeUnitPhase(const string& Name);
     void EnableGroup(eUIGroup Group);
     void DisableGroup(eUIGroup Group);
     void InitializeCursor(eCursorType CursorType, string FilePath);
+    void ChangeUnitPhase(const string& Name);
+    void CreateGameObjects();
 
     template<typename T>
     vector<shared_ptr<T>> GetObjects();

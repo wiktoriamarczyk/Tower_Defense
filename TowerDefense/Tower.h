@@ -45,6 +45,5 @@ private:
     Damage          m_StartingDamageValues;
 
     float           m_ShootingTimer = 0;
-
 };
 

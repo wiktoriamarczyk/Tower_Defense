@@ -40,9 +40,8 @@ bool Image::IsCursorOverObject()const
 {
     vec2i mousePos = Engine::GetSingleton()->GetMousePos();
 
-    vec2 textureCenter = GetPosition() + GetSize() / 2;
-    vec2 textureTopLeft = textureCenter - GetSize() / 2;
-    vec2 textureBottomRight = textureCenter + GetSize() / 2;
+    vec2 textureTopLeft = GetPosition() - m_Pivot * GetSize();
+    vec2 textureBottomRight = textureTopLeft + GetSize();
 
     if (mousePos.x >= textureTopLeft.x &&  mousePos.x <= textureBottomRight.x)
     {

@@ -5,18 +5,20 @@
 class Button : public GameObject
 {
 public:
-    Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function, bool Move = false);
+    Button(string TextureName, vec2 Position, vec2 Pivot, function<void()> Function, bool Move = false);
     void Update(float DeltaTime)override {};
     void Render(sf::RenderWindow& Renderer)override;
     bool OnMouseButtonDown(int Button)override;
     bool IsCursorOverObject()const override;
     bool FillToolTip(ToolTip& MyToolTip)const override;
     void SetToolTipText(vector<TextLineData> ToolTip);
+    void ClearToolTip();
 
 private:
     string               m_TextureName;
     vector<TextLineData> m_ToolTip;
     function<void()>     m_Function;
+    vec2                 m_Pivot;
     bool                 m_Move = false;
 };
 

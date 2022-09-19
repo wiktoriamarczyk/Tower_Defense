@@ -2,13 +2,14 @@
 #include "Engine.h"
 #include "ToolTip.h"
 
-Button::Button(string TextureName, vec2 Position, vec2i Size, function<void()> Function, bool Move)
+Button::Button(string TextureName, vec2 Position, vec2 Pivot, function<void()> Function, bool Move)
 {
     m_TextureName = TextureName;
     SetPosition(Position);
-    SetSize(Size);
+    SetSize(Engine::GetSingleton()->GetTextureSize(m_TextureName));
     m_Function = Function;
     m_Layer = eGraphicLayer::UI;
+    m_Pivot = Pivot;
     m_Move = Move;
 }
 
@@ -16,9 +17,10 @@ void Button::Render(sf::RenderWindow& Renderer)
 {
     if (IsCursorOverObject() && m_Move)
     {
-        Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x - 5, GetPosition().y + 5));
+        Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x - 5, GetPosition().y + 5), DisplayParameters{.Pivot = m_Pivot});
     }
-    else Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x, GetPosition().y));
+    else 
+        Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x, GetPosition().y), DisplayParameters{.Pivot = m_Pivot});
 }
 
 bool Button::OnMouseButtonDown(int Button)
@@ -35,9 +37,8 @@ bool Button::IsCursorOverObject()const
 {
     vec2i mousePos = Engine::GetSingleton()->GetMousePos();
 
-    vec2 textureCenter = GetPosition() + GetSize() / 2;
-    vec2 textureTopLeft = textureCenter - GetSize() / 2;
-    vec2 textureBottomRight = textureCenter + GetSize() / 2;
+    vec2 textureTopLeft = GetPosition() - m_Pivot * GetSize();
+    vec2 textureBottomRight = textureTopLeft + GetSize();
 
     if (mousePos.x >= textureTopLeft.x &&  mousePos.x <= textureBottomRight.x)
     {
@@ -66,6 +67,12 @@ bool Button::FillToolTip(ToolTip& MyToolTip)const
 void Button::SetToolTipText(vector<TextLineData> ToolTip)
 {
     m_ToolTip = ToolTip;
+}
+
+void Button::ClearToolTip()
+{
+    if (!m_ToolTip.empty())
+        m_ToolTip.clear();
 }
 
 bool TowerButton::FillToolTip(ToolTip& MyToolTip)const

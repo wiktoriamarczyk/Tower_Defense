@@ -146,6 +146,7 @@ struct DisplayParameters
     vec2 Pivot = vec2(0, 0);
     sf::Color DrawColor = sf::Color::White;
     float Rotation = 0.0f;
+    int32_t CurrentFrame = -1;
 };
 
 struct DrawTextParameters

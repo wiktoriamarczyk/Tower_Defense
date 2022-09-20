@@ -17,7 +17,7 @@ public:
     const sf::Texture& GetSFMLTexture()const;
 
     void SetSize(vec2i Size);
-
+    virtual uint32_t GetFrmaesCount()const;
 protected:
     sf::RenderWindow* m_pRenderer = nullptr;
     vec2i             m_Size;
@@ -35,6 +35,7 @@ public:
     void Update(float DeltaTime);
     void Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName);
 
+    uint32_t GetFrmaesCount()const override;
 private:
     vector<shared_ptr<Texture>> m_Frames;
     float                       m_CurrentFrame = 0; //< numer klatki, ktory w display zostanie przyciety do inta

@@ -10,17 +10,17 @@ Unit::Unit(vec2 Position)
 
 void Unit::Update(float DeltaTime)
 {
-    m_HurtTimer -= DeltaTime;
+    m_Animator.Update(DeltaTime);
 
     // sprawdzenie czy jednostka zostala usmiercona
     if (GetHP() <= 0)
     {
-        m_DyingTimer -= DeltaTime;
-        
-        ChangeTexture(eTextureType::DEATH);
-
-        if (m_DyingTimer <= 0)
+        auto OnAnimEnd = [this]()
+        {
             SetLifeStatus(false);
+        };
+
+        m_Animator.StartAnimation(eTextureType::DEATH,false,OnAnimEnd);
 
         return;
     }
@@ -28,14 +28,14 @@ void Unit::Update(float DeltaTime)
     // sprawdzenie czy jednostka zostala postrzelona
     if (GetDamageStatus())
     {
-        ChangeTexture(eTextureType::HIT);
-        SetDamageStatus(false);
-        m_HurtTimer = 1.f;
-    }
+        auto OnAnimEnd = [this]()
+        {
+            m_Animator.StartAnimation(eTextureType::DEFAULT,true);
+        };
 
-    if (m_HurtTimer < 0)
-    {
-        ChangeTexture(eTextureType::DEFAULT);
+        m_Animator.StartAnimation(eTextureType::HIT,false,OnAnimEnd);
+
+        SetDamageStatus(false);
     }
 
     // podazanie wyznaczona w InGameState sciezka
@@ -78,8 +78,8 @@ void Unit::Render(sf::RenderWindow& Renderer)
     Renderer.draw(unitOnMap);
 
     // tekstura
-    Engine::GetSingleton()->DisplayTexture(m_CurrentTexture.second, GetPosition() , DisplayParameters{.Pivot{0.5, 0.5}});
-        
+    m_Animator.DisplayTexture(Renderer,GetPosition() , DisplayParameters{.Pivot{0.5, 0.5}});
+
     // poziom HP
     sf::RectangleShape lifeBar(vec2(50.f, 15.f));
     lifeBar.setFillColor(sf::Color::Transparent);
@@ -162,13 +162,13 @@ void Unit::Initialize(const Definition& Def)
     m_Name = Def.GetStringValue("Name");
 
     string textureName = Def.GetStringValue("AnimFileName", "MissingTexture");
-    m_TextureNames.push_back(make_pair(eTextureType::DEFAULT, textureName));
+    m_Animator.AddTexture(eTextureType::DEFAULT, textureName);
 
     textureName = Def.GetStringValue("DAnimFileName", "MissingTexture");
-    m_TextureNames.push_back(make_pair(eTextureType::DEATH, textureName));
+    m_Animator.AddTexture(eTextureType::DEATH, textureName);
 
     textureName = Def.GetStringValue("HAnimFileName", "MissingTexture");
-    m_TextureNames.push_back(make_pair(eTextureType::HIT, textureName));
+    m_Animator.AddTexture(eTextureType::HIT, textureName);
 
     m_MaxHP = Def.GetIntValue("HP");
     m_Speed = Def.GetFloatValue("Speed", 200.f);
@@ -179,8 +179,9 @@ void Unit::Initialize(const Definition& Def)
 
     m_HP = m_MaxHP;
 
-    SetSize(Engine::GetSingleton()->GetTextureSize(m_TextureNames[0].second));
-    ChangeTexture(eTextureType::DEFAULT);
+    SetSize(Engine::GetSingleton()->GetTextureSize(textureName));
+    //ChangeTexture(eTextureType::DEFAULT);
+    m_Animator.StartAnimation(eTextureType::DEFAULT,true);
 }
 
 void Unit::OnHit(Damage DamageValue)
@@ -197,19 +198,20 @@ void Unit::OnHit(Damage DamageValue)
 
 void Unit::ChangeTexture(eTextureType Texture)
 {
-    if (m_CurrentTexture.first == Texture)
-    {
-        return;
-    }
+    m_Animator.StartAnimation(Texture,true);
+    //if (m_CurrentTexture.first == Texture)
+    //{
+    //    return;
+    //}
 
-    for (size_t i = 0; i < m_TextureNames.size(); ++i)
-    {
-        if (m_TextureNames[i].first == Texture)
-        {
-            m_CurrentTexture = m_TextureNames[i];
-            break;
-        }
-    }
+    //for (size_t i = 0; i < m_TextureNames.size(); ++i)
+    //{
+    //    if (m_TextureNames[i].first == Texture)
+    //    {
+    //        m_CurrentTexture = m_TextureNames[i];
+    //        break;
+    //    }
+    //}
 }
 
 bool Unit::GetDamageStatus()const
@@ -240,4 +242,73 @@ void Unit::SetDamageStatus(bool Info)
 void Unit::SetHP(int Value)
 {
     m_HP = Value;
+}
+
+
+void Animator::AddTexture(eTextureType Type, const string& FileName )
+{
+    auto pTexture = Engine::GetSingleton()->GetTexture(FileName);
+    if (!pTexture)
+        return;
+
+    TextureData Data;
+    Data.m_Type = Type;
+    Data.m_FileName = FileName;
+    Data.m_FramesCount = pTexture->GetFrmaesCount();
+    m_TextureNames.push_back(Data);
+}
+
+void Animator::DisplayTexture(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Parameters)
+{
+    Parameters.CurrentFrame = (int32_t)m_CurrentFrame;
+    Engine::GetSingleton()->DisplayTexture(m_CurrentTexture.m_FileName, Position , Parameters);
+}
+
+bool Animator::StartAnimation(eTextureType Type, bool Loop, function<void()> FinishCallback)
+{
+    if (m_CurrentTexture.m_Type == Type)
+    {
+        return true;
+    }
+
+    m_Loop = Loop;
+    m_FinishCallback = FinishCallback;
+    m_CurrentFrame = 0;
+    m_Working = true;
+
+    for (size_t i = 0; i < m_TextureNames.size(); ++i)
+    {
+        if (m_TextureNames[i].m_Type == Type)
+        {
+            m_CurrentTexture = m_TextureNames[i];
+            return true;
+        }
+    }
+    return false;
+}
+
+void Animator::Update(float DeltaTime)
+{
+    if (!m_Working)
+        return;
+
+    m_CurrentFrame += DeltaTime * m_FrameSpeed;
+
+    if (m_CurrentFrame >= m_CurrentTexture.m_FramesCount)
+    {
+        if (m_Loop)
+        {
+            m_CurrentFrame = 0;
+        }
+        else
+        {
+            m_Working = false;
+            m_FinishCallback();
+        }
+    }
+}
+
+void Animator::SetFrameSpeed(float FrameSpeed)
+{
+    m_FrameSpeed = FrameSpeed;
 }

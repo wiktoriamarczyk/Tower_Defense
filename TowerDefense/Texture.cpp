@@ -47,7 +47,10 @@ void Texture::FreeResources()
 
 void AnimatedTexture::Display(vec2 Position, DisplayParameters Param) const
 {
-    m_Frames[(int)m_CurrentFrame]->Display(Position, Param);
+    if (Param.CurrentFrame > -1 && Param.CurrentFrame < m_Frames.size())
+        m_Frames[Param.CurrentFrame]->Display(Position, Param);
+    else
+        m_Frames[(uint32_t)m_CurrentFrame]->Display(Position, Param);
 }
 
 void AnimatedTexture::Update(float DeltaTime)
@@ -68,6 +71,11 @@ void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& Ani
         SetSize(m_Frames[0]->GetSize());
 }
 
+uint32_t AnimatedTexture::GetFrmaesCount() const
+{
+    return uint32_t(m_Frames.size());
+}
+
 vec2i Texture::GetSize()const
 {
     return m_Size;
@@ -86,4 +94,9 @@ const sf::Texture& Texture::GetSFMLTexture()const
 void Texture::SetSize(vec2i Size)
 {
     m_Size = Size;
+}
+
+uint32_t Texture::GetFrmaesCount() const
+{
+    return 1;
 }

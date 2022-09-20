@@ -9,6 +9,11 @@ Shot::Shot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue
     m_Damage = DamageValue;
 }
 
+Shot::~Shot()
+{
+
+}
+
 void Shot::Update(float DeltaTime)
 {
     // wektor kierunkowy v = [x2 - x1, y2 - y1]

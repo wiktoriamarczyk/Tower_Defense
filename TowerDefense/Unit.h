@@ -2,6 +2,30 @@
 #include "GameObject.h"
 #include "Definition.h"
 
+class Animator
+{
+public:
+    void AddTexture(eTextureType Type, const string& FileName);
+    void DisplayTexture(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Parameters);
+    bool StartAnimation(eTextureType Type, bool Loop, function<void()> FinishCallback={});
+    void Update(float DeltaTime);
+    void SetFrameSpeed(float FrameSpeed);
+private:
+    struct TextureData
+    {
+        eTextureType m_Type;
+        string m_FileName;
+        uint32_t m_FramesCount;
+    };
+    vector<TextureData>                 m_TextureNames;
+    TextureData                         m_CurrentTexture;
+    bool                                m_Loop = false;
+    bool                                m_Working = false;
+    function<void()>                    m_FinishCallback;
+    float                               m_CurrentFrame = 0; //< numer klatki, ktory w display zostanie przyciety do inta
+    float                               m_FrameSpeed = 12.f; //< ile klatek animacji zostanie wyswietlonych w ciagu 1s
+};
+
 class Unit : public GameObject
 {
 public:
@@ -25,8 +49,9 @@ public:
     void SetHP(int Value);
 
 private:
-    vector<pair<eTextureType, string>> m_TextureNames;
-    pair<eTextureType, string>         m_CurrentTexture;
+    //vector<pair<eTextureType, string>> m_TextureNames;
+    //pair<eTextureType, string>         m_CurrentTexture;
+    Animator     m_Animator;
     vector<vec2> m_TargetPositions;
     float        m_Speed = 10.f;
     float        m_HP = 100.f;
@@ -34,7 +59,4 @@ private:
     float        m_MoneyForKill = 0;
     bool         m_IsHurt = false;
     Resistances  m_Resistances;
-
-    float        m_HurtTimer = 0;
-    float        m_DyingTimer = 0.5f;
 };

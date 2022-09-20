@@ -410,7 +410,7 @@ void InGameState::SetCursor(eCursorType Cursor)
         return;
     }
 
-    for (int i = 0; i < m_AllCursors.size(); ++i)
+    for (size_t i = 0; i < m_AllCursors.size(); ++i)
     {
         if (m_AllCursors[i]->first == Cursor)
         {

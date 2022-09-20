@@ -23,7 +23,7 @@ bool Engine::Initialize()
     pSingleton = this;
 
     // stworzenie okna
-    m_Renderer.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Tower Defense" , sf::Style::None );
+    m_Renderer.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Tower Defense" );//, sf::Style::None );
 
     // inicjalizacja czcionek
     sf::Font font;
@@ -42,6 +42,8 @@ bool Engine::Initialize()
 
     // zaladowanie animacji obiektow
     LoadAnimation("/Textures/DragonAnim.xml");
+    LoadAnimation("/Textures/DragonDeathAnim.xml");
+    LoadAnimation("/Textures/DragonHitAnim.xml");
     LoadAnimation("/Textures/BasiliskAnim.xml");
     LoadAnimation("/Textures/Tower3Anim.xml");
 

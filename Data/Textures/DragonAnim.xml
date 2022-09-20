@@ -1,8 +1,8 @@
 <Data>
-	<Frame>/Textures/WALKCadrgn13.png</Frame>
-	<Frame>/Textures/WALKCadrgn14.png</Frame>
-	<Frame>/Textures/WALKCadrgn15.png</Frame>
-	<Frame>/Textures/WALKCadrgn16.png</Frame>
-	<Frame>/Textures/WALKCadrgn15.png</Frame>
-	<Frame>/Textures/WALKCadrgn14.png</Frame>
+	<Frame>Textures/BlueDragon/WALKCadrgn13.png</Frame>
+	<Frame>Textures/BlueDragon/WALKCadrgn14.png</Frame>
+	<Frame>Textures/BlueDragon/WALKCadrgn15.png</Frame>
+	<Frame>Textures/BlueDragon/WALKCadrgn16.png</Frame>
+	<Frame>Textures/BlueDragon/WALKCadrgn15.png</Frame>
+	<Frame>Textures/BlueDragon/WALKCadrgn14.png</Frame>
 </Data>

@@ -14,6 +14,7 @@ public:
     void MoveTo(vector<vec2> TargetPosition);
     void Initialize(const Definition& Def);
     void OnHit(Damage DamageValue);
+    void ChangeTexture(eTextureType Texture);
 
     bool GetDamageStatus()const;
     int GetHP()const;
@@ -24,7 +25,8 @@ public:
     void SetHP(int Value);
 
 private:
-    string       m_TextureName;
+    vector<pair<eTextureType, string>> m_TextureNames;
+    pair<eTextureType, string>         m_CurrentTexture;
     vector<vec2> m_TargetPositions;
     float        m_Speed = 10.f;
     float        m_HP = 100.f;

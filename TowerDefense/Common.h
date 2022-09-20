@@ -109,6 +109,14 @@ enum class eCursorType
     SPELL,
 };
 
+enum class eTextureType
+{
+    UNKNOWN,
+    DEFAULT,
+    DEATH,
+    HIT,
+};
+
 namespace eFontStyle
 {
     enum Type

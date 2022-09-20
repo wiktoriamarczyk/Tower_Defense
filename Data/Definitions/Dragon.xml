@@ -1,5 +1,7 @@
 <Data>
-	<FileName>/Textures/DragonAnim.xml</FileName>
+	<AnimFileName>/Textures/DragonAnim.xml</AnimFileName>
+	<DAnimFileName>/Textures/DragonDeathAnim.xml</DAnimFileName>
+	<HAnimFileName>/Textures/DragonHitAnim.xml</HAnimFileName>
 	<Name>Dragon</Name>
 	<Speed>200</Speed>
 	<HP>100</HP>

@@ -12,9 +12,12 @@ void Unit::Update(float DeltaTime)
 {
     m_HurtTimer -= DeltaTime;
 
+    // sprawdzenie czy jednostka zostala usmiercona
     if (GetHP() <= 0)
     {
         m_DyingTimer -= DeltaTime;
+        
+        ChangeTexture(eTextureType::DEATH);
 
         if (m_DyingTimer <= 0)
             SetLifeStatus(false);
@@ -22,10 +25,17 @@ void Unit::Update(float DeltaTime)
         return;
     }
 
+    // sprawdzenie czy jednostka zostala postrzelona
     if (GetDamageStatus())
     {
-        m_IsHurt = false;
+        ChangeTexture(eTextureType::HIT);
+        SetDamageStatus(false);
         m_HurtTimer = 1.f;
+    }
+
+    if (m_HurtTimer < 0)
+    {
+        ChangeTexture(eTextureType::DEFAULT);
     }
 
     // podazanie wyznaczona w InGameState sciezka
@@ -68,11 +78,8 @@ void Unit::Render(sf::RenderWindow& Renderer)
     Renderer.draw(unitOnMap);
 
     // tekstura
-    if (m_HurtTimer >= 0)
-        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() , DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
-    else
-        Engine::GetSingleton()->DisplayTexture(m_TextureName, GetPosition() , DisplayParameters{.Pivot{0.5, 0.5}});
-
+    Engine::GetSingleton()->DisplayTexture(m_CurrentTexture.second, GetPosition() , DisplayParameters{.Pivot{0.5, 0.5}});
+        
     // poziom HP
     sf::RectangleShape lifeBar(vec2(50.f, 15.f));
     lifeBar.setFillColor(sf::Color::Transparent);
@@ -153,7 +160,16 @@ void Unit::MoveTo(vector<vec2> TargetPositions)
 void Unit::Initialize(const Definition& Def)
 {
     m_Name = Def.GetStringValue("Name");
-    m_TextureName = Def.GetStringValue("FileName", "MissingTexture");
+
+    string textureName = Def.GetStringValue("AnimFileName", "MissingTexture");
+    m_TextureNames.push_back(make_pair(eTextureType::DEFAULT, textureName));
+
+    textureName = Def.GetStringValue("DAnimFileName", "MissingTexture");
+    m_TextureNames.push_back(make_pair(eTextureType::DEATH, textureName));
+
+    textureName = Def.GetStringValue("HAnimFileName", "MissingTexture");
+    m_TextureNames.push_back(make_pair(eTextureType::HIT, textureName));
+
     m_MaxHP = Def.GetIntValue("HP");
     m_Speed = Def.GetFloatValue("Speed", 200.f);
     m_MoneyForKill = Def.GetFloatValue("Money");
@@ -163,7 +179,8 @@ void Unit::Initialize(const Definition& Def)
 
     m_HP = m_MaxHP;
 
-    SetSize(Engine::GetSingleton()->GetTextureSize(m_TextureName));
+    SetSize(Engine::GetSingleton()->GetTextureSize(m_TextureNames[0].second));
+    ChangeTexture(eTextureType::DEFAULT);
 }
 
 void Unit::OnHit(Damage DamageValue)
@@ -178,10 +195,27 @@ void Unit::OnHit(Damage DamageValue)
     m_HP -= fireDamage + lightningDamage + iceDamage;
 }
 
- bool Unit::GetDamageStatus()const
- {
+void Unit::ChangeTexture(eTextureType Texture)
+{
+    if (m_CurrentTexture.first == Texture)
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < m_TextureNames.size(); ++i)
+    {
+        if (m_TextureNames[i].first == Texture)
+        {
+            m_CurrentTexture = m_TextureNames[i];
+            break;
+        }
+    }
+}
+
+bool Unit::GetDamageStatus()const
+{
     return m_IsHurt;
- }
+}
 
 int Unit::GetHP()const
 {

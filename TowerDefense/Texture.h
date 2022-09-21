@@ -18,6 +18,7 @@ public:
 
     void SetSize(vec2i Size);
     virtual uint32_t GetFrmaesCount()const;
+    virtual float GetFrameSpeed()const;
 protected:
     sf::RenderWindow* m_pRenderer = nullptr;
     vec2i             m_Size;
@@ -32,9 +33,10 @@ class AnimatedTexture : public Texture
 public:
     void Display(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Param = {})const override;
     void Update(float DeltaTime);
-    void Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName);
+    void Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName,float FrameSpeed);
 
     uint32_t GetFrmaesCount()const override;
+    float GetFrameSpeed()const override;
 private:
     vector<shared_ptr<Texture>> m_Frames;
     float                       m_CurrentFrame = 0;  //< numer klatki, ktory w display zostanie przyciety do inta

@@ -33,7 +33,7 @@ void Unit::Update(float DeltaTime)
             m_Animator.StartAnimation(eTextureType::DEFAULT,true);
         };
 
-        m_Animator.StartAnimation(eTextureType::HIT,false,OnAnimEnd);
+        m_Animator.StartAnimation(eTextureType::HIT,false,OnAnimEnd,true);
 
         SetDamageStatus(false);
     }
@@ -85,7 +85,7 @@ void Unit::Render(sf::RenderWindow& Renderer)
     lifeBar.setFillColor(sf::Color::Transparent);
     lifeBar.setOutlineColor(sf::Color::White);
     lifeBar.setOutlineThickness(1.f);
-    lifeBar.setPosition(vec2(GetPosition().x, GetPosition().y - 70.f));
+    lifeBar.setPosition(vec2(GetPosition().x-25.f, GetPosition().y - 70.f));
 
     sf::RectangleShape lifeBarFilling;
 
@@ -95,12 +95,21 @@ void Unit::Render(sf::RenderWindow& Renderer)
     lifeBarFilling.setFillColor(sf::Color::Red);
     lifeBarFilling.setOutlineColor(sf::Color::Red);
     lifeBarFilling.setOutlineThickness(1.f);
-    lifeBarFilling.setPosition(vec2(GetPosition().x + 3.f, GetPosition().y - 68.f));
+    lifeBarFilling.setPosition(vec2(GetPosition().x-25.f + 3.f, GetPosition().y - 68.f));
 
     Renderer.draw(lifeBar);
 
     if (GetHP() > 0)
         Renderer.draw(lifeBarFilling);
+
+
+    sf::RectangleShape bounds = sf::RectangleShape(vec2(GetSize()));
+    bounds.setFillColor(sf::Color::Transparent);
+    bounds.setOutlineColor(sf::Color::Red);
+    bounds.setOutlineThickness(1.f);
+    bounds.setPosition(GetPosition()-GetSize()/2);
+
+    //Renderer.draw(bounds);
 }
 
 bool Unit::OnMouseButtonDown(int Button)
@@ -164,6 +173,8 @@ void Unit::Initialize(const Definition& Def)
     string textureName = Def.GetStringValue("AnimFileName", "MissingTexture");
     m_Animator.AddTexture(eTextureType::DEFAULT, textureName);
 
+    auto DefaultTexture = textureName;
+
     textureName = Def.GetStringValue("DAnimFileName", "MissingTexture");
     m_Animator.AddTexture(eTextureType::DEATH, textureName);
 
@@ -179,7 +190,7 @@ void Unit::Initialize(const Definition& Def)
 
     m_HP = m_MaxHP;
 
-    SetSize(Engine::GetSingleton()->GetTextureSize(textureName));
+    SetSize(Engine::GetSingleton()->GetTextureSize(DefaultTexture));
     //ChangeTexture(eTextureType::DEFAULT);
     m_Animator.StartAnimation(eTextureType::DEFAULT,true);
 }

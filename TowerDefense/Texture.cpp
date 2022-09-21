@@ -54,10 +54,11 @@ void AnimatedTexture::Update(float DeltaTime)
         m_CurrentFrame = 0;
 }
 
-void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName)
+void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName,float FrameSpeed)
 {
     m_Frames = Frames;
     m_FileName = AnimatedTxtName;
+    m_FrameSpeed = FrameSpeed;
 
     // ustaw rozmiar animowanej tekstury jako rozmiar z 1 klatki
     if(m_Frames.size())
@@ -67,6 +68,11 @@ void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& Ani
 uint32_t AnimatedTexture::GetFrmaesCount() const
 {
     return uint32_t(m_Frames.size());
+}
+
+float AnimatedTexture::GetFrameSpeed() const
+{
+    return m_FrameSpeed;
 }
 
 vec2i Texture::GetSize()const
@@ -92,4 +98,9 @@ void Texture::SetSize(vec2i Size)
 uint32_t Texture::GetFrmaesCount() const
 {
     return 1;
+}
+
+float Texture::GetFrameSpeed() const
+{
+    return 12.0f;
 }

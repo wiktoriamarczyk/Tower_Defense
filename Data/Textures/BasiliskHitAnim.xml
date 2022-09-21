@@ -1,12 +1,11 @@
-<Data>
-	<Frame>/Textures/Basilisk/WALK-ENDcbasil59.png</Frame>
-	<Frame>/Textures/Basilisk/WALK-ENDcbasil60.png</Frame>
+<Data FrameSpeed="36.0">
 	<Frame>/Textures/Basilisk/HITcbasil66.png</Frame>
 	<Frame>/Textures/Basilisk/HITcbasil65.png</Frame>
 	<Frame>/Textures/Basilisk/HITcbasil64.png</Frame>
 	<Frame>/Textures/Basilisk/HITcbasil63.png</Frame>
 	<Frame>/Textures/Basilisk/HITcbasil62.png</Frame>
-	<Frame>/Textures/Basilisk/HITcbasil61.png</Frame>
-	<Frame>/Textures/Basilisk/WALK-STARTcbasil49.png</Frame>
-	<Frame>/Textures/Basilisk/WALK-STARTcbasil50.png</Frame>
+	<Frame>/Textures/Basilisk/HITcbasil63.png</Frame>
+	<Frame>/Textures/Basilisk/HITcbasil64.png</Frame>
+	<Frame>/Textures/Basilisk/HITcbasil65.png</Frame>
+	<Frame>/Textures/Basilisk/HITcbasil66.png</Frame>
 </Data>

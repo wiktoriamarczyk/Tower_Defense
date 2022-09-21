@@ -11,6 +11,7 @@ void Animator::AddTexture(eTextureType Type, const string& FileName )
     Data.m_Type = Type;
     Data.m_FileName = FileName;
     Data.m_FramesCount = pTexture->GetFrmaesCount();
+    Data.m_FrameSpeed = pTexture->GetFrameSpeed();
     m_TextureNames.push_back(Data);
 }
 
@@ -20,9 +21,9 @@ void Animator::DisplayTexture(sf::RenderWindow& Renderer, vec2 Position, Display
     Engine::GetSingleton()->DisplayTexture(m_CurrentTexture.m_FileName, Position , Parameters);
 }
 
-bool Animator::StartAnimation(eTextureType Type, bool Loop, function<void()> FinishCallback)
+bool Animator::StartAnimation(eTextureType Type, bool Loop, function<void()> FinishCallback, bool AllowInterrupt)
 {
-    if (m_CurrentTexture.m_Type == Type)
+    if (m_CurrentTexture.m_Type == Type && !AllowInterrupt)
     {
         return true;
     }
@@ -48,7 +49,7 @@ void Animator::Update(float DeltaTime)
     if (!m_Working)
         return;
 
-    m_CurrentFrame += DeltaTime * m_FrameSpeed;
+    m_CurrentFrame += DeltaTime * m_CurrentTexture.m_FrameSpeed;
 
     if (m_CurrentFrame >= m_CurrentTexture.m_FramesCount)
     {
@@ -66,5 +67,5 @@ void Animator::Update(float DeltaTime)
 
 void Animator::SetFrameSpeed(float FrameSpeed)
 {
-    m_FrameSpeed = FrameSpeed;
+    m_CurrentTexture.m_FrameSpeed = FrameSpeed;
 }

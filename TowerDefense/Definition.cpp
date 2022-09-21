@@ -17,7 +17,7 @@ string Definition::GetStringValue(const string& ValueName, string DefaultValue) 
 
 vector<string> Definition::GetStringValuesVector(const string& ValueName)const
 {
-    vector<string> vec;
+     vector<string> vec;
 
      auto dataNode = m_Data.child("Data");
      auto frameNode = dataNode.child(ValueName.c_str());
@@ -33,6 +33,11 @@ vector<string> Definition::GetStringValuesVector(const string& ValueName)const
      }
 
      return vec;
+}
+
+float Definition::GetAttributeFloatValue(const string& AttributeName, float DefaultValue) const
+{
+    return m_Data.child("Data").attribute(AttributeName.c_str()).as_float(DefaultValue);
 }
 
 bool Definition::LoadFromFile(const string& FileName)

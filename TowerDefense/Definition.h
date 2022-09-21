@@ -9,6 +9,7 @@ public:
     float GetFloatValue(const string& ValueName, float DefaultValue=0)const;
     string GetStringValue(const string& ValueName, string DefaultValue="")const;
     vector<string> GetStringValuesVector(const string& ValueName="")const;
+    float GetAttributeFloatValue(const string& AttributeName, float DefaultValue=0)const;
     bool LoadFromFile(const string& FileName);
     string GetName()const;
 private:

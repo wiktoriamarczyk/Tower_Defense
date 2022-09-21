@@ -310,7 +310,7 @@ bool Engine::LoadAnimation(const string& FileName)
     }
 
     shared_ptr<AnimatedTexture> unitAnimationTexture = make_shared<AnimatedTexture>();
-    unitAnimationTexture->Load(unitAnimationFrames, FileName);
+    unitAnimationTexture->Load(unitAnimationFrames, FileName, pDef->GetAttributeFloatValue("FrameSpeed",12.0f));
     m_LoadedTextures.push_back(unitAnimationTexture);
 
    return true;

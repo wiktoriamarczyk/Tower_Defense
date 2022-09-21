@@ -6,7 +6,7 @@ class Animator
 public:
     void AddTexture(eTextureType Type, const string& FileName);
     void DisplayTexture(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Parameters);
-    bool StartAnimation(eTextureType Type, bool Loop, function<void()> FinishCallback={});
+    bool StartAnimation(eTextureType Type, bool Loop, function<void()> FinishCallback={}, bool AllowInterrupt=false);
     void Update(float DeltaTime);
     void SetFrameSpeed(float FrameSpeed);
 private:
@@ -15,6 +15,7 @@ private:
         eTextureType m_Type;
         string m_FileName;
         uint32_t m_FramesCount;
+        float m_FrameSpeed = 12.0f; //< ile klatek animacji zostanie wyswietlonych w ciagu 1s
     };
     vector<TextureData>                 m_TextureNames;
     TextureData                         m_CurrentTexture;
@@ -22,5 +23,4 @@ private:
     bool                                m_Working = false;
     function<void()>                    m_FinishCallback;
     float                               m_CurrentFrame = 0; //< numer klatki, ktory w display zostanie przyciety do inta
-    float                               m_FrameSpeed = 12.f; //< ile klatek animacji zostanie wyswietlonych w ciagu 1s
 };

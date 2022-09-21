@@ -17,15 +17,18 @@ void Shot::Update(float DeltaTime)
     vec2 shiftPerFrame = m_NormalizedDir * m_Speed * DeltaTime;
 
     // przemieszczanie sie strzalu
+    
     SetPosition(GetPosition() + shiftPerFrame);
+
+    vec2 unitHitSize(20,20);
 
     // wymiary strzalu
     vec2 objectTopLeft = GetPosition() - GetSize() / 2;
     vec2 objectBottomRight = GetPosition() + GetSize() / 2;
 
     // wymiary jednostki
-    vec2 unitTopLeft = m_Target->GetPosition() - m_Target->GetSize() / 2;
-    vec2 unitBottomRight =  m_Target->GetPosition() + m_Target->GetSize() / 2;
+    vec2 unitTopLeft = m_Target->GetPosition() - unitHitSize / 2;
+    vec2 unitBottomRight =  m_Target->GetPosition() + unitHitSize / 2;
 
     // trafienie w jendostke przez strzal wiezy 
     if (GetPosition().x >= unitTopLeft.x && GetPosition().x <= unitBottomRight.x

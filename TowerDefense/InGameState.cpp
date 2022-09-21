@@ -21,8 +21,6 @@ InGameState::InGameState() : GameState(eStateID::INGAME)
     // zainicjalizowanie szukania sciezki dla jednostek
     if (!m_PathFinder.InitFinder(m_Grid))
         std::cout << "Path could not be found!" << std::endl;
-
-    OnEnter();
 }
 
 InGameState::~InGameState() {}
@@ -48,14 +46,33 @@ void InGameState::OnEnter()
     m_HoldTower = false;
     m_MoveTower = false;
     m_pTowerDef = nullptr;
-
-    // ustawienie timerow na domyslna wartosc
-    m_SpawningTimer = 0;
-    m_UnitPhaseTimer = 40.f;
+    
     m_TimeToNextUnitPhase = 20.f;
 
     // stworzenie obiektow gry
     CreateGameObjects();
+
+    auto dragonPhaseFunc = [this]()
+    {
+         ChangeUnitPhase("Dragon");
+    };
+
+    Engine::GetSingleton()->StartTimer(40.f, true, dragonPhaseFunc, -40.f);
+
+    auto basiliskPhaseFunc = [this]()
+    {
+        ChangeUnitPhase("Basilisk");
+
+    };
+
+    Engine::GetSingleton()->StartTimer(40.f, true, basiliskPhaseFunc, -20.f);
+
+    auto unitSpawnerFunc = [this]()
+    {
+        CreateUnit(vec2i(60, -100), m_CurrentUnitPhase);
+    };
+
+    Engine::GetSingleton()->StartTimer(2.5f, true, unitSpawnerFunc, -2.5f);
 }
 
 bool InGameState::ReadGrid()
@@ -146,26 +163,12 @@ void InGameState::Update(float DeltaTime)
     // inicjalizacja tool tipow
     m_ToolTip->ClearToolTip();
 
-    // ustalanie aktualnej fazy spawnowania jednostki
-    m_SpawningTimer -= DeltaTime;
-    m_UnitPhaseTimer -= DeltaTime;
+    // licznik do nastepnej fali
     m_TimeToNextUnitPhase -= DeltaTime;
 
     if (m_TimeToNextUnitPhase <= 0)
         m_TimeToNextUnitPhase += 20.f;
 
-    if (m_UnitPhaseTimer <= 0)
-        m_UnitPhaseTimer += 40.f;
-
-    if (m_SpawningTimer <= 0)
-    {
-        if (m_UnitPhaseTimer >= 20.f)
-            ChangeUnitPhase("Dragon");
-        else
-            ChangeUnitPhase("Basilisk");
-
-        m_SpawningTimer += 2.5f;
-    }
 
     // sprawdz, czy wyswietlic tooltip obiektu
     for (int i = 0; i < m_AllGameObjects.size(); ++i)
@@ -335,7 +338,9 @@ void InGameState::BuildTower(vec2 Cell, const Definition* pDef)
 
 void InGameState::CreateUnit(vec2 Position, const string& UnitName)
 {
-    const Definition* pDef = Engine::GetSingleton()->FindDefinition(UnitName);
+    m_UnitPhaseIcon->InitializeUnitIcon(UnitName);
+
+    const Definition* pDef = Engine::GetSingleton()->FindDefinition(string("/Definitions/" + UnitName + ".xml"));
 
     if (!pDef)
         return;
@@ -399,8 +404,7 @@ void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
 
 void InGameState::ChangeUnitPhase(const string& Name)
  {
-    m_UnitPhaseIcon->Initialize(Name);
-    CreateUnit(vec2i(60, -100), string("/Definitions/" + Name + ".xml"));
+    m_CurrentUnitPhase = Name;
  }
 
 void InGameState::SetCursor(eCursorType Cursor)

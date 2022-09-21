@@ -4,6 +4,7 @@
 #include "Sound.h"
 #include "Texture.h"
 #include "Definition.h"
+#include "Timer.h"
 
 class Engine
 {
@@ -21,6 +22,7 @@ public:
     vec2i DrawText(string Text, int PixelSize, vec2 Position, DrawTextParameters Param = {});
     void DestroyTextures();
     const Definition* FindDefinition(const string& FileName)const;
+    void StartTimer(float Time, bool Loop, function<void()> Function, float Delay=0.f);
 
     shared_ptr<Texture> GetTexture(const string& FileName)const;
     vec2i GetTextureSize(const string& FileName)const;
@@ -48,5 +50,7 @@ private:
     vector<pair<string, sf::Font>> m_Fonts;
     vector<unique_ptr<Definition>> m_Definitions;
 
-    float                         m_FramesPerSec = 60.0f;
+    TimerManager                   m_TimerManager;
+    float                          m_FramesPerSec = 60.0f;
 };
+

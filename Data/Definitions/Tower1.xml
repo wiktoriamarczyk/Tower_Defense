@@ -6,5 +6,5 @@
 	<LightningDamage>20</LightningDamage>
 	<IceDamage>10</IceDamage>
 	<DetectionRadius>170</DetectionRadius>
-	<ShootInterval>0.5</ShootInterval>
+	<ShootInterval>0.9</ShootInterval>
 </Data>

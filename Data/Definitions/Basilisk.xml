@@ -1,5 +1,7 @@
 <Data>
-	<FileName>/Textures/BasiliskAnim.xml</FileName>
+	<AnimFileName>/Textures/BasiliskAnim.xml</AnimFileName>
+	<DAnimFileName>/Textures/BasiliskDeathAnim.xml</DAnimFileName>
+	<HAnimFileName>/Textures/BasiliskHitAnim.xml</HAnimFileName>
 	<Name>Basilisk</Name>
 	<Speed>350</Speed>
 	<HP>150</HP>

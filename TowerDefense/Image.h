@@ -9,7 +9,7 @@ public:
     void Render(sf::RenderWindow& Renderer)override;
     bool FillToolTip(ToolTip& MyToolTip)const override;
     bool IsCursorOverObject()const override;
-    void Initialize(const string& Name);
+    void InitializeUnitIcon(const string& UnitName);
 
 private:
     vec2   m_Pivot;

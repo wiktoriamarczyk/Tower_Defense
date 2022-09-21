@@ -48,11 +48,10 @@ private:
     const Definition*                                 m_pTowerDef = nullptr;
     float                                             m_Money = 1000.f;
     AStar                                             m_PathFinder;
-
-    float                                             m_SpawningTimer = 0;
-    float                                             m_UnitPhaseTimer = 40.f;
-    float                                             m_TimeToNextUnitPhase = 20.f;
     shared_ptr<Image>                                 m_UnitPhaseIcon;
+
+    string m_CurrentUnitPhase;
+    float                                             m_TimeToNextUnitPhase = 20.f;
 
     // debug
     bool _gridDebug = false;

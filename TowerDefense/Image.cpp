@@ -54,9 +54,9 @@ bool Image::IsCursorOverObject()const
     return false;
 }
 
-void Image::Initialize(const string& Name)
+void Image::InitializeUnitIcon(const string& UnitName)
 {
-    m_ReferenceUnitName = string("/Definitions/" + Name + ".xml");
-    m_Name = "/Images/" + Name + "Icon.png";
+    m_ReferenceUnitName = UnitName;
+    m_Name = string("/Images/" + UnitName + "Icon.png");
     m_Size = Engine::GetSingleton()->GetTextureSize(m_Name);
 }

@@ -78,7 +78,7 @@ void Unit::Render(sf::RenderWindow& Renderer)
     Renderer.draw(unitOnMap);
 
     // tekstura
-    m_Animator.DisplayTexture(Renderer,GetPosition() , DisplayParameters{.Pivot{0.5, 0.5}});
+    m_Animator.DisplayTexture(Renderer, GetPosition() , DisplayParameters{.Pivot{0.5, 0.5}});
 
     // poziom HP
     sf::RectangleShape lifeBar(vec2(50.f, 15.f));

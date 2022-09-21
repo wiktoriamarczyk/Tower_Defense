@@ -45,6 +45,8 @@ bool Engine::Initialize()
     LoadAnimation("/Textures/DragonDeathAnim.xml");
     LoadAnimation("/Textures/DragonHitAnim.xml");
     LoadAnimation("/Textures/BasiliskAnim.xml");
+    LoadAnimation("/Textures/BasiliskDeathAnim.xml");
+    LoadAnimation("/Textures/BasiliskHitAnim.xml");
     LoadAnimation("/Textures/Tower3Anim.xml");
 
     // dodanie wszystkich stanow gry do wektora
@@ -87,6 +89,7 @@ void Engine::Loop()
 
         m_pCurrentState->Update(1.0f / m_FramesPerSec);
         m_pCurrentState->Render(m_Renderer);
+        m_TimerManager.Update(1.0f / m_FramesPerSec);
 
         auto timePassed = clock.getElapsedTime();
 
@@ -246,6 +249,11 @@ const Definition* Engine::FindDefinition(const string& FileName) const
     }
 
     return nullptr;
+}
+
+void Engine::StartTimer(float Time, bool Loop, function<void()> Function, float Delay)
+{
+    m_TimerManager.StartTimer(Time, Loop, Function, Delay);
 }
 
 vec2i Engine::GetTextureSize(const string& FileName)const

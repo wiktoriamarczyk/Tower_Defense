@@ -7,7 +7,6 @@ class Shot : public GameObject
 {
 public:
     Shot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue);
-    ~Shot();
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
 

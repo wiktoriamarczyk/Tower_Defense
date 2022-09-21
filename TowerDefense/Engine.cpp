@@ -148,7 +148,7 @@ shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
         }
     }
 
-    shared_ptr<Texture> tmpTexture = make_shared<Texture>(const_cast<sf::RenderWindow*>(&m_Renderer));
+    shared_ptr<Texture> tmpTexture = make_shared<Texture>();
 
     if (!tmpTexture->Load(FileName))
     {
@@ -164,7 +164,7 @@ void Engine::DisplayTexture(const string& FileName, vec2 Position, DisplayParame
     // jesli znalezlismy teksture, wyswietl ja
     if (auto pTexture = GetTexture(FileName))
     {
-        pTexture->Display(Position, Param);
+        pTexture->Display(m_Renderer, Position, Param);
     }
 }
 
@@ -309,7 +309,7 @@ bool Engine::LoadAnimation(const string& FileName)
         unitAnimationFrames.push_back(GetTexture(textureNames[i]));
     }
 
-    shared_ptr<AnimatedTexture> unitAnimationTexture = make_shared<AnimatedTexture>(&m_Renderer);
+    shared_ptr<AnimatedTexture> unitAnimationTexture = make_shared<AnimatedTexture>();
     unitAnimationTexture->Load(unitAnimationFrames, FileName);
     m_LoadedTextures.push_back(unitAnimationTexture);
 

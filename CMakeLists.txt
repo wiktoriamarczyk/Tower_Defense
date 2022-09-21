@@ -50,6 +50,8 @@ SET(APP_SRC_FILES_LIST
 	TowerDefense/ToolTip.cpp
 	TowerDefense/Timer.cpp
 	TowerDefense/Timer.h
+	TowerDefense/Animator.cpp
+	TowerDefense/Animator.h
     TowerDefense/lib/pugiconfig.hpp
     TowerDefense/lib/pugixml.cpp
     TowerDefense/lib/pugixml.hpp

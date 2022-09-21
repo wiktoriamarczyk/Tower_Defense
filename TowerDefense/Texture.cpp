@@ -1,12 +1,5 @@
 #include "Texture.h"
 
-Texture::Texture(sf::RenderWindow* pRenderer)
-{
-    m_pRenderer = pRenderer;
-}
-
-Texture::~Texture() {}
-
 bool Texture::Load(const string& FileName)
 {
     m_FileName = FileName;
@@ -22,7 +15,7 @@ bool Texture::Load(const string& FileName)
     return true;
 }
 
-void Texture::Display(vec2 Position, DisplayParameters Param)const
+void Texture::Display(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Param)const
 {
     sf::Sprite sprite;
     sprite.setTexture(m_Texture);
@@ -37,7 +30,7 @@ void Texture::Display(vec2 Position, DisplayParameters Param)const
     if (Param.DrawMode == eDrawMode::ADDITIVE)
         states.blendMode = sf::BlendAdd;
 
-    m_pRenderer->draw(sprite, states);
+    Renderer.draw(sprite, states);
 }
 
 void Texture::FreeResources()
@@ -45,12 +38,12 @@ void Texture::FreeResources()
     Texture::~Texture();
 }
 
-void AnimatedTexture::Display(vec2 Position, DisplayParameters Param) const
+void AnimatedTexture::Display(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Param) const
 {
     if (Param.CurrentFrame > -1 && Param.CurrentFrame < m_Frames.size())
-        m_Frames[Param.CurrentFrame]->Display(Position, Param);
+        m_Frames[Param.CurrentFrame]->Display(Renderer, Position, Param);
     else
-        m_Frames[(uint32_t)m_CurrentFrame]->Display(Position, Param);
+        m_Frames[(uint32_t)m_CurrentFrame]->Display(Renderer, Position, Param);
 }
 
 void AnimatedTexture::Update(float DeltaTime)

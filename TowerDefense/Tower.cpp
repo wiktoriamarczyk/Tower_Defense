@@ -72,7 +72,7 @@ bool Tower::OnMouseButtonDown(int Button)
 {
     if (IsCursorOverObject())
     {
-        m_Picked = !m_Picked;
+        PickTower(!m_Picked);
         return true;
     }
 
@@ -209,4 +209,9 @@ void Tower::SetMoneyEarned(float Value)
 {
     m_MoneyEarned += Value;
     m_Game.SetMoneyAmount(m_Game.GetMoneyAmount() + Value);
+}
+
+void Tower::PickTower(bool Value)
+{
+    m_Picked = Value;
 }

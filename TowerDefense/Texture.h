@@ -5,10 +5,10 @@
 class Texture
 {
 public:
-    Texture(sf::RenderWindow* pRenderer);
-    ~Texture();
+    Texture()=default;
+    ~Texture() {};
     bool Load(const string& FileName);
-    virtual void Display(vec2 Position, DisplayParameters Param = {})const;
+    virtual void Display(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Param = {})const;
     virtual void Update(float DeltaTime){};
     void FreeResources();
 
@@ -30,15 +30,14 @@ private:
 class AnimatedTexture : public Texture
 {
 public:
-    AnimatedTexture(sf::RenderWindow* pRenderer) : Texture(pRenderer) {};
-    void Display(vec2 Position, DisplayParameters Param = {})const override;
+    void Display(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Param = {})const override;
     void Update(float DeltaTime);
     void Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName);
 
     uint32_t GetFrmaesCount()const override;
 private:
     vector<shared_ptr<Texture>> m_Frames;
-    float                       m_CurrentFrame = 0; //< numer klatki, ktory w display zostanie przyciety do inta
+    float                       m_CurrentFrame = 0;  //< numer klatki, ktory w display zostanie przyciety do inta
     float                       m_FrameSpeed = 12.f; //< ile klatek animacji zostanie wyswietlonych w ciagu 1s
 
 };

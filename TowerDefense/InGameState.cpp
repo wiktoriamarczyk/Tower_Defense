@@ -123,11 +123,18 @@ void InGameState::OnMouseButtonDown(int Button)
     // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to wieza
     eGridValue gridState = m_Grid[cell.y % GRID_ROWS][cell.x % GRID_COLS];
 
-    for (int i = 0; i < m_AllGameObjects.size(); ++i)
+    for (size_t i = 0; i < m_AllGameObjects.size(); ++i)
     {
         if (m_AllGameObjects[i]->IsActive() && m_AllGameObjects[i]->OnMouseButtonDown(Button))
             return;
     }
+
+   vector<shared_ptr<Tower>> towers = GetObjects<Tower>();
+    for (size_t i = 0; i < towers.size(); ++i)
+    {
+       towers[i]->PickTower(false);
+    }
+
 
     // wybudowanie wiezy po kliknieciu w wolne pole
     if (m_HoldTower)

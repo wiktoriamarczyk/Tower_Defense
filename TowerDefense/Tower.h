@@ -16,6 +16,7 @@ public:
     bool FillToolTip(ToolTip& MyToolTip)const override;
     void Initialize(const Definition& Def);
     void Shoot(shared_ptr<Unit> Target);
+    void LvlUp();
 
     bool IsPicked()const;
     float GetPrize()const;
@@ -24,9 +25,9 @@ public:
     float GetMoneyEarned()const;
     float GetPrizeForUpgrade();
 
-    void LvlUp();
     void SetKills(int Value);
     void SetMoneyEarned(float Value);
+    void PickTower(bool Value);
 
 private:
     InGameState&    m_Game;

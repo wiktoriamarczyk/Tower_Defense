@@ -48,3 +48,8 @@ void TimerManager::Update(float DeltaTime)
             ++i;
     }
 }
+
+void TimerManager::StopAllTimers()
+{
+    m_Timers.clear();
+}

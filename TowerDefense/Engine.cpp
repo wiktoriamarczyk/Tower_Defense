@@ -256,6 +256,11 @@ void Engine::StartTimer(float Time, bool Loop, function<void()> Function, float 
     m_TimerManager.StartTimer(Time, Loop, Function, Delay);
 }
 
+void Engine::StopAllTimers()
+{
+    m_TimerManager.StopAllTimers();
+}
+
 vec2i Engine::GetTextureSize(const string& FileName)const
 {
     if (auto pTexture = GetTexture(FileName))

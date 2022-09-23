@@ -47,14 +47,16 @@ void InGameState::OnEnter()
     m_MoveTower = false;
     m_pTowerDef = nullptr;
     
+    // wyzerowanie timerow
     m_TimeToNextUnitPhase = 20.f;
+    Engine::GetSingleton()->StopAllTimers();
 
     // stworzenie obiektow gry
     CreateGameObjects();
 
     auto dragonPhaseFunc = [this]()
     {
-         ChangeUnitPhase("Dragon");
+        ChangeUnitPhase("Dragon");
     };
 
     Engine::GetSingleton()->StartTimer(40.f, true, dragonPhaseFunc, -40.f);
@@ -123,18 +125,19 @@ void InGameState::OnMouseButtonDown(int Button)
     // 0 - nie mozna polozyc obiektu, 1 - mozna polozyc obiekt, 2 - wybrany obiekt to wieza
     eGridValue gridState = m_Grid[cell.y % GRID_ROWS][cell.x % GRID_COLS];
 
+    // klik na obiekt
     for (size_t i = 0; i < m_AllGameObjects.size(); ++i)
     {
         if (m_AllGameObjects[i]->IsActive() && m_AllGameObjects[i]->OnMouseButtonDown(Button))
             return;
     }
 
+    // odkliknij trzymane wieze, jesli nie wykonano zadnej interakcji z buttonem
    vector<shared_ptr<Tower>> towers = GetObjects<Tower>();
     for (size_t i = 0; i < towers.size(); ++i)
     {
        towers[i]->PickTower(false);
     }
-
 
     // wybudowanie wiezy po kliknieciu w wolne pole
     if (m_HoldTower)
@@ -366,6 +369,18 @@ void InGameState::CreateUnit(vec2 Position, const string& UnitName)
     pUnit->MoveTo(unitPath);
 }
 
+shared_ptr<ParticleEmiter> InGameState::CreateParticles(vec2 Position, int ParticleCount, float ParticleScale, float MaxLifeTime, shared_ptr<GameObject> Target)
+{
+    shared_ptr<ParticleEmiter> pEmiter = make_shared<ParticleEmiter>("/Textures/Particle.png", ParticleCount, ParticleScale, MaxLifeTime);
+    pEmiter->SetPosition(Position);
+
+    if (Target)
+        pEmiter->InitializeTarget(Target);
+
+    m_AllGameObjects.push_back(pEmiter);
+    return pEmiter;
+}
+
 void InGameState::DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param)
 {
     Engine::GetSingleton()->DisplayTexture(FileName, Position, Param);
@@ -380,6 +395,7 @@ void InGameState::Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damag
 {
     shared_ptr<Shot> pShot = make_shared<Shot>(Source, Target, DamageValue);
     m_AllGameObjects.push_back(pShot);
+    CreateParticles(Source->GetPosition(), 128, 0.8f, INFINITY, pShot);
 }
 
 void InGameState::EnableGroup(eUIGroup Group)

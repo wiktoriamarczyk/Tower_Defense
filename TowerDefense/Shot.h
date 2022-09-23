@@ -14,6 +14,6 @@ private:
     shared_ptr<Unit>  m_Target;
     shared_ptr<Tower> m_Source;
     vec2              m_NormalizedDir;
-    float             m_Speed = 1200.f;
+    float             m_Speed = 120.f;
     Damage            m_Damage;
 };

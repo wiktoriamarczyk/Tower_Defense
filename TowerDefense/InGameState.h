@@ -4,6 +4,7 @@
 #include "Unit.h"
 #include "ToolTip.h"
 #include "Image.h"
+#include "ParticleEmiter.h"
 
 class Tower;
 
@@ -20,6 +21,7 @@ public:
     void Update(float DeltaTime)override;
     void BuildTower(vec2 Cell, const Definition* pDef);
     void CreateUnit(vec2 Position, const string& UnitName);
+    shared_ptr<ParticleEmiter> CreateParticles(vec2 Position, int ParticleCount, float ParticleScale, float MaxLifeTime, shared_ptr<GameObject> Target=nullptr);
     void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
     void Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue);

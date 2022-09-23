@@ -23,6 +23,7 @@ public:
     void DestroyTextures();
     const Definition* FindDefinition(const string& FileName)const;
     void StartTimer(float Time, bool Loop, function<void()> Function, float Delay=0.f);
+    void StopAllTimers();
 
     shared_ptr<Texture> GetTexture(const string& FileName)const;
     vec2i GetTextureSize(const string& FileName)const;

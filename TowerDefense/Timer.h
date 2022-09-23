@@ -22,6 +22,7 @@ class TimerManager
 public:
     void StartTimer(float Time, bool Loop, function<void()> Function, float Delay=0.f);
     void Update(float DeltaTime);
+    void StopAllTimers();
 
 private:
     vector<shared_ptr<Timer>> m_Timers;

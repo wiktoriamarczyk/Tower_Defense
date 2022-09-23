@@ -136,6 +136,7 @@ enum class eTextHorizontalAlign
     RIGHT,
 };
 
+
 struct DisplayParameters
 {
     //optional<vec2i> DisplaySize;
@@ -185,3 +186,9 @@ string ToString(const T& value)
     return std::to_string(value);
 }
 string ToString(float value, int precision=1);
+
+int GetRandInt (int Min, int Max);
+
+float GetRandFloat(float Min, float Max);
+
+float GetNormalizedFloat();

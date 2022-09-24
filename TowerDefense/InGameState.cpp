@@ -395,7 +395,7 @@ void InGameState::Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damag
 {
     shared_ptr<Shot> pShot = make_shared<Shot>(Source, Target, DamageValue);
     m_AllGameObjects.push_back(pShot);
-    CreateParticles(Source->GetPosition(), 128, 0.8f, INFINITY, pShot);
+    CreateParticles(Source->GetPosition(), 30, 0.25f, INFINITY, pShot);
 }
 
 void InGameState::EnableGroup(eUIGroup Group)

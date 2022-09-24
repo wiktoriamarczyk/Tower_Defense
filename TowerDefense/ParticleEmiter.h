@@ -6,6 +6,7 @@ struct ParticleData
 {
     // pozycja partikla w przestrzeni ParticleEmiter (pozycja partikla na ekranie to m_ParticlePosition + ParticleEmiter.m_Position)
     vec2 m_ParticlePosition;
+    vec2 m_OptionalOffset;
     // wektor kierunek ruchu - jego długosc to dodatkowo prędkość na sekundę
     vec2 m_DirectionVector;
     // pozostały czas życia (ile sekund mu zostało)
@@ -15,7 +16,7 @@ struct ParticleData
     // skala partikla
     float m_Scale = 1.0f;
     // kolor partikla
-    sf::Color m_Color = sf::Color::Red;
+    sf::Color m_Color = sf::Color(120,40,90);
     // nazwa tekstury
     const char* m_Texture = "";
 
@@ -34,6 +35,7 @@ public:
 private:
     void UpdateState(float DeltaTime);
 
+    float                  m_TotalTime = 0;
     vector<ParticleData>   m_Particles;
     string                 m_FileName;
     shared_ptr<GameObject> m_Target = nullptr;

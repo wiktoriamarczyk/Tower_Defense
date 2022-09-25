@@ -14,4 +14,5 @@ public:
 private:
     vec2   m_Pivot;
     string m_ReferenceUnitName;
+    TextureID m_ID;
 };

@@ -7,6 +7,7 @@ Image::Image(const string& Name, vec2 Position, vec2 Pivot)
     m_Name = Name;
     SetPosition(Position);
     m_Pivot = Pivot;
+    m_ID = Engine::GetSingleton()->GenerateTextureID(Name);
 }
 
 void Image::Update(float DeltaTime)

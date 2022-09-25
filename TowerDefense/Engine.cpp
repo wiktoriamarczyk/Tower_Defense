@@ -87,9 +87,9 @@ void Engine::Loop()
             }
         }
 
-        for (int i = 0; i < m_LoadedTextures.size(); ++i)
+        for (auto& el : m_LoadedTextures)
         {
-            m_LoadedTextures[i]->Update(1.0f / m_FramesPerSec);
+            el->Update(1.0f / m_FramesPerSec);
         }
 
         m_pCurrentState->Update(1.0f / m_FramesPerSec);
@@ -145,35 +145,22 @@ void Engine::PlaySound(const string& FileName,float Volume )
     m_LoadedSounds.back()->Play();*/
 }
 
-shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
+shared_ptr<Texture> Engine::GetTexture(TextureID ID)const
 {
     ZoneScoped;
 
-    for (int i = 0; i < m_LoadedTextures.size(); ++i)
-    {
-        if (m_LoadedTextures[i]->GetName() == FileName)
-        {
-            return m_LoadedTextures[i];
-        }
-    }
-
-    shared_ptr<Texture> tmpTexture = make_shared<Texture>();
-
-    if (!tmpTexture->Load(FileName))
-    {
+    if (ID == TextureID::INVALID)
         return nullptr;
-    }
 
-    m_LoadedTextures.push_back(tmpTexture);
-    return tmpTexture;
+    return m_LoadedTextures[int(ID)];
 }
 
-void Engine::DisplayTexture(const string& FileName, vec2 Position, DisplayParameters Param)
+void Engine::DisplayTexture(TextureID ID, vec2 Position, DisplayParameters Param)
 {
     ZoneScoped;
 
     // jesli znalezlismy teksture, wyswietl ja
-    if (auto pTexture = GetTexture(FileName))
+    if (auto pTexture = GetTexture(ID))
     {
         pTexture->Display(m_Renderer, Position, Param);
     }
@@ -241,15 +228,14 @@ vec2i Engine::DrawText(string TextUtf8, int PixelSize, vec2 InputPosition, DrawT
         lastLineSize = vec2{bounds.width, bounds.height};
     }
 
-
     return vec2i(bounds.width, bounds.height);
 }
 
 void Engine::DestroyTextures()
 {
-    for (int i = 0; i < m_LoadedTextures.size(); ++i)
+    for (auto& el : m_LoadedTextures)
     {
-        m_LoadedTextures[i]->FreeResources();
+        el->FreeResources();
     }
 }
 
@@ -275,6 +261,23 @@ void Engine::StartTimer(float Time, bool Loop, function<void()> Function, float 
 void Engine::StopAllTimers()
 {
     m_TimerManager.StopAllTimers();
+}
+
+TextureID Engine::GenerateTextureID(string Name)
+{
+    auto it = m_TexturesIDs.find(Name);
+    if (it != m_TexturesIDs.end())
+        return it->second;
+
+    shared_ptr<Texture> tmpTexture = make_shared<Texture>();
+    if (!tmpTexture->Load(Name))
+        return TextureID::INVALID;
+
+    m_LoadedTextures.push_back(tmpTexture);
+    TextureID id = TextureID(m_TexturesIDs.size());
+    m_TexturesIDs.insert(make_pair(Name, id));
+
+    return id;
 }
 
 vec2i Engine::GetTextureSize(const string& FileName)const
@@ -338,7 +341,7 @@ bool Engine::LoadAnimation(const string& FileName)
 
     shared_ptr<AnimatedTexture> unitAnimationTexture = make_shared<AnimatedTexture>();
     unitAnimationTexture->Load(unitAnimationFrames, FileName, pDef->GetAttributeFloatValue("FrameSpeed",12.0f));
-    m_LoadedTextures.push_back(unitAnimationTexture);
+    m_LoadedTextures[FileName] = unitAnimationTexture;
 
    return true;
 }

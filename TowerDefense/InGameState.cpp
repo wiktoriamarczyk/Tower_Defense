@@ -46,7 +46,7 @@ void InGameState::OnEnter()
     m_HoldTower = false;
     m_MoveTower = false;
     m_pTowerDef = nullptr;
-    
+
     // wyzerowanie timerow
     m_TimeToNextUnitPhase = 20.f;
     Engine::GetSingleton()->StopAllTimers();

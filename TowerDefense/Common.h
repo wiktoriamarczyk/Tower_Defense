@@ -2,6 +2,7 @@
 #include<iostream>
 #include<vector>
 #include<deque>
+#include<map>
 #include<string>
 #include<fstream>
 #include<memory>
@@ -18,6 +19,7 @@
 
 using std::vector;
 using std::deque;
+using std::map;
 using std::pair;
 using std::make_pair;
 using std::unique_ptr;
@@ -116,6 +118,11 @@ enum class eTextureType
     DEFAULT,
     DEATH,
     HIT,
+};
+
+enum class TextureID : uint32_t
+{
+    INVALID = -1,
 };
 
 namespace eFontStyle

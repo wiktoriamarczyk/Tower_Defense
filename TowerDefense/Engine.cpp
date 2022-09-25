@@ -16,6 +16,8 @@ Engine::~Engine()
 
 bool Engine::Initialize()
 {
+    ZoneScoped;
+
     srand(time(NULL));
 
     sf::err().rdbuf(std::cout.rdbuf());
@@ -63,6 +65,9 @@ void Engine::Loop()
 {
     while (m_Renderer.isOpen())
     {
+        FrameMark;
+        ZoneScoped;
+
         sf::Clock clock;
 
         sf::Event event;
@@ -106,6 +111,8 @@ void Engine::Loop()
 
 void Engine::ChangeState(eStateID StateID)
 {
+    ZoneScoped;
+
     for (int i = 0; i < m_AllStates.size(); ++i)
     {
         if (m_AllStates[i]->GetStateID() == StateID)
@@ -140,6 +147,8 @@ void Engine::PlaySound(const string& FileName,float Volume )
 
 shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
 {
+    ZoneScoped;
+
     for (int i = 0; i < m_LoadedTextures.size(); ++i)
     {
         if (m_LoadedTextures[i]->GetName() == FileName)
@@ -161,6 +170,8 @@ shared_ptr<Texture> Engine::GetTexture(const string& FileName)const
 
 void Engine::DisplayTexture(const string& FileName, vec2 Position, DisplayParameters Param)
 {
+    ZoneScoped;
+
     // jesli znalezlismy teksture, wyswietl ja
     if (auto pTexture = GetTexture(FileName))
     {
@@ -170,6 +181,8 @@ void Engine::DisplayTexture(const string& FileName, vec2 Position, DisplayParame
 
 vec2i Engine::DrawText(string TextUtf8, int PixelSize, vec2 InputPosition, DrawTextParameters Param)
 {
+    ZoneScoped;
+
     sf::Font* pFont = nullptr;
 
     static vec2 LastLineEnd  = vec2{0,0};
@@ -242,6 +255,8 @@ void Engine::DestroyTextures()
 
 const Definition* Engine::FindDefinition(const string& FileName) const
 {
+    ZoneScoped;
+
     for (size_t i = 0; i < m_Definitions.size(); ++i)
     {
         if (m_Definitions[i]->GetName() == FileName)
@@ -253,6 +268,7 @@ const Definition* Engine::FindDefinition(const string& FileName) const
 
 void Engine::StartTimer(float Time, bool Loop, function<void()> Function, float Delay)
 {
+    ZoneScoped;
     m_TimerManager.StartTimer(Time, Loop, Function, Delay);
 }
 
@@ -263,6 +279,8 @@ void Engine::StopAllTimers()
 
 vec2i Engine::GetTextureSize(const string& FileName)const
 {
+    ZoneScoped;
+
     if (auto pTexture = GetTexture(FileName))
     {
         return pTexture->GetSize();
@@ -290,6 +308,8 @@ void Engine::SetFramesPerSecond(float Value)
 
 bool Engine::LoadDefinition(const string& FileName)
 {
+    ZoneScoped;
+
     unique_ptr<Definition> pDef = make_unique<Definition>();
 
     if (!pDef->LoadFromFile(FileName))
@@ -302,6 +322,8 @@ bool Engine::LoadDefinition(const string& FileName)
 
 bool Engine::LoadAnimation(const string& FileName)
 {
+    ZoneScoped;
+
     if (!LoadDefinition(FileName))
        return false;
 

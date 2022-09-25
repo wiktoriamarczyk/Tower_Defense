@@ -14,6 +14,7 @@
 #include"vec2.h"
 #include<SFML/Graphics.hpp>
 #include<SFML/Audio.hpp>
+#include<Tracy.hpp>
 
 using std::vector;
 using std::deque;

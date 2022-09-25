@@ -2,6 +2,7 @@
 
 bool Texture::Load(const string& FileName)
 {
+    ZoneScoped;
     m_FileName = FileName;
 
     if (!m_Texture.loadFromFile("../Data/" + FileName))
@@ -17,6 +18,8 @@ bool Texture::Load(const string& FileName)
 
 void Texture::Display(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Param)const
 {
+    ZoneScoped;
+
     sf::Sprite sprite;
     sprite.setTexture(m_Texture);
     sprite.setPosition(Position);
@@ -40,6 +43,7 @@ void Texture::FreeResources()
 
 void AnimatedTexture::Display(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Param) const
 {
+    ZoneScoped;
     if (Param.CurrentFrame > -1 && Param.CurrentFrame < m_Frames.size())
         m_Frames[Param.CurrentFrame]->Display(Renderer, Position, Param);
     else
@@ -48,6 +52,7 @@ void AnimatedTexture::Display(sf::RenderWindow& Renderer, vec2 Position, Display
 
 void AnimatedTexture::Update(float DeltaTime)
 {
+    ZoneScoped;
     m_CurrentFrame += DeltaTime * m_FrameSpeed;
 
     if (m_CurrentFrame >= m_Frames.size())
@@ -56,6 +61,7 @@ void AnimatedTexture::Update(float DeltaTime)
 
 void AnimatedTexture::Load(vector<shared_ptr<Texture>> Frames, const string& AnimatedTxtName,float FrameSpeed)
 {
+    ZoneScoped;
     m_Frames = Frames;
     m_FileName = AnimatedTxtName;
     m_FrameSpeed = FrameSpeed;

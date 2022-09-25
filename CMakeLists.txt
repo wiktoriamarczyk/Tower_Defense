@@ -60,6 +60,7 @@ SET(APP_SRC_FILES_LIST
 	TowerDefense/resource.h
 	TowerDefense/TowerDefense.rc
 	Data/TowerDefense.ico
+	Dependencies/Tracy/TracyClient.cpp
 )
 
 #*****************************************************
@@ -85,6 +86,14 @@ ADD_EXECUTABLE(TowerDefense ${APP_SRC_FILES_LIST} )
 if(MSVC)
     target_compile_options(TowerDefense PRIVATE "/MP")
 endif()
+
+#*****************************************************
+# tracy
+#*****************************************************
+
+target_compile_definitions(TowerDefense PUBLIC TRACY_ENABLE)
+
+target_include_directories(TowerDefense PUBLIC "Dependencies/Tracy")
 
 #*****************************************************
 # Set language version to C++20

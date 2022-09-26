@@ -27,7 +27,7 @@ public:
     TextureID GenerateTextureID(string Name);
 
     shared_ptr<Texture> GetTexture(TextureID ID)const;
-    vec2i GetTextureSize(const string& FileName)const;
+    vec2i GetTextureSize(TextureID ID)const;
     vec2i GetMousePos()const;
     sf::Window& GetWindow() { return m_Renderer; }
     const sf::Window& GetWindow()const { return m_Renderer; }

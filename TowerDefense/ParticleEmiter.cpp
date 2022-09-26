@@ -5,6 +5,7 @@
 ParticleEmiter::ParticleEmiter(string FileName, int ParticleCount, float Scale, float MaxLifeTime)
 {
     m_FileName = FileName;
+    m_ID = Engine::GetSingleton()->GenerateTextureID(FileName);
 
     // kąt pomiędzy poszczególnymi partiklami -> pełne koło / liczba partikli
     float AngleDistance = 3.14f * 2 / ParticleCount;
@@ -134,10 +135,10 @@ void ParticleEmiter::Render(sf::RenderWindow& Renderer)
         const float  ParticleRotation= m_Particles[i].m_Rotation;
         const vec2   ParticlePos     = m_Particles[i].m_ParticlePosition + m_Particles[i].m_OptionalOffset + GetPosition();
         sf::Color    ParticleColor   = m_Particles[i].m_Color;
-        const string ParticleName    = m_Particles[i].m_Texture;
+        const TextureID ParticleID   = m_Particles[i].m_TextureID;
 
 
-        Engine::GetSingleton()->DisplayTexture(ParticleName, ParticlePos, { .DrawMode = eDrawMode::ADDITIVE , .DrawScale = ParticleScale ,
+        Engine::GetSingleton()->DisplayTexture(ParticleID, ParticlePos, { .DrawMode = eDrawMode::ADDITIVE , .DrawScale = ParticleScale ,
                                                                             .Pivot = vec2(0.5f,0.5f), .DrawColor = ParticleColor,
                                                                             .Rotation = ParticleRotation });
     }

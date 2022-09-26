@@ -5,11 +5,12 @@
 Button::Button(string TextureName, vec2 Position, vec2 Pivot, function<void()> Function, bool Move)
 {
     m_TextureName = TextureName;
-    SetPosition(Position);
-    SetSize(Engine::GetSingleton()->GetTextureSize(m_TextureName));
-    m_Function = Function;
+    m_ID = Engine::GetSingleton()->GenerateTextureID(m_TextureName);
+    SetSize(Engine::GetSingleton()->GetTextureSize(m_ID));
     m_Layer = eGraphicLayer::UI;
+    SetPosition(Position);
     m_Pivot = Pivot;
+    m_Function = Function;
     m_Move = Move;
 }
 
@@ -17,10 +18,10 @@ void Button::Render(sf::RenderWindow& Renderer)
 {
     if (IsCursorOverObject() && m_Move)
     {
-        Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x - 5, GetPosition().y + 5), DisplayParameters{.Pivot = m_Pivot});
+        Engine::GetSingleton()->DisplayTexture(m_ID, vec2i(GetPosition().x - 5, GetPosition().y + 5), DisplayParameters{.Pivot = m_Pivot});
     }
     else 
-        Engine::GetSingleton()->DisplayTexture(m_TextureName, vec2i(GetPosition().x, GetPosition().y), DisplayParameters{.Pivot = m_Pivot});
+        Engine::GetSingleton()->DisplayTexture(m_ID, vec2i(GetPosition().x, GetPosition().y), DisplayParameters{.Pivot = m_Pivot});
 }
 
 bool Button::OnMouseButtonDown(int Button)

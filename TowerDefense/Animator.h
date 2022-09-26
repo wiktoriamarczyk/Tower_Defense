@@ -13,9 +13,10 @@ private:
     struct TextureData
     {
         eTextureType m_Type;
-        string m_FileName;
-        uint32_t m_FramesCount;
-        float m_FrameSpeed = 12.0f; //< ile klatek animacji zostanie wyswietlonych w ciagu 1s
+        string       m_FileName;
+        TextureID    m_ID = TextureID::INVALID;
+        uint32_t     m_FramesCount;
+        float        m_FrameSpeed = 12.0f; //< ile klatek animacji zostanie wyswietlonych w ciagu 1s
     };
     vector<TextureData>                 m_TextureNames;
     TextureData                         m_CurrentTexture;

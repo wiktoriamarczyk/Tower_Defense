@@ -20,7 +20,7 @@ void Image::Render(sf::RenderWindow& Renderer)
     if (m_Name.empty())
         return;
 
-    Engine::GetSingleton()->DisplayTexture((m_Name).c_str(), GetPosition(), DisplayParameters{.Pivot = m_Pivot});
+    Engine::GetSingleton()->DisplayTexture(m_ID, GetPosition(), DisplayParameters{.Pivot = m_Pivot});
 }
 
 
@@ -59,5 +59,6 @@ void Image::InitializeUnitIcon(const string& UnitName)
 {
     m_ReferenceUnitName = UnitName;
     m_Name = string("/Images/" + UnitName + "Icon.png");
-    m_Size = Engine::GetSingleton()->GetTextureSize(m_Name);
+    m_ID = Engine::GetSingleton()->GenerateTextureID(m_Name);
+    m_Size = Engine::GetSingleton()->GetTextureSize(m_ID);
 }

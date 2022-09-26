@@ -261,7 +261,8 @@ void InGameState::Render(sf::RenderWindow& Renderer)
     {
         if (m_pTowerDef)
         {
-            Tower::DrawTowerOverlay(m_pTowerDef->GetStringValue("FileName"), Renderer, gridState != eGridValue::FREE);
+            auto id = Engine::GetSingleton()->GenerateTextureID(m_pTowerDef->GetStringValue("FileName"));
+            Tower::DrawTowerOverlay(id, Renderer, gridState != eGridValue::FREE);
         }
     }
 
@@ -381,9 +382,9 @@ shared_ptr<ParticleEmiter> InGameState::CreateParticles(vec2 Position, int Parti
     return pEmiter;
 }
 
-void InGameState::DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param)
+void InGameState::DisplayTexture(TextureID ID, vec2i Position, DisplayParameters Param)
 {
-    Engine::GetSingleton()->DisplayTexture(FileName, Position, Param);
+    Engine::GetSingleton()->DisplayTexture(ID, Position, Param);
 }
 
 void InGameState::DestroyTextures()
@@ -391,9 +392,9 @@ void InGameState::DestroyTextures()
     Engine::GetSingleton()->DestroyTextures();
 }
 
-void InGameState::Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue)
+void InGameState::Shoot(const string& TextureName, shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue)
 {
-    shared_ptr<Shot> pShot = make_shared<Shot>(Source, Target, DamageValue);
+    shared_ptr<Shot> pShot = make_shared<Shot>(TextureName, Source, Target, DamageValue);
     m_AllGameObjects.push_back(pShot);
     CreateParticles(Source->GetPosition(), 30, 0.25f, INFINITY, pShot);
 }
@@ -418,7 +419,8 @@ void InGameState::DisableGroup(eUIGroup Group)
 
 void InGameState::InitializeCursor(eCursorType CursorType, string FilePath)
 {
-    auto cursorTexture = Engine::GetSingleton()->GetTexture("/Cursors/" + FilePath);
+    auto id = Engine::GetSingleton()->GenerateTextureID("/Cursors/" + FilePath);
+    auto cursorTexture = Engine::GetSingleton()->GetTexture(id);
     auto pCursor = make_unique<pair<eCursorType, sf::Cursor>> ();
     pCursor->first = CursorType;
     pCursor->second.loadFromPixels(cursorTexture->GetSFMLTexture().copyToImage().getPixelsPtr(), sf::Vector2u(cursorTexture->GetSize()), sf::Vector2u(0, 0));

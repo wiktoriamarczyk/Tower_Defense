@@ -3,13 +3,15 @@
 
 void Animator::AddTexture(eTextureType Type, const string& FileName )
 {
-    auto pTexture = Engine::GetSingleton()->GetTexture(FileName);
+    auto id = Engine::GetSingleton()->GenerateTextureID(FileName);
+    auto pTexture = Engine::GetSingleton()->GetTexture(id);
     if (!pTexture)
         return;
 
     TextureData Data;
     Data.m_Type = Type;
     Data.m_FileName = FileName;
+    Data.m_ID = id;
     Data.m_FramesCount = pTexture->GetFrmaesCount();
     Data.m_FrameSpeed = pTexture->GetFrameSpeed();
     m_TextureNames.push_back(Data);
@@ -18,7 +20,7 @@ void Animator::AddTexture(eTextureType Type, const string& FileName )
 void Animator::DisplayTexture(sf::RenderWindow& Renderer, vec2 Position, DisplayParameters Parameters)
 {
     Parameters.CurrentFrame = (int32_t)m_CurrentFrame;
-    Engine::GetSingleton()->DisplayTexture(m_CurrentTexture.m_FileName, Position , Parameters);
+    Engine::GetSingleton()->DisplayTexture(m_CurrentTexture.m_ID, Position , Parameters);
 }
 
 bool Animator::StartAnimation(eTextureType Type, bool Loop, function<void()> FinishCallback, bool AllowInterrupt)

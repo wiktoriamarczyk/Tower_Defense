@@ -12,7 +12,6 @@ public:
     void InitializeUnitIcon(const string& UnitName);
 
 private:
-    vec2   m_Pivot;
-    string m_ReferenceUnitName;
-    TextureID m_ID;
+    vec2      m_Pivot;
+    string    m_ReferenceUnitName;
 };

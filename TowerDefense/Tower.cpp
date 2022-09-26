@@ -9,14 +9,14 @@ Tower::Tower(InGameState& Game, vec2 Position) : m_Game(Game)
     SetPosition(vec2(((int(Position.x)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2), (int(Position.y)/CELL_SIZE * CELL_SIZE) + CELL_SIZE / 2));
 }
 
-void Tower::DrawTowerOverlay(string TextureName, sf::RenderWindow& Renderer, bool IsBlocked)
+void Tower::DrawTowerOverlay(TextureID ID, sf::RenderWindow& Renderer, bool IsBlocked)
 {
     auto mousePos = (Engine::GetSingleton()->GetMousePos() / CELL_SIZE) * CELL_SIZE;
 
     if (IsBlocked)
-        Engine::GetSingleton()->DisplayTexture((TextureName).c_str(), mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5), .DrawColor = sf::Color::Red});
+        Engine::GetSingleton()->DisplayTexture(ID, mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5), .DrawColor = sf::Color::Red});
     else
-        Engine::GetSingleton()->DisplayTexture((TextureName).c_str(), mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5)});
+        Engine::GetSingleton()->DisplayTexture(ID, mousePos + vec2i(CELL_SIZE/2, CELL_SIZE/2), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot = vec2(0.5,0.5)});
 }
 
 void Tower::Update(float DeltaTime)
@@ -42,7 +42,7 @@ void Tower::Update(float DeltaTime)
                 continue;
 
             m_DetectionArea.setOutlineColor(sf::Color::Red * sf::Color(255,255,255,192));
-            Shoot(units[i]);
+            Shoot("/Textures/Shot.png", units[i]);
         }
         else
         {
@@ -54,9 +54,9 @@ void Tower::Update(float DeltaTime)
 void Tower::Render(sf::RenderWindow& Renderer)
 {
     if (IsPicked())
-        Engine::GetSingleton()->DisplayTexture((m_TextureName).c_str(), GetPosition(), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_ID, GetPosition(), DisplayParameters{.DrawMode = eDrawMode::ADDITIVE, .Pivot{0.5, 0.5}});
     else
-        Engine::GetSingleton()->DisplayTexture((m_TextureName).c_str(), GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
+        Engine::GetSingleton()->DisplayTexture(m_ID, GetPosition(), DisplayParameters{.Pivot{0.5, 0.5}});
 
     //-------debug-----------
     if (IsCursorOverObject())
@@ -142,18 +142,19 @@ void Tower::Initialize(const Definition& Def)
     m_DetectionRadius = Def.GetIntValue("DetectionRadius");
     m_ShootInterval = Def.GetFloatValue("ShootInterval");
 
-    m_TextureSize = Engine::GetSingleton()->GetTextureSize((m_TextureName).c_str());
+    m_ID = Engine::GetSingleton()->GenerateTextureID(m_TextureName);
+    m_TextureSize = Engine::GetSingleton()->GetTextureSize(m_ID);
     m_DetectionArea.setRadius(m_DetectionRadius);
 
     m_Damage = m_StartingDamageValues;
     m_CostForUpgrade = m_Cost * 1.5f;
 }
 
-void Tower::Shoot(shared_ptr<Unit> Target)
+void Tower::Shoot(const string& TextureName, shared_ptr<Unit> Target)
 {
     if (m_ShootingTimer <= 0)
     {
-        m_Game.Shoot(GetSelf(), Target, m_Damage);
+        m_Game.Shoot(TextureName, GetSelf(), Target, m_Damage);
         m_ShootingTimer = m_ShootInterval;
     }
 }

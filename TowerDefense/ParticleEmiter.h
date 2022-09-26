@@ -19,6 +19,7 @@ struct ParticleData
     sf::Color m_Color = sf::Color(120,40,90);
     // nazwa tekstury
     const char* m_Texture = "";
+    TextureID m_TextureID;
 
     float m_Rotation = 0.0f;
     float m_RotationSpeed = 0.0f;

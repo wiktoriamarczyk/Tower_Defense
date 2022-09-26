@@ -149,7 +149,7 @@ shared_ptr<Texture> Engine::GetTexture(TextureID ID)const
 {
     ZoneScoped;
 
-    if (ID == TextureID::INVALID)
+    if (ID == TextureID::INVALID || int(ID) > m_LoadedTextures.size())
         return nullptr;
 
     return m_LoadedTextures[int(ID)];
@@ -280,11 +280,11 @@ TextureID Engine::GenerateTextureID(string Name)
     return id;
 }
 
-vec2i Engine::GetTextureSize(const string& FileName)const
+vec2i Engine::GetTextureSize(TextureID ID)const
 {
     ZoneScoped;
 
-    if (auto pTexture = GetTexture(FileName))
+    if (auto pTexture = GetTexture(ID))
     {
         return pTexture->GetSize();
     }
@@ -336,12 +336,15 @@ bool Engine::LoadAnimation(const string& FileName)
 
     for (size_t i = 0; i < textureNames.size(); ++i)
     {
-        unitAnimationFrames.push_back(GetTexture(textureNames[i]));
+        auto id = GenerateTextureID(textureNames[i]);
+        unitAnimationFrames.push_back(GetTexture(id));
     }
 
     shared_ptr<AnimatedTexture> unitAnimationTexture = make_shared<AnimatedTexture>();
     unitAnimationTexture->Load(unitAnimationFrames, FileName, pDef->GetAttributeFloatValue("FrameSpeed",12.0f));
-    m_LoadedTextures[FileName] = unitAnimationTexture;
+    TextureID  id = TextureID(m_LoadedTextures.size());
+    m_LoadedTextures.push_back(unitAnimationTexture);
+    m_TexturesIDs.insert(make_pair(FileName, id));
 
    return true;
 }

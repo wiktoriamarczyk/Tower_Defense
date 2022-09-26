@@ -32,6 +32,7 @@ public:
 
 protected:
     string        m_Name;
+    TextureID     m_ID = TextureID::INVALID;
     vec2          m_Position;
     vec2i         m_Size;
     bool          m_Alive = true;

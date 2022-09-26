@@ -7,7 +7,7 @@ class Tower : public GameObject
 {
 public:
     Tower(InGameState& Game, vec2 Position);
-    static void DrawTowerOverlay(string TextureName, sf::RenderWindow& Renderer, bool IsBlocked);
+    static void DrawTowerOverlay(TextureID ID, sf::RenderWindow& Renderer, bool IsBlocked);
     shared_ptr<Tower> GetSelf() {return static_pointer_cast<Tower>(GameObject::GetSelf());};
     void Update(float DeltaTime)override;
     void Render(sf::RenderWindow& Renderer)override;
@@ -15,7 +15,7 @@ public:
     bool IsCursorOverObject()const override;
     bool FillToolTip(ToolTip& MyToolTip)const override;
     void Initialize(const Definition& Def);
-    void Shoot(shared_ptr<Unit> Target);
+    void Shoot(const string& TextureName, shared_ptr<Unit> Target);
     void LvlUp();
 
     bool IsPicked()const;

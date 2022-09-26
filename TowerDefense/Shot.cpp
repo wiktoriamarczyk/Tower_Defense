@@ -1,13 +1,14 @@
 #include "Shot.h"
 #include "Engine.h"
 
-Shot::Shot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue)
+Shot::Shot(const string& TextureName, shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue)
 {
-    m_Name = "/Textures/Shot.png";
+    m_Name = TextureName;
+    m_ID = Engine::GetSingleton()->GenerateTextureID(m_Name);
     m_Target = Target;
     m_Source = Source;
     SetPosition(m_Source->GetPosition());
-    SetSize(Engine::GetSingleton()->GetTextureSize(m_Name));
+    SetSize(Engine::GetSingleton()->GetTextureSize(m_ID));
     m_Damage = DamageValue;
 }
 
@@ -56,5 +57,5 @@ void Shot::Update(float DeltaTime)
 
 void Shot::Render(sf::RenderWindow& Renderer)
 {
-    Engine::GetSingleton()->DisplayTexture(m_Name, GetPosition(), DisplayParameters{.DrawScale{0.1f, 0.1f}, .Pivot{0.5, 0.5}, .Rotation{m_NormalizedDir.GetAngleFromVec()}});
+    Engine::GetSingleton()->DisplayTexture(m_ID, GetPosition(), DisplayParameters{.DrawScale{0.1f, 0.1f}, .Pivot{0.5, 0.5}, .Rotation{m_NormalizedDir.GetAngleFromVec()}});
 }

@@ -5,7 +5,6 @@
 Unit::Unit(vec2 Position)
 {
     SetPosition(Position);
-    //SetSize(vec2i(CELL_SIZE, CELL_SIZE));
 }
 
 void Unit::Update(float DeltaTime)
@@ -190,8 +189,8 @@ void Unit::Initialize(const Definition& Def)
 
     m_HP = m_MaxHP;
 
-    SetSize(Engine::GetSingleton()->GetTextureSize(DefaultTexture));
-    //ChangeTexture(eTextureType::DEFAULT);
+    m_ID = Engine::GetSingleton()->GenerateTextureID(DefaultTexture);
+    SetSize(Engine::GetSingleton()->GetTextureSize(m_ID));
     m_Animator.StartAnimation(eTextureType::DEFAULT,true);
 }
 

@@ -22,9 +22,9 @@ public:
     void BuildTower(vec2 Cell, const Definition* pDef);
     void CreateUnit(vec2 Position, const string& UnitName);
     shared_ptr<ParticleEmiter> CreateParticles(vec2 Position, int ParticleCount, float ParticleScale, float MaxLifeTime, shared_ptr<GameObject> Target=nullptr);
-    void DisplayTexture(const string& FileName, vec2i Position, DisplayParameters Param = {});
+    void DisplayTexture(TextureID ID, vec2i Position, DisplayParameters Param = {});
     void DestroyTextures();
-    void Shoot(shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue);
+    void Shoot(const string& TextureName, shared_ptr<Tower> Source, shared_ptr<Unit> Target, Damage DamageValue);
     void EnableGroup(eUIGroup Group);
     void DisableGroup(eUIGroup Group);
     void InitializeCursor(eCursorType CursorType, string FilePath);

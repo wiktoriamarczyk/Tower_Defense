@@ -43,6 +43,7 @@ ParticleEmiter::ParticleEmiter(string FileName, int ParticleCount, float Scale, 
         tmp.m_Scale = GetRandFloat(Scale/2.f, Scale);
         // przypisujemy nazwę tekstury do partikla
         tmp.m_Texture = m_FileName.c_str();
+        tmp.m_TextureID = m_ID;
 
         tmp.m_ParticlePosition = vec2(GetRandFloat(-10,10), GetRandFloat(-10,10));
 

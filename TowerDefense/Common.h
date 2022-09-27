@@ -17,6 +17,10 @@
 #include<SFML/Audio.hpp>
 #include<Tracy.hpp>
 
+//#define ZoneScoped 0;
+//#define FrameMark 0;
+
+
 using std::vector;
 using std::deque;
 using std::map;
